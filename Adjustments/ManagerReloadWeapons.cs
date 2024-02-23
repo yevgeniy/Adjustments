@@ -15,7 +15,6 @@ namespace Adjustments
     public class ManagerReloadWeapons: MapComponent
     {
         private static HashSet<ThingWithComps> weaponsInStorage=new HashSet<ThingWithComps>();
-        private static HashSet<ThingWithComps> changeAmmoRequest=new HashSet<ThingWithComps>();
         
 
         public static void AddWeapon(ThingWithComps t)
@@ -27,14 +26,16 @@ namespace Adjustments
             weaponsInStorage.Remove(t);
         }
 
+        public static bool IsThingInConsideration(ThingWithComps thing)
+        {
+            return weaponsInStorage.Contains(thing);
+        }
         public static IEnumerable<ThingWithComps>  ConsiderWeapons()
         {
             if (weaponsInStorage.Count() == 0)
                 return null;
 
-            /*Get weapons on map (hauled and placed) */
             var mapWeapons = weaponsInStorage.Where(v => v.Map == Find.CurrentMap).ToList();
-            Log.Message("map weapons: " + mapWeapons.Count);
 
             if (mapWeapons.Count == 0)
                 return null;
@@ -71,14 +72,11 @@ namespace Adjustments
                     continue;
                 }
 
-                if (!changeAmmoRequest.Contains(wep) && FullAmmo(wep))
+                if (FullAmmo(wep))
                 {
                     RemoveWeapon(wep);
                     continue;
                 }
-                
-                /* Remove weapons fully loaded w/ assigned ammunition */
-
             }
 
             return weaponsInStorage.Where(v => v.Map == Find.CurrentMap);
@@ -91,24 +89,38 @@ namespace Adjustments
             var compAmmoUser = genMethod.Invoke(wep, null);
 
             var r= (bool)Adjustments.HasMagazinePropInfo.GetValue(compAmmoUser);
-            Log.Message("USES AMMO: " + r);
             return r;
         }
 
         private static bool FullAmmo(ThingWithComps wep)
         {
+            var i = 0;
+            GetRequiredAmmoDef(wep, out i);
+
+            return i == 0;
+        }
+        /*returns AmmoDef */
+        public static object GetRequiredAmmoDef(ThingWithComps gun, out int howMuch)
+        {
+
             var methinfo = typeof(ThingWithComps).GetMethod("GetComp");
             var genMethod = methinfo.MakeGenericMethod(Adjustments.CompAmmoUserType);
-            var compAmmoUser = genMethod.Invoke(wep, null);
+            var compAmmoUser = genMethod.Invoke(gun, null);
+
+            var selectedAmmo = Adjustments.SelectedAmmoPropInfo.GetValue(compAmmoUser);
+            var currentAmmo = Adjustments.CurrentAmmoPropInfo.GetValue(compAmmoUser);
+            var curMag = (int)Adjustments.CurMagCountPropInfo.GetValue(compAmmoUser);
 
             var props = Adjustments.PropsPropInfo.GetValue(compAmmoUser);
-            var magsize = (int)Adjustments.MagazineSizeFieldInfo.GetValue(props);
+            var magSize = (int)Adjustments.MagazineSizeFieldInfo.GetValue(props);
 
-            var curmagsize = (int)Adjustments.CurMagCountPropInfo.GetValue(compAmmoUser);
 
-            Log.Message("MAG: " + curmagsize + "/" + magsize);
+            if (selectedAmmo.Equals(currentAmmo))
+                howMuch = magSize - curMag;
+            else
+                howMuch = magSize;
 
-            return magsize == curmagsize;
+            return selectedAmmo;
         }
 
         static ManagerReloadWeapons()
