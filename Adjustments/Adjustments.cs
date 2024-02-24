@@ -15,12 +15,16 @@ namespace Adjustments
         public static bool HasCombatExtended;
         public static Type CompAmmoUserType;
         public static Type CompProperties_AmmoUserType;
+        public static Type AmmoThingType;
         public static PropertyInfo HasMagazinePropInfo = null;
         public static PropertyInfo CurMagCountPropInfo = null;
         public static PropertyInfo CurrentAmmoPropInfo = null;
         public static PropertyInfo SelectedAmmoPropInfo = null;
         public static PropertyInfo PropsPropInfo = null;
         public static FieldInfo MagazineSizeFieldInfo = null;
+        public static FieldInfo ReloadTimeFieldInfo = null;
+        public static PropertyInfo IsCookingOffPropInfo = null;
+        public static StatDef ReloadSpeed = null;
 
         static Adjustments()
         {
@@ -42,6 +46,7 @@ namespace Adjustments
             if (CompAmmoUserType != null)
             {
                 HasCombatExtended = true;
+
                 HasMagazinePropInfo = CompAmmoUserType.GetProperty("HasMagazine");
                 CurMagCountPropInfo = CompAmmoUserType.GetProperty("CurMagCount");
                 CurrentAmmoPropInfo = CompAmmoUserType.GetProperty("CurrentAmmo");
@@ -50,6 +55,14 @@ namespace Adjustments
 
                 CompProperties_AmmoUserType = assemblies.SelectMany(v => v.GetTypes()).FirstOrDefault(v => v.Name == "CompProperties_AmmoUser");
                 MagazineSizeFieldInfo = CompProperties_AmmoUserType.GetField("magazineSize", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                ReloadTimeFieldInfo = CompProperties_AmmoUserType.GetField("reloadTime", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+
+                AmmoThingType = assemblies.SelectMany(v => v.GetTypes()).FirstOrDefault(v => v.Name == "AmmoThing");
+                IsCookingOffPropInfo = AmmoThingType.GetProperty("IsCookingOff");
+
+                
+                ReloadSpeed =StatDef.Named("ReloadSpeed");
+
             }
             
             Log.Message("HAS CE: " + HasCombatExtended);

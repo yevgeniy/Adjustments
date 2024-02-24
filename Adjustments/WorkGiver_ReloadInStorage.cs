@@ -23,19 +23,23 @@ namespace Adjustments
 
         public override Job JobOnThing(Pawn pawn, Thing t, bool forced = false)
         {
+            
             if (!(t is ThingWithComps gun))
                 return null;
 
             if (!pawn.CanReach(new LocalTargetInfo(gun.Position), PathEndMode.Touch, Danger.Deadly))
                 return null;
 
+            if (pawn.CurJob!=null && pawn.CurJob.def.driverClass == JobDefOf.ReloadInStorage.driverClass)
+                return null;
+
             if (!ManagerReloadWeapons.IsThingInConsideration(gun))
                 return null;
 
-            int howMuch = 0;
+            int howMuchNeededForFullReload = 0;
 
             /*returns AmmoDef*/
-            var ammoDef = GetRequiredAmmoDef(gun, out howMuch);
+            var ammoDef = GetRequiredAmmoDef(gun, out howMuchNeededForFullReload);
 
 
             if (ammoDef==null)
@@ -43,7 +47,7 @@ namespace Adjustments
                 Log.Error("Somehow got a gun with no ammoDef");
                 return null;
             }
-            if (howMuch == 0)
+            if (howMuchNeededForFullReload == 0)
             {
                 Log.Error("Somehow considering a gun already full on ammo.");
                 return null;
@@ -51,13 +55,16 @@ namespace Adjustments
 
             Thing ammoThing = FindClosestReachableAmmoThing(ammoDef, pawn, ThingRequestGroup.Pawn)
                 ?? FindClosestReachableAmmoThing(ammoDef, pawn, ThingRequestGroup.HaulableEver);
+
             
             if (ammoThing == null)
                 return null;
 
 
             var job = JobMaker.MakeJob(JobDefOf.ReloadInStorage, ammoThing, gun);
+            job.count = howMuchNeededForFullReload;
 
+            Log.Message("AA: " + job.def.defName + " " + job.count);
             return job;
         }
 

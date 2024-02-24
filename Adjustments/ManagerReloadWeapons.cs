@@ -104,15 +104,20 @@ namespace Adjustments
         {
 
             var methinfo = typeof(ThingWithComps).GetMethod("GetComp");
+
             var genMethod = methinfo.MakeGenericMethod(Adjustments.CompAmmoUserType);
+
             var compAmmoUser = genMethod.Invoke(gun, null);
+
 
             var selectedAmmo = Adjustments.SelectedAmmoPropInfo.GetValue(compAmmoUser);
             var currentAmmo = Adjustments.CurrentAmmoPropInfo.GetValue(compAmmoUser);
             var curMag = (int)Adjustments.CurMagCountPropInfo.GetValue(compAmmoUser);
 
+
             var props = Adjustments.PropsPropInfo.GetValue(compAmmoUser);
             var magSize = (int)Adjustments.MagazineSizeFieldInfo.GetValue(props);
+
 
 
             if (selectedAmmo.Equals(currentAmmo))
