@@ -13,17 +13,14 @@ namespace Adjustments
     public static class Adjustments
     {
         public static bool HasCombatExtended;
-        public static Type CompAmmoUserType;
-        public static Type CompProperties_AmmoUserType;
-        public static Type AmmoThingType;
-        public static PropertyInfo HasMagazinePropInfo = null;
-        public static PropertyInfo CurMagCountPropInfo = null;
-        public static PropertyInfo CurrentAmmoPropInfo = null;
+        public static bool HasAllowTool;
+        
+        
+        
         public static PropertyInfo SelectedAmmoPropInfo = null;
-        public static PropertyInfo PropsPropInfo = null;
-        public static FieldInfo MagazineSizeFieldInfo = null;
-        public static FieldInfo ReloadTimeFieldInfo = null;
-        public static PropertyInfo IsCookingOffPropInfo = null;
+        
+        
+        
         public static StatDef ReloadSpeed = null;
 
         static Adjustments()
@@ -42,32 +39,26 @@ namespace Adjustments
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
             /* find 'haul urgently' class */
-            CompAmmoUserType = assemblies.SelectMany(v => v.GetTypes()).FirstOrDefault(v => v.Name == "CompAmmoUser");
-            if (CompAmmoUserType != null)
+            var compAmmoUserType = assemblies.SelectMany(v => v.GetTypes()).FirstOrDefault(v => v.Name == "CompAmmoUser");
+            if (compAmmoUserType != null)
             {
-                HasCombatExtended = true;
-
-                HasMagazinePropInfo = CompAmmoUserType.GetProperty("HasMagazine");
-                CurMagCountPropInfo = CompAmmoUserType.GetProperty("CurMagCount");
-                CurrentAmmoPropInfo = CompAmmoUserType.GetProperty("CurrentAmmo");
-                SelectedAmmoPropInfo = CompAmmoUserType.GetProperty("SelectedAmmo");
-                PropsPropInfo = CompAmmoUserType.GetProperty("Props");
-
-                CompProperties_AmmoUserType = assemblies.SelectMany(v => v.GetTypes()).FirstOrDefault(v => v.Name == "CompProperties_AmmoUser");
-                MagazineSizeFieldInfo = CompProperties_AmmoUserType.GetField("magazineSize", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-                ReloadTimeFieldInfo = CompProperties_AmmoUserType.GetField("reloadTime", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-
-                AmmoThingType = assemblies.SelectMany(v => v.GetTypes()).FirstOrDefault(v => v.Name == "AmmoThing");
-                IsCookingOffPropInfo = AmmoThingType.GetProperty("IsCookingOff");
-
-                
+                HasCombatExtended = true;   
                 ReloadSpeed =StatDef.Named("ReloadSpeed");
 
             }
             
+            var classType = assemblies.SelectMany(assembly => assembly.GetTypes())
+                    .FirstOrDefault(v => v.Name == "Designator_HaulUrgently");
+            if (classType != null)
+            {
+                HasAllowTool = true;
+            }
+
+            Log.Message("HAS ALLOW TOOL: " + HasAllowTool);
             Log.Message("HAS CE: " + HasCombatExtended);
                 
         }
+
     }
 
 

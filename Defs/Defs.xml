@@ -15,19 +15,7 @@
 		<workType>Hauling</workType>
 		<verb>reload</verb>
 		<gerund>reloading</gerund>
-		<priorityInType>11</priorityInType>
-		<requireCapacities>
-			<li>Manipulation</li>
-		</requireCapacities>
-	</WorkGiverDef>
-	<WorkGiverDef>
-		<defName>ReloadWeaponsScan</defName>
-		<label>reloading in storage</label>
-		<giverClass>Adjustments.WorkGiver_ReloadInStorage</giverClass>
-		<workType>HaulingUrgent</workType>
-		<verb>reload</verb>
-		<gerund>reloading</gerund>
-		<priorityInType>55</priorityInType>
+		<priorityInType>150</priorityInType>
 		<requireCapacities>
 			<li>Manipulation</li>
 		</requireCapacities>

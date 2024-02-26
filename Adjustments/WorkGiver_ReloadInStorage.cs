@@ -23,24 +23,19 @@ namespace Adjustments
 
         public override Job JobOnThing(Pawn pawn, Thing t, bool forced = false)
         {
-            
-            if (!(t is ThingWithComps gun))
+            if (!ManagerReloadWeapons.IsThingInConsideration(t as ThingWithComps))
                 return null;
 
-            if (!pawn.CanReach(new LocalTargetInfo(gun.Position), PathEndMode.Touch, Danger.Deadly))
+            if (pawn.CurJob != null && pawn.CurJob.def.driverClass == JobDefOf.ReloadInStorage.driverClass)
                 return null;
 
-            if (pawn.CurJob!=null && pawn.CurJob.def.driverClass == JobDefOf.ReloadInStorage.driverClass)
+            var gun = new GunProxy(t as ThingWithComps);
+
+            if (!pawn.CanReserveAndReach(gun.Thing, PathEndMode.Touch, Danger.Deadly))
                 return null;
 
-            if (!ManagerReloadWeapons.IsThingInConsideration(gun))
-                return null;
-
-            int howMuchNeededForFullReload = 0;
-
-            /*returns AmmoDef*/
-            var ammoDef = GetRequiredAmmoDef(gun, out howMuchNeededForFullReload);
-
+            var ammoDef = gun.CurrentAmmo;
+            int howMuchNeededForFullReload = gun.TotalMagCount - gun.CurrentMagCount;
 
             if (ammoDef==null)
             {
@@ -49,22 +44,18 @@ namespace Adjustments
             }
             if (howMuchNeededForFullReload == 0)
             {
-                Log.Error("Somehow considering a gun already full on ammo.");
                 return null;
             }
 
             Thing ammoThing = FindClosestReachableAmmoThing(ammoDef, pawn, ThingRequestGroup.Pawn)
                 ?? FindClosestReachableAmmoThing(ammoDef, pawn, ThingRequestGroup.HaulableEver);
 
-            
             if (ammoThing == null)
                 return null;
 
-
-            var job = JobMaker.MakeJob(JobDefOf.ReloadInStorage, ammoThing, gun);
+            var job = JobMaker.MakeJob(JobDefOf.ReloadInStorage, ammoThing, gun.Thing);
             job.count = howMuchNeededForFullReload;
 
-            Log.Message("AA: " + job.def.defName + " " + job.count);
             return job;
         }
 
@@ -80,18 +71,7 @@ namespace Adjustments
                     && pawn.CanReserve(thing)
                     && !thing.IsForbidden(pawn.Faction)
             );
-            
         }
 
-        private object GetRequiredAmmoDef(ThingWithComps gun, out int howMuch)
-        {
-            
-            var selectedAmmo = ManagerReloadWeapons.GetRequiredAmmoDef(gun, out howMuch);
-
-
-            return selectedAmmo;
-            
-
-        }
     }
 }

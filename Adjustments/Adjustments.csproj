@@ -231,7 +231,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="WorkGiverDefOf.cs" />
+    <Compile Include="AmmoProxy.cs" />
     <Compile Include="Driver_ReloadInStorage.cs" />
+    <Compile Include="GunProxy.cs" />
     <Compile Include="JobDefOf.cs" />
     <Compile Include="Adjustments.cs" />
     <Compile Include="ManagerReloadWeapons.cs" />

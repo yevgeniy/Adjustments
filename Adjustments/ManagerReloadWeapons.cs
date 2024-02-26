@@ -42,90 +42,45 @@ namespace Adjustments
 
             var areaManager = new AreaManager(Find.CurrentMap);
             
-            foreach (var wep in mapWeapons)
+            foreach (var t in mapWeapons)
             {
+                var gun = new GunProxy(t);
                 /* clean up despawned weapons */
-                if (!wep.Spawned)
+                if (!gun.Thing.Spawned)
                 {
-                    RemoveWeapon(wep);
+                    RemoveWeapon(gun.Thing);
                     continue;
                 }
 
 
                 /* Removed weapons not in home zone */
-                var homeArea = wep.Map.areaManager.Home;
+                var homeArea = gun.Thing.Map.areaManager.Home;
                 if (homeArea == null)
                 {
                     Log.Error("NO HOME AREA?");
-                    RemoveWeapon(wep);
+                    RemoveWeapon(gun.Thing);
                     continue;
                 }
-                if (!homeArea.ActiveCells.Any(v => v == wep.Position))
+                if (!homeArea.ActiveCells.Any(v => v == gun.Thing.Position))
                 {
-                    RemoveWeapon(wep);
-                    continue;
-                }
-
-                if (!WeaponUsesAmmo(wep))
-                {
-                    RemoveWeapon(wep);
+                    RemoveWeapon(gun.Thing);
                     continue;
                 }
 
-                if (FullAmmo(wep))
+                if (!gun.HasMagazine)
                 {
-                    RemoveWeapon(wep);
+                    RemoveWeapon(gun.Thing);
+                    continue;
+                }
+
+                if (gun.CurrentMagCount==gun.TotalMagCount)
+                {
+                    RemoveWeapon(gun.Thing);
                     continue;
                 }
             }
 
             return weaponsInStorage.Where(v => v.Map == Find.CurrentMap);
-        }
-
-        private static bool WeaponUsesAmmo(ThingWithComps wep)
-        {
-            var methinfo = typeof(ThingWithComps).GetMethod("GetComp");
-            var genMethod = methinfo.MakeGenericMethod(Adjustments.CompAmmoUserType);
-            var compAmmoUser = genMethod.Invoke(wep, null);
-
-            var r= (bool)Adjustments.HasMagazinePropInfo.GetValue(compAmmoUser);
-            return r;
-        }
-
-        private static bool FullAmmo(ThingWithComps wep)
-        {
-            var i = 0;
-            GetRequiredAmmoDef(wep, out i);
-
-            return i == 0;
-        }
-        /*returns AmmoDef */
-        public static object GetRequiredAmmoDef(ThingWithComps gun, out int howMuch)
-        {
-
-            var methinfo = typeof(ThingWithComps).GetMethod("GetComp");
-
-            var genMethod = methinfo.MakeGenericMethod(Adjustments.CompAmmoUserType);
-
-            var compAmmoUser = genMethod.Invoke(gun, null);
-
-
-            var selectedAmmo = Adjustments.SelectedAmmoPropInfo.GetValue(compAmmoUser);
-            var currentAmmo = Adjustments.CurrentAmmoPropInfo.GetValue(compAmmoUser);
-            var curMag = (int)Adjustments.CurMagCountPropInfo.GetValue(compAmmoUser);
-
-
-            var props = Adjustments.PropsPropInfo.GetValue(compAmmoUser);
-            var magSize = (int)Adjustments.MagazineSizeFieldInfo.GetValue(props);
-
-
-
-            if (selectedAmmo.Equals(currentAmmo))
-                howMuch = magSize - curMag;
-            else
-                howMuch = magSize;
-
-            return selectedAmmo;
         }
 
         static ManagerReloadWeapons()

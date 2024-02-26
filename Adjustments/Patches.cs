@@ -32,9 +32,8 @@ namespace Adjustments
             { 
                 Log.Message("LOOKING AT: " + compsThing.def.defName);
 
-                var methinfo = typeof(ThingWithComps).GetMethod("GetComp");
-                var genMethod = methinfo.MakeGenericMethod(Adjustments.CompAmmoUserType);
-                var comp = genMethod.Invoke(compsThing, null);
+                var gun = new GunProxy(compsThing);
+                var comp = gun.CompAmmoUser;
 
                 if (comp!=null)
                 {
