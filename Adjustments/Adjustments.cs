@@ -28,9 +28,10 @@ namespace Adjustments
             Log.Message("ADJUSTMENTS STARTED.");
 
             Harmony.DEBUG = true;  // Enable Harmony Debug
-            Harmony harmony = new Harmony("nimm.admustments");
+            Harmony harmony = new Harmony("nimm.adjustments");
 
             Pawn_CarryTracker_TryDropCarriedThing.Wire(harmony);
+            ApplyOnPawn_CheckSurgeryFail.Wire(harmony);
 
             harmony.PatchAll();
 
