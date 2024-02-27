@@ -16,9 +16,9 @@
 		<verb>reload</verb>
 		<gerund>reloading</gerund>
 		<priorityInType>150</priorityInType>
-		<requireCapacities>
+		<requiredCapacities>
 			<li>Manipulation</li>
-		</requireCapacities>
+		</requiredCapacities>
 	</WorkGiverDef>
 	
 </Defs>
