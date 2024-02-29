@@ -57,7 +57,7 @@ namespace Adjustments
             base.PostExposeData();
             if (Pawn == null) return;
 
-            Scribe_Collections.Look(ref _brands, "nim-adjust-brands");
+            Scribe_Deep.Look(ref _brands, "nim-adjust-brands");
         }
         public void RemoveBrand(Brand brand)
         {
