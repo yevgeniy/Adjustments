@@ -57,9 +57,20 @@ namespace Adjustments
 
             Log.Message("HAS ALLOW TOOL: " + HasAllowTool);
             Log.Message("HAS CE: " + HasCombatExtended);
+
+            AttachComps();
                 
         }
 
+        private static void AttachComps()
+        {
+            foreach (ThingDef thingDef in DefDatabase<ThingDef>.AllDefs.Where(thingDef =>
+                    thingDef.race != null))
+            {
+                Log.Message("Adding to: " + thingDef.race);
+                thingDef.comps.Add(new BrandCompProp());
+            }
+        }
     }
 
 

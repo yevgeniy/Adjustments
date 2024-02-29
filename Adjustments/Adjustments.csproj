@@ -231,6 +231,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BrandComp.cs" />
+    <Compile Include="BrandDialog.cs" />
+    <Compile Include="PathcBrandCard.cs" />
+    <Compile Include="ManagerBrand.cs" />
     <Compile Include="WorkGiverDefOf.cs" />
     <Compile Include="AmmoProxy.cs" />
     <Compile Include="Driver_ReloadInStorage.cs" />
