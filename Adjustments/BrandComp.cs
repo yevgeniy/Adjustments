@@ -9,7 +9,7 @@ using static UnityEngine.Tilemaps.Tilemap;
 
 namespace Adjustments
 {
-    public class Brand
+    public class Brand : IExposable
     {
         public Color Color;
         public string IconName;
@@ -35,6 +35,12 @@ namespace Adjustments
                 }
                 return _icon;
             } }
+
+        public void ExposeData()
+        {
+            Scribe_Values.Look(ref Color, "adj-color");
+            Scribe_Values.Look(ref IconName, "adj-icon-name");
+        }
     }
     public class BrandComp : ThingComp
     {
@@ -50,12 +56,21 @@ namespace Adjustments
             } }
 
         private Pawn pawn;
+        
+
         private Pawn Pawn => parent is Pawn pawn ? pawn : null;
+
+
+        private TickManager _tickManager;
+        public bool Paused { get {
+                if (_tickManager == null)
+                    _tickManager = Find.TickManager;
+                return _tickManager.Paused;
+        } }
 
         public override void PostExposeData()
         {
             base.PostExposeData();
-            if (Pawn == null) return;
 
             Scribe_Deep.Look(ref _brands, "nim-adjust-brands");
         }
@@ -79,6 +94,10 @@ namespace Adjustments
 
         public override void DrawGUIOverlay()
         {
+
+            if (!Paused)
+                return;
+
             var i = 0;
             foreach(var brand in Brands)
             {
