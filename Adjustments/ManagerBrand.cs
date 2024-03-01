@@ -26,20 +26,20 @@ namespace Adjustments
                 return _tickManager.Paused;
             }
         }
-        private bool invalidate = false;
+        public static bool Invalidate = false;
         private List<Brand> _brands;
         private List<Brand> Brands
         {
             get
             {
-                if (invalidate || _brands==null)
+                if (Invalidate || _brands==null)
                 {
                     var pawns = Find.CurrentMap.mapPawns.SlavesOfColonySpawned.Concat(Find.CurrentMap.mapPawns.FreeColonistsSpawned)
                         .Concat(SpawnedColonyMechs());
 
                     _brands = pawns.Select(v => v.GetComp<BrandComp>()).SelectMany(v => v.Brands).ToList();
 
-                    invalidate = false;
+                    Invalidate = false;
                 }
                 return _brands;
             }
@@ -98,7 +98,7 @@ namespace Adjustments
                 }
 
             } else
-                invalidate = true;
+                Invalidate = true;
 
             
         }

@@ -72,11 +72,12 @@ namespace Adjustments
         {
             base.PostExposeData();
 
-            Scribe_Deep.Look(ref _brands, "nim-adjust-brands");
+            Scribe_Collections.Look(ref _brands, "nim-adjust-brands");
         }
         public void RemoveBrand(Brand brand)
         {
             _brands.Remove(brand);
+            ManagerBrand.Invalidate = true;
         }
         public void AddBrand(Color c, string iconName)
         {
@@ -84,7 +85,8 @@ namespace Adjustments
             {
                 Color = c,
                 IconName = iconName
-            });;
+            });
+            ManagerBrand.Invalidate = true;
         }
 
         public static void ShowDialog(Pawn pawn)
