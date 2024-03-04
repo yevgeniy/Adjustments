@@ -236,6 +236,8 @@
     <Compile Include="PatchDamageWorker_Blunt.cs" />
     <Compile Include="PathcBrandCard.cs" />
     <Compile Include="ManagerBrand.cs" />
+    <Compile Include="SubjugateComp.cs" />
+    <Compile Include="SubjugatePatch.cs" />
     <Compile Include="WorkGiverDefOf.cs" />
     <Compile Include="AmmoProxy.cs" />
     <Compile Include="Driver_ReloadInStorage.cs" />
@@ -249,6 +251,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="TODO.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

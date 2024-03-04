@@ -1,0 +1,7 @@
+- Add subjugate comp -- done
+
+- When beating a female pawn prisoner should add to subjugating meter 
+	- Meter is reset when the pawn is again made prisoner.
+	- Meter is filled up 1:1 point of suffering
+	- Meter is full at resistence x 10 rating
+	

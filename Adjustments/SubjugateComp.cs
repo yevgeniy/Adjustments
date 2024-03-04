@@ -8,15 +8,20 @@ using Verse;
 namespace Adjustments
 {
     [StaticConstructorOnStartup]
-    public class SubjectComp : ThingComp
+    public class SubjugateComp : ThingComp
     {
-        static SubjectComp()
+        static SubjugateComp()
         {
             foreach (ThingDef thingDef in DefDatabase<ThingDef>.AllDefs.Where(thingDef =>
                     thingDef.race != null))
             {
-                thingDef.comps.Add(new CompProperties { compClass = typeof(SubjectComp) });
+                thingDef.comps.Add(new CompProperties { compClass = typeof(SubjugateComp) });
             }
+        }
+
+        public void ActivateSubjugation()
+        {
+            Log.Message("SUBJUCATION ACTIVATE");
         }
     }
 }
