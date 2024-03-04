@@ -48,7 +48,6 @@ namespace Adjustments
         {
             return pawn.GetComp<BrandComp>();
         }
-        public BrandCompProp Props => (BrandCompProp)props;
         private List<Brand> _brands=new List<Brand>();
         public List<Brand> Brands { get
             {
@@ -139,13 +138,6 @@ namespace Adjustments
 
 
 
-    }
-
-    public class BrandCompProp : CompProperties
-    {
-        public BrandCompProp() {
-            compClass = typeof(BrandComp);
-        }
     }
 
 

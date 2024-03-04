@@ -233,6 +233,7 @@
   <ItemGroup>
     <Compile Include="BrandComp.cs" />
     <Compile Include="BrandDialog.cs" />
+    <Compile Include="PatchDamageWorker_Blunt.cs" />
     <Compile Include="PathcBrandCard.cs" />
     <Compile Include="ManagerBrand.cs" />
     <Compile Include="WorkGiverDefOf.cs" />

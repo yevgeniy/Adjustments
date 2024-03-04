@@ -27,15 +27,6 @@ namespace Adjustments
         {
             Log.Message("ADJUSTMENTS STARTED.");
 
-            Harmony.DEBUG = true;  // Enable Harmony Debug
-            Harmony harmony = new Harmony("nimm.adjustments");
-
-            Pawn_CarryTracker_TryDropCarriedThing.Wire(harmony);
-            ApplyOnPawn_CheckSurgeryFail.Wire(harmony);
-
-            harmony.PatchAll();
-
-            Log.Message("ADJUSTMENTS PATCHED.");
 
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
@@ -43,11 +34,11 @@ namespace Adjustments
             var compAmmoUserType = assemblies.SelectMany(v => v.GetTypes()).FirstOrDefault(v => v.Name == "CompAmmoUser");
             if (compAmmoUserType != null)
             {
-                HasCombatExtended = true;   
-                ReloadSpeed =StatDef.Named("ReloadSpeed");
+                HasCombatExtended = true;
+                ReloadSpeed = StatDef.Named("ReloadSpeed");
 
             }
-            
+
             var classType = assemblies.SelectMany(assembly => assembly.GetTypes())
                     .FirstOrDefault(v => v.Name == "Designator_HaulUrgently");
             if (classType != null)
@@ -58,8 +49,19 @@ namespace Adjustments
             Log.Message("HAS ALLOW TOOL: " + HasAllowTool);
             Log.Message("HAS CE: " + HasCombatExtended);
 
+            Harmony.DEBUG = true;  // Enable Harmony Debug
+            Harmony harmony = new Harmony("nimm.adjustments");
+
+            if (HasCombatExtended)
+                Pawn_CarryTracker_TryDropCarriedThing.Wire(harmony);
+
+            ApplyOnPawn_CheckSurgeryFail.Wire(harmony);
+
+            harmony.PatchAll();
+
+            Log.Message("ADJUSTMENTS PATCHED.");
+
             AttachComps();
-                
         }
 
         private static void AttachComps()
@@ -68,7 +70,7 @@ namespace Adjustments
                     thingDef.race != null))
             {
                 Log.Message("Adding to: " + thingDef.race);
-                thingDef.comps.Add(new BrandCompProp());
+                thingDef.comps.Add(new CompProperties { compClass = typeof(BrandComp) });
             }
         }
     }

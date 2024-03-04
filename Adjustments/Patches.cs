@@ -56,7 +56,7 @@ namespace Adjustments
                 return;
             var thing = resultingThing;
 
-            if (thing != null && thing is ThingWithComps compsThing)
+            if (thing != null && thing is ThingWithComps compsThing )
             { 
                 Log.Message("LOOKING AT: " + compsThing.def.defName);
 
