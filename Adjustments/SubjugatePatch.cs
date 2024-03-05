@@ -84,7 +84,7 @@ namespace Adjustments
             if (!__instance.IsPrisoner && guestStatus == GuestStatus.Prisoner)
             {
                 var pawn = GetPawn(__instance);
-                if (pawn.gender==Gender.Female)
+                if (pawn.gender==Gender.Female /*&& pawn.guilt.IsGuilty*/)
                 {
                     var comp = pawn.GetComp<SubjugateComp>();
                     if (comp!=null)

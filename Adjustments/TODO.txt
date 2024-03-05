@@ -7,9 +7,11 @@
 	
 
 - When resistance cap is breached add a rating of subjugation
-	- Create subjucation trait (1, 2, and 3)
-		- Create empty trait and add it to pawn.
-	- Add next lvl trait to pawn
+	- Create subjucation trait (1, 2, and 3) -- done
+	- Add next lvl trait to pawn -- done
+	- Trait should adjust skill learn offset based on trait rating given the current job
+		- all jobs need to be updated to include subjugation preferences
+	
 
 	(look at Jealous to see mood impact)
 	(look at StatDef to see different stats)
