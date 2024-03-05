@@ -15,6 +15,8 @@ namespace Adjustments
         private float CurrentRating;
         private float ResistanceCap;
         public static readonly TraitDef subjugatedTrait = DefDatabase<TraitDef>.GetNamed("Subjugated");
+        public static HashSet<Pawn, SubjugateComp> Repo = new HashSet<Pawn, SubjugateComp();
+        private Trait CahedTrait=null;
         private Pawn Pawn
         {
             get
@@ -40,6 +42,22 @@ namespace Adjustments
             ResistanceCap = 0f;
         }
 
+        public override void PostDestroy(DestroyMode mode, Map map) {
+            Repo.Remove(Pawn);
+            
+            base.PostDestroy(mode,map);
+        }
+        public override void PostSpawnSetup(bool respawningAfterLoad)
+        {
+            Repo.Add(Pawn, this);
+            CacheTrait();
+
+            base.PostSpawnSetup(respawningAfterLoad);
+        }
+        private void CacheTrait() {
+            CahedTrait = Pawn.story.traits.GetTrait(SubjugatedDefs.Subjugated);
+        }
+
         public void ActivateSubjugation()
         {
             CurrentRating = 0f;
@@ -49,7 +67,6 @@ namespace Adjustments
                 return;
             }
             ResistanceCap = Pawn.guest.resistance * 10f;
-            Log.Message("SUBJUCATION ACTIVATE");
         }
 
         public void RegisterSeverity(float suffering)
@@ -64,7 +81,11 @@ namespace Adjustments
 
         private void ResistanceCapBreached()
         {
-            throw new NotImplementedException();
+            var trait = Pawn.story.traits.GetTrait(SubjugatedDefs.Subjugated);
+            if (trait==null) {
+                trait = new Trait(SubjugatedDefs.Subjugated, 1, true);
+                Pawn.story.traits.GainTrait(trait);
+            }
         }
     }
 }
