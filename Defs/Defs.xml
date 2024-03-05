@@ -1,6 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Defs>
 
+	<TraitDef>
+		<defName>Subjugated</defName>
+		<commonality>0.00</commonality>
+		<commonalityFemale>0.01</commonalityFemale>
+		<degreeDatas>
+			<li>
+				<degree>2</degree>
+				<label>Subjugated x2</label>
+				<description>[PAWN_nameDef] loves doing domestic jobs and dislikes masculine jobs.</description>
+			</li>
+			<li>
+				<degree>1</degree>
+				<label>Subjugated</label>
+				<description>[PAWN_nameDef] prefers doing domestic jobs and avoid masculine jobs.</description>
+			</li>
+		</degreeDatas>
+		<conflictingTraits>
+			<li>DislikesMen</li>
+			<li>DislikesWomen</li>
+		</conflictingTraits>
+	</TraitDef>
+
+
 	<JobDef>
 		<defName>ReloadInStorage</defName>
 		<driverClass>Adjustments.Driver_ReloadInStorage</driverClass>
