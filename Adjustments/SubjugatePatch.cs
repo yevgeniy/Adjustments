@@ -10,43 +10,53 @@ using Verse;
 
 namespace Adjustments
 {
-    //public float LearnRateFactor(bool direct = false)
-    [HarmonyPatch(typeof(SkillRecord), "LearnRateFactor")]
-    public class learn_factor
+    [HarmonyPatch(typeof(Trait), "TipString")]
+    public class trait_should_include_perk_descriptions
     {
-
-        private static FieldInfo _pawnFieldInfo
-        private static FieldInfo PawnFieldInfo {
-            get{
-                if (_pawnFieldInfo==null) {
-                    Type type = typeof(SkillRecord);
-
-                    _pawnFieldInfo = type.GetField("pawn", BindingFlags.NonPublic | BindingFlags.Instance);
-                }
-                
-                return _pawnFieldInfo;
-            }
-        }
-
         [HarmonyPostfix]
-        public static void Patch(SkillRecord __instance, ref float __result )
+        public static void postfix(Trait __instance, ref string __result, Pawn pawn)
         {
-            var pawn = GetPawn(__instance);
-            if (pawn.gender==Gender.Female) {
-                
-                var trait = pawn.story.traits.GetTrait(SubjugatedDefs.Subjugated);
-                if (trait!=null) {
+            if (__instance.def != SubjugatedDefs.Subjugated)
+                return;
 
-                }
+            if (!SubjugateComp.Repo.ContainsKey(pawn))
+            {
+                Log.Error("Subjugate: GOT A PAWN W/ NO REPO COMP");
             }
 
-        }
-        private static Pawn GetPawn(SkillRecord instance)
-        {
-            return (Pawn)PawnFieldInfo.GetValue(instance);
-        }
+            var comp = SubjugateComp.Repo[pawn];
 
+            var explanations = comp.Perks.Select(v => v.Describe(pawn)).ToList();
+            __result = __result + "\n\n" + string.Join("\n", explanations);
+        }
     }
+
+    [HarmonyPatch(typeof(SkillRecord), "CalculatePermanentlyDisabled")]
+    public class disabling_skills_based_on_perks
+    {
+        [HarmonyPrefix]
+        public static bool prefixer(SkillRecord __instance, ref bool __result)
+        {
+            if (!SubjugateComp.Repo.ContainsKey(__instance.Pawn))
+                return true;
+
+            var comp = SubjugateComp.Repo[__instance.Pawn];
+            if (comp != null)
+            {
+                __result = comp.Perks.Any(v =>
+                {
+                    return v.IsDisabled(__instance);
+                });
+                if (__result) /*dont evaluate default.  We know it's disabled */
+                    return false;
+
+                return true;
+            }
+
+            return true;
+        }
+    }
+
 
     //public void AddDirect(Hediff hediff, DamageInfo? dinfo = null, DamageWorker.DamageResult damageResult = null)
     [HarmonyPatch(typeof(HediffSet), "AddDirect")]

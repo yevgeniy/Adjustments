@@ -1,4 +1,5 @@
-﻿using RimWorld;
+﻿using Adjustments.SubjucationPerks;
+using RimWorld;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,12 +13,19 @@ namespace Adjustments
     [StaticConstructorOnStartup]
     public class SubjugateComp : ThingComp
     {
+        
+        public static readonly TraitDef SubjugatedTrait = DefDatabase<TraitDef>.GetNamed("Subjugated");
+        public static Dictionary<Pawn, SubjugateComp> Repo = new Dictionary<Pawn, SubjugateComp>();
+        public static List<BasePerk> NegPerks = new List<BasePerk>
+        {
+            new PerkNegSkillShooting()
+        };
+
+        public int CurrentSubjugationLevel;
+        private bool SubjugationActive=false;
         private float CurrentRating;
         private float ResistanceCap;
-        public static readonly TraitDef subjugatedTrait = DefDatabase<TraitDef>.GetNamed("Subjugated");
-        public static HashSet<Pawn, SubjugateComp> Repo = new HashSet<Pawn, SubjugateComp();
-        private Trait CahedTrait=null;
-        private bool SubjugationActive=false;
+        public List<BasePerk> Perks = new List<BasePerk>();
         private Pawn Pawn
         {
             get
@@ -48,26 +56,59 @@ namespace Adjustments
             
             base.PostDestroy(mode,map);
         }
-        public override void PostSpawnSetup(bool respawningAfterLoad)
-        {
-            Repo.Add(Pawn, this);
-            CacheTrait();
-
-            base.PostSpawnSetup(respawningAfterLoad);
-        }
-        private void CacheTrait() {
-            CahedTrait = Pawn.story.traits.GetTrait(SubjugatedDefs.Subjugated);
-        }
+        
+        
 
         public void ActivateSubjugation()
         {
+            
             if (SubjugationActive) {
                 return;
             }
-            SubjugationActive=true;
+
+            if (!Repo.ContainsKey(Pawn))
+                Repo.Add(Pawn, this);
+
+            SubjugationActive =true;
             CurrentRating = 0f;
-            ResistanceCap = Pawn.guest.resistance * 10f;
-            
+
+            ResistanceCap = GenResistance();
+
+
+            Log.Message("SUBJUGATION ACTIVATED: CAP: " + ResistanceCap);
+        }
+        public override void PostExposeData()
+        {
+            base.PostExposeData();
+
+            Scribe_Collections.Look(ref Perks, "subjugate-perks");
+            Scribe_Values.Look(ref CurrentSubjugationLevel, "subjugate-current-level" );
+            Scribe_Values.Look(ref SubjugationActive, "subjugate-active" );
+            Scribe_Values.Look(ref CurrentRating, "subjugate-current-rating" );
+            Scribe_Values.Look(ref ResistanceCap, "subjugate-res" );
+
+
+            if (!Repo.ContainsKey(Pawn))
+                Repo.Add(Pawn, this);
+
+            if (Perks == null)
+                Perks = new List<BasePerk>();
+        }
+        
+
+        private float GenResistance()
+        {
+            FloatRange value = Pawn.kindDef.initialResistanceRange.Value;
+            float single = value.RandomInRange;
+            if (Pawn.royalty != null)
+            {
+                RoyalTitle mostSeniorTitle = Pawn.royalty.MostSeniorTitle;
+                if (mostSeniorTitle != null)
+                {
+                    single += mostSeniorTitle.def.recruitmentResistanceOffset;
+                }
+            }
+            return (float)GenMath.RoundRandom(single);
         }
 
         public void RegisterSeverity(float suffering)
@@ -75,7 +116,10 @@ namespace Adjustments
             if (!SubjugationActive)
                 return;
 
-            CurrentRating = Mathf.Min(ResistanceCap, CurrentRating + suffering);
+            CurrentRating = Mathf.Min(ResistanceCap, CurrentRating + suffering * .1f);
+
+            /*lower resistance by the beating amount*/
+            Pawn.guest.resistance = Mathf.Max(.1f, Pawn.guest.resistance - suffering * .1f);
 
             if (CurrentRating>=ResistanceCap)
             {
@@ -85,21 +129,35 @@ namespace Adjustments
 
         private void UpgradeSubjugation()
         {
-            
-            var currentTraitLevel = 0;
+            Log.Message("ADDING TRAIT");
             var trait = Pawn.story.traits.GetTrait(SubjugatedDefs.Subjugated);
             
-            if (trait!=null) {
-                currentTraitLevel = trait.Degree;
-                Pawn.story.traits.allTraits.Remove(trait);
+            if (trait==null) {
+                Pawn.story.traits.GainTrait(new Trait(SubjugatedDefs.Subjugated, 1, true));
             }
 
-            currentTraitLevel = Mathf.Min(++currentTraitLevel, 3);
-            Pawn.story.traits.GainTrait(new Trait(SubjugatedDefs.Subjugated, currentTraitLevel, true));
-            
-            CacheTrait();
+            CurrentSubjugationLevel++;
+
+            AddRandNegative();
+            //AddRandNegative();
+            //AddRandPossitive();
 
             SubjugationActive=false;
+        }
+
+        private void AddRandPossitive()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void AddRandNegative()
+        {
+            var negType = NegPerks.Where(v => v.CanHandle(Pawn)).RandomElement();
+
+            var perk = (BasePerk)Activator.CreateInstance(negType.GetType());
+
+            perk.Activate(parent as Pawn);
+            Perks.Add(perk);
         }
     }
 }

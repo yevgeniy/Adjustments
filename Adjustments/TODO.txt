@@ -6,24 +6,23 @@
 	- Meter is full at resistence x 10 rating -- done
 	
 
-- When resistance cap is breached add a rating of subjugation
-	- Create subjucation trait (1, 2, and 3) -- done
-	- Add next lvl trait to pawn -- done
-	- Trait should adjust skill learn offset based on trait rating given the current job
-		- all jobs need to be updated to include subjugation preferences
+- When resistance cap is breached add a rating of subjugation -- done
+	- Create subjucation trait -- done
+	- Add subjugation trait to pawn when resistence hits cap -- done
+
+- Add perk
+	- Create a single perk and add it to pawn -- done
+		- Perk should be randomly generated -- done
+		- Perk needs to read out description on mouse over -- done
+	- Add more perks
+		- neg shooting -- done
+		- neg melee
+		- neg mining
+		- neg construction
+		
+
 	
 
-	(look at Jealous to see mood impact)
-	(look at StatDef to see different stats)
-	(look at GreatMemory to see learning speed offset)
 
-	  <TraitDef>
-		<defName>GreatMemory</defName>
-		<commonality>1.1</commonality>
-		<degreeDatas>
-		  <li>
-			<label>great memory</label>
-			<description>{PAWN_nameDef} has a fantastic memory for detail. {PAWN_pronoun} will lose unused skills at half the rate of other people.</description>
-		  </li>
-		</degreeDatas>
-	  </TraitDef>
+	(look at Jealous to see mood impact)
+	(look at GreatMemory to see learning speed offset)

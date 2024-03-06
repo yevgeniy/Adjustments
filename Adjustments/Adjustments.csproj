@@ -236,7 +236,13 @@
     <Compile Include="PatchDamageWorker_Blunt.cs" />
     <Compile Include="PathcBrandCard.cs" />
     <Compile Include="ManagerBrand.cs" />
+    <Compile Include="SubjucationPerks\BasePerk.cs" />
+    <Compile Include="SubjucationPerks\INegSkillPerk.cs" />
+    <Compile Include="SubjucationPerks\IPerk.cs" />
+    <Compile Include="SubjucationPerks\NegSkillPerk.cs" />
+    <Compile Include="SubjucationPerks\PerkNegSkillShooting.cs" />
     <Compile Include="SubjugateComp.cs" />
+    <Compile Include="SubjugatedDefs.cs" />
     <Compile Include="SubjugatePatch.cs" />
     <Compile Include="WorkGiverDefOf.cs" />
     <Compile Include="AmmoProxy.cs" />

@@ -14,9 +14,9 @@ namespace Adjustments
     {
         public static bool HasCombatExtended;
         public static bool HasAllowTool;
+        public static bool HassVanillaSkillMod;
         
-        
-        
+
         public static PropertyInfo SelectedAmmoPropInfo = null;
         
         
@@ -45,6 +45,12 @@ namespace Adjustments
             {
                 HasAllowTool = true;
             }
+
+            classType = assemblies.SelectMany(assembly => assembly.GetTypes())
+                    .FirstOrDefault(v => v.Name == "SkillsMod");
+            if (classType != null)
+                HassVanillaSkillMod = true;
+
 
             Log.Message("HAS ALLOW TOOL: " + HasAllowTool);
             Log.Message("HAS CE: " + HasCombatExtended);
