@@ -10,8 +10,6 @@ namespace Adjustments.SubjucationPerks
 {
     public class NegSkillPerk : BasePerk
     {
-        public override SkillDef SkillDef => null;
-
         public override bool CanHandle(Pawn pawn)
         {
             var skill = pawn.skills.GetSkill(SkillDef);

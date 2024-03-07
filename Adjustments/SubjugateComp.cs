@@ -22,12 +22,15 @@ namespace Adjustments
             new PerkNegSkillMelee(),
             new PerkNegSkillMining(),
             new PerkNegSkillShooting(),
+            new PerkNegHateArmor()
         };
         public static List<BasePerk> OtherPerks = new List<BasePerk>
         {
-            new PerkPlant(),
-            new PerkCooking(),
-            new PerkArtistic()
+            //new PerkPlant(),
+            //new PerkCooking(),
+            //new PerkArtistic(),
+            //new PerkNudistTrait(),
+            new PerkTailoring()
         };
 
 
@@ -146,7 +149,7 @@ namespace Adjustments
             var trait = Pawn.story.traits.GetTrait(SubjugatedDefs.Subjugated);
             
             if (trait==null) {
-                Pawn.story.traits.GainTrait(new Trait(SubjugatedDefs.Subjugated, 1, true));
+                Pawn.story.traits.GainTrait(new Trait(SubjugatedDefs.Subjugated, 0, true));
             }
 
             CurrentSubjugationLevel++;

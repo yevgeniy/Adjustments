@@ -11,6 +11,39 @@ using Verse;
 
 namespace Adjustments
 {
+    [HarmonyPatch(typeof(Pawn), "GetDisabledWorkTypes")]
+    public class check_for_disabled_crafting_work_types
+    {
+        [HarmonyPostfix]
+        public static void patcher(Pawn __instance, ref List<WorkTypeDef> __result)
+        {
+            if (PerkTailoring.OnlyDoesTailoring(__instance))
+            {
+                __result.AddDistinct(WorkTypeDefOf.Smithing);
+
+                var disableDefs = DefDatabase<WorkTypeDef>.AllDefs.Where(v => new string[] { "Smithing", "Crafting" }.Contains(v.defName));
+
+                foreach(var i in disableDefs)
+                    __result.AddDistinct(i);
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(Pawn_ApparelTracker), "Notify_ApparelAdded")]
+    public class check_for_wearing_armor
+    {
+        [HarmonyPrefix]
+        public static bool prepatcher(Apparel apparel, Pawn_ApparelTracker __instance)
+        {
+            if (apparel.def.tradeTags.Any(v => v == "Armor") && PerkNegHateArmor.HatesArmor(__instance.pawn) )
+            {
+                __instance.pawn.needs.mood.thoughts.memories.TryGainMemory(SubjugatedDefs.SubjugatePutOnArmour);
+            }
+
+            return true;
+        }
+    }
+
     [HarmonyPatch(typeof(GuestUtility), "GetDisabledWorkTypes")]
     public class activate_artistic_for_applicable_slaves
     {

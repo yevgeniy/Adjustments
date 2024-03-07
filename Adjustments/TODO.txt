@@ -19,11 +19,20 @@
 		- neg melee -- done
 		- neg mining -- done
 		- neg construction -- done
+		- major mood debuf for wearing armor -- done
 	- add other perks
 		- plants increase -- done
 		- cooking increase -- done
 		- artistic activate and increase -- done
-		- adds nudist trait
+		- adds nudist trait -- done
+		- craft only tailoring but w/ 1/20th less materials, and craft increase
+
+	- after some time sumjugated pawn will like being subjugated
+		- this pawn will never be part of rebellion
+		- suppression will never go down
+		- every subjugation level will produce 20pts worth of suffering per year
+			- once the pts rank reaches the total amount of suffering caused through beatings the pawn will like being subjugated.
+
 		
 
 - remove dont do plants perk when gaining plants

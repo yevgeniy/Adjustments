@@ -45,7 +45,7 @@ namespace Adjustments.SubjucationPerks
         }
 
 
-        public virtual SkillDef SkillDef => throw new NotImplementedException();
+        public virtual SkillDef SkillDef => new SkillDef { defName = "" };
 
         private bool disabled;
         public virtual bool Disabled { get { return disabled; } set { disabled = value; } }

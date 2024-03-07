@@ -12,6 +12,8 @@ namespace Adjustments
     public static class SubjugatedDefs
     {
         public static TraitDef Subjugated;
+
+        public static ThoughtDef SubjugatePutOnArmour;
     }
 }
 

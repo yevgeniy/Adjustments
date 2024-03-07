@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Defs>
+	  <ThoughtDef>
+		<defName>SubjugatePutOnArmour</defName>
+		<durationDays>1</durationDays>
+		<stages>
+		  <li>
+			<label>put on armour</label>
+			<description>I was made to put on armour.  I really don't like wearing armour. </description>
+			<baseMoodEffect>-30</baseMoodEffect>
+		  </li>
+		</stages>
+	  </ThoughtDef>
+
 
 	<TraitDef>
 		<defName>Subjugated</defName>
@@ -7,14 +19,8 @@
 		<commonalityFemale>0.01</commonalityFemale>
 		<degreeDatas>
 			<li>
-				<degree>2</degree>
-				<label>Subjugated x2</label>
-				<description>[PAWN_nameDef] loves doing domestic jobs and dislikes masculine jobs.</description>
-			</li>
-			<li>
-				<degree>1</degree>
 				<label>Subjugated</label>
-				<description>[PAWN_nameDef] prefers doing domestic jobs and avoid masculine jobs.</description>
+				<description>[PAWN_nameDef] was subjugated as a result she gained .</description>
 			</li>
 		</degreeDatas>
 		<conflictingTraits>

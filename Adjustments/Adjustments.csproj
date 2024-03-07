@@ -246,6 +246,9 @@
     <Compile Include="SubjucationPerks\PerkNegSkillShooting.cs" />
     <Compile Include="SubjucationPerks\PerkCooking.cs" />
     <Compile Include="SubjucationPerks\PerkArtistic.cs" />
+    <Compile Include="SubjucationPerks\PerkNudistTrait.cs" />
+    <Compile Include="SubjucationPerks\PerkNegHateArmor.cs" />
+    <Compile Include="SubjucationPerks\PerkTailoring.cs" />
     <Compile Include="SubjucationPerks\PerkPlant.cs" />
     <Compile Include="SubjugateComp.cs" />
     <Compile Include="SubjugatedDefs.cs" />
