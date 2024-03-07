@@ -17,7 +17,7 @@ namespace Adjustments.SubjucationPerks
             var skill = pawn.skills.GetSkill(SkillDef);
             if (SubjugateComp.Repo.ContainsKey(pawn))
             {
-                var existing = SubjugateComp.Repo[pawn].Perks.FirstOrDefault(v => v.SkillDef == SkillDef);
+                var existing =  SubjugateComp.GetComp(pawn).Perks.FirstOrDefault(v => v.SkillDef == SkillDef);
                 if (existing == null)
                     return true;
                 return existing.Disabled == false;
@@ -31,21 +31,14 @@ namespace Adjustments.SubjucationPerks
 
             /* All passions above minors will be set to minor passion */
             byte x = (byte)currPassion;
-            if (x > 1)
-            {
-                Log.Message("SKILL MINOR PASSION");
-                currPassion = Passion.Minor;
-                Explain = "SKILL degraded to Minor passion.";
-                skill.passion = currPassion;
-            }
-            else if (x==1)
+            if (x==1 || x == 2 || x == 4 || x == 5) /*minor, major, natural, critical */
             {
                 Log.Message("NO PASSION");
-                currPassion = Passion.None;
                 Explain = "No longer passionate about SKILL.";
-                skill.passion = currPassion;
+                byte p = (byte)(Adjustments.HassVanillaSkillMod ? 3 : 0);
+                skill.passion = (Passion)p;
             }
-            else
+            else /* apathy or no passion */
             {
                 Log.Message("SKILL DISABLED");
                 Disabled = true;

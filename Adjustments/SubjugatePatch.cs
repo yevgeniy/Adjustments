@@ -19,12 +19,7 @@ namespace Adjustments
             if (__instance.def != SubjugatedDefs.Subjugated)
                 return;
 
-            if (!SubjugateComp.Repo.ContainsKey(pawn))
-            {
-                Log.Error("Subjugate: GOT A PAWN W/ NO REPO COMP");
-            }
-
-            var comp = SubjugateComp.Repo[pawn];
+            var comp = SubjugateComp.GetComp(pawn);
 
             var explanations = comp.Perks.Select(v => v.Describe(pawn)).ToList();
             __result = __result + "\n\n" + string.Join("\n", explanations);
@@ -32,23 +27,44 @@ namespace Adjustments
     }
 
     [HarmonyPatch(typeof(SkillRecord), "CalculatePermanentlyDisabled")]
+    public class disabling_skill_based_on_perks_for_perm
+    {
+        [HarmonyPrefix]
+        public static bool prefixer(SkillRecord __instance, ref bool __result)
+        {
+            return disabling_skills_based_on_perks.prefixer(__instance, ref __result);
+        }
+
+    }
+
+    [HarmonyPatch(typeof(SkillRecord), "CalculateTotallyDisabled")]
     public class disabling_skills_based_on_perks
     {
         [HarmonyPrefix]
         public static bool prefixer(SkillRecord __instance, ref bool __result)
         {
-            if (!SubjugateComp.Repo.ContainsKey(__instance.Pawn))
-                return true;
+            Log.Message("NAME: " + __instance.Pawn.Name.ToStringShort + " for skill: " + __instance.def.defName);
+            var comp = SubjugateComp.GetComp(__instance.Pawn);
 
-            var comp = SubjugateComp.Repo[__instance.Pawn];
             if (comp != null)
             {
-                __result = comp.Perks.Any(v =>
+                Log.Message("YES Comp exists");
+                var forcedisable = comp.Perks.Any(v => v.IsDisabled(__instance));
+                if (forcedisable)
                 {
-                    return v.IsDisabled(__instance);
-                });
-                if (__result) /*dont evaluate default.  We know it's disabled */
+                    Log.Message("FORCE DISABLED");
+                    __result = true;
                     return false;
+                }
+
+
+                var forceenable = comp.Perks.Any(v => v.IsEnabled(__instance));
+                if (forceenable)
+                {
+                    Log.Message("FORCE ENABLE");
+                    __result = false;
+                    return false;
+                }
 
                 return true;
             }
@@ -70,7 +86,7 @@ namespace Adjustments
                 var pawn = __instance.pawn;
                 if (pawn.gender == Gender.Female)
                 {
-                    var comp = pawn.GetComp<SubjugateComp>();
+                    var comp = SubjugateComp.GetComp(pawn);
                     if (comp != null)
                     {
                         comp.RegisterSeverity(hediff.Severity);

@@ -14,14 +14,19 @@
 	- Create a single perk and add it to pawn -- done
 		- Perk should be randomly generated -- done
 		- Perk needs to read out description on mouse over -- done
-	- Add more perks
+	- Add more neg perks
 		- neg shooting -- done
-		- neg melee
-		- neg mining
-		- neg construction
+		- neg melee -- done
+		- neg mining -- done
+		- neg construction -- done
+	- add other perks
+		- plants increase -- done
 		
 
-	
+- remove dont do plants perk when gaining plants
+- show message when subjugated -- done
+
+- ladies can only be slaves, else men get a daily accumulating debuf -3/day, max 30
 
 
 	(look at Jealous to see mood impact)

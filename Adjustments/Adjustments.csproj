@@ -240,7 +240,11 @@
     <Compile Include="SubjucationPerks\INegSkillPerk.cs" />
     <Compile Include="SubjucationPerks\IPerk.cs" />
     <Compile Include="SubjucationPerks\NegSkillPerk.cs" />
+    <Compile Include="SubjucationPerks\PerkNegSkillMining.cs" />
+    <Compile Include="SubjucationPerks\PerkNegSkillConstruction.cs" />
+    <Compile Include="SubjucationPerks\PerkNegSkillMelee.cs" />
     <Compile Include="SubjucationPerks\PerkNegSkillShooting.cs" />
+    <Compile Include="SubjucationPerks\PerkPlant.cs" />
     <Compile Include="SubjugateComp.cs" />
     <Compile Include="SubjugatedDefs.cs" />
     <Compile Include="SubjugatePatch.cs" />

@@ -18,8 +18,16 @@ namespace Adjustments
         public static Dictionary<Pawn, SubjugateComp> Repo = new Dictionary<Pawn, SubjugateComp>();
         public static List<BasePerk> NegPerks = new List<BasePerk>
         {
-            new PerkNegSkillShooting()
+            new PerkNegSkillConstruction(),
+            new PerkNegSkillMelee(),
+            new PerkNegSkillMining(),
+            new PerkNegSkillShooting(),
         };
+        public static List<BasePerk> OtherPerks = new List<BasePerk>
+        {
+            new PerkPlant()
+        };
+
 
         public int CurrentSubjugationLevel;
         private bool SubjugationActive=false;
@@ -51,13 +59,19 @@ namespace Adjustments
             ResistanceCap = 0f;
         }
 
-        public override void PostDestroy(DestroyMode mode, Map map) {
+        public override void PostDeSpawn(Map map)
+        {
             Repo.Remove(Pawn);
-            
-            base.PostDestroy(mode,map);
+            base.PostDeSpawn(map);
         }
         
-        
+        public override void Initialize(CompProperties props)
+        {
+
+            base.Initialize(props);
+        }
+
+
 
         public void ActivateSubjugation()
         {
@@ -65,9 +79,6 @@ namespace Adjustments
             if (SubjugationActive) {
                 return;
             }
-
-            if (!Repo.ContainsKey(Pawn))
-                Repo.Add(Pawn, this);
 
             SubjugationActive =true;
             CurrentRating = 0f;
@@ -119,7 +130,7 @@ namespace Adjustments
             CurrentRating = Mathf.Min(ResistanceCap, CurrentRating + suffering * .1f);
 
             /*lower resistance by the beating amount*/
-            Pawn.guest.resistance = Mathf.Max(.1f, Pawn.guest.resistance - suffering * .1f);
+            Pawn.guest.will = Mathf.Max(.1f, Pawn.guest.will - suffering * .01f);
 
             if (CurrentRating>=ResistanceCap)
             {
@@ -138,26 +149,59 @@ namespace Adjustments
 
             CurrentSubjugationLevel++;
 
-            AddRandNegative();
-            //AddRandNegative();
-            //AddRandPossitive();
+            AddPerks();
+
+            Messages.Message("Subjugated: " + Pawn.Name.ToStringShort, MessageTypeDefOf.NeutralEvent, true);
 
             SubjugationActive=false;
         }
 
-        private void AddRandPossitive()
+        private void AddPerks()
         {
-            throw new NotImplementedException();
+            /* Negative perk */
+            var perkType = NegPerks.Where(v => v.CanHandle(Pawn)).RandomElement();
+            if (perkType!=null)
+            {
+                var perk = Perks.FirstOrDefault(v => v.GetType().Name == perkType.GetType().Name);
+                if (perk == null)
+                {
+                    perk = (BasePerk)Activator.CreateInstance(perkType.GetType());
+                    Perks.Add(perk);
+                }
+                perk.Activate(parent as Pawn);
+            }
+            
+
+            /*Other perk*/
+            perkType = OtherPerks.Where(v => v.CanHandle(Pawn)).RandomElement();
+            if (perkType!=null)
+            {
+                var perk = Perks.FirstOrDefault(v => v.GetType().Name == perkType.GetType().Name);
+                if (perk == null)
+                {
+                    perk = (BasePerk)Activator.CreateInstance(perkType.GetType());
+                    Perks.Add(perk);
+                }
+
+                perk.Activate(parent as Pawn);
+            }
+            
+            
         }
 
-        private void AddRandNegative()
+        public static SubjugateComp GetComp(Pawn pawn)
         {
-            var negType = NegPerks.Where(v => v.CanHandle(Pawn)).RandomElement();
+            if (!Repo.ContainsKey(pawn))
+            {
+                var comp = pawn.GetComp<SubjugateComp>();
+                if (comp == null)
+                    return null;
 
-            var perk = (BasePerk)Activator.CreateInstance(negType.GetType());
+                Repo.Add(pawn, comp);
 
-            perk.Activate(parent as Pawn);
-            Perks.Add(perk);
+            }
+            return Repo[pawn];
+
         }
     }
 }
