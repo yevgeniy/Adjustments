@@ -244,6 +244,8 @@
     <Compile Include="SubjucationPerks\PerkNegSkillConstruction.cs" />
     <Compile Include="SubjucationPerks\PerkNegSkillMelee.cs" />
     <Compile Include="SubjucationPerks\PerkNegSkillShooting.cs" />
+    <Compile Include="SubjucationPerks\PerkCooking.cs" />
+    <Compile Include="SubjucationPerks\PerkArtistic.cs" />
     <Compile Include="SubjucationPerks\PerkPlant.cs" />
     <Compile Include="SubjugateComp.cs" />
     <Compile Include="SubjugatedDefs.cs" />

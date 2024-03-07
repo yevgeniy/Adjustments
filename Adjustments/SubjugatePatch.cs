@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using Adjustments.SubjucationPerks;
+using HarmonyLib;
 using RimWorld;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,32 @@ using Verse;
 
 namespace Adjustments
 {
+    [HarmonyPatch(typeof(GuestUtility), "GetDisabledWorkTypes")]
+    public class activate_artistic_for_applicable_slaves
+    {
+        private static Pawn GetPawn(Pawn_GuestTracker instance)
+        {
+            Type type = typeof(Pawn_GuestTracker);
+
+            // Get the private field info
+            FieldInfo fieldInfo = type.GetField("pawn", BindingFlags.NonPublic | BindingFlags.Instance);
+
+            return (Pawn)fieldInfo.GetValue(instance);
+
+        }
+        [HarmonyPostfix]
+        public static void postfix(Pawn_GuestTracker guest, ref List<WorkTypeDef> __result)
+        {
+            var pawn = GetPawn(guest);
+            if (pawn.gender != Gender.Female)
+                return;
+
+            var shouldDoArt = PerkArtistic.ShouldDoArt(pawn);
+            if (shouldDoArt)
+                __result.RemoveAll(v => v.defName == WorkTypeDefOf.Art.defName);
+        }
+    }
+
     [HarmonyPatch(typeof(Trait), "TipString")]
     public class trait_should_include_perk_descriptions
     {
@@ -43,16 +70,15 @@ namespace Adjustments
         [HarmonyPrefix]
         public static bool prefixer(SkillRecord __instance, ref bool __result)
         {
-            Log.Message("NAME: " + __instance.Pawn.Name.ToStringShort + " for skill: " + __instance.def.defName);
             var comp = SubjugateComp.GetComp(__instance.Pawn);
 
             if (comp != null)
             {
-                Log.Message("YES Comp exists");
+
                 var forcedisable = comp.Perks.Any(v => v.IsDisabled(__instance));
                 if (forcedisable)
                 {
-                    Log.Message("FORCE DISABLED");
+
                     __result = true;
                     return false;
                 }
@@ -61,7 +87,6 @@ namespace Adjustments
                 var forceenable = comp.Perks.Any(v => v.IsEnabled(__instance));
                 if (forceenable)
                 {
-                    Log.Message("FORCE ENABLE");
                     __result = false;
                     return false;
                 }
@@ -73,8 +98,6 @@ namespace Adjustments
         }
     }
 
-
-    //public void AddDirect(Hediff hediff, DamageInfo? dinfo = null, DamageWorker.DamageResult damageResult = null)
     [HarmonyPatch(typeof(HediffSet), "AddDirect")]
     public class register_severity_for_beating
     {

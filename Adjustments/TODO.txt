@@ -21,6 +21,9 @@
 		- neg construction -- done
 	- add other perks
 		- plants increase -- done
+		- cooking increase -- done
+		- artistic activate and increase -- done
+		- adds nudist trait
 		
 
 - remove dont do plants perk when gaining plants

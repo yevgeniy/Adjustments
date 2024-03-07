@@ -25,7 +25,9 @@ namespace Adjustments
         };
         public static List<BasePerk> OtherPerks = new List<BasePerk>
         {
-            new PerkPlant()
+            new PerkPlant(),
+            new PerkCooking(),
+            new PerkArtistic()
         };
 
 
