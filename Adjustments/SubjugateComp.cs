@@ -1,6 +1,7 @@
 ﻿using Adjustments.SubjucationPerks;
 using RimWorld;
 using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -38,7 +39,13 @@ namespace Adjustments
         private bool SubjugationActive=false;
         private float CurrentRating;
         private float ResistanceCap;
+        private double CurrentContentScore;
+        private double ContentScoreLimit;
+        static double gainPerTickPerPerk = Convert.ToDouble(20) / Convert.ToDouble(GenDate.TicksPerYear/2f);
+
         public List<BasePerk> Perks = new List<BasePerk>();
+        private bool IsContent;
+
         private Pawn Pawn
         {
             get
@@ -63,19 +70,49 @@ namespace Adjustments
             CurrentRating = 0f;
             ResistanceCap = 0f;
         }
+        public override void CompTick()
+        {
+            if (Pawn.gender == Gender.Female && Pawn.IsSlave)
+            {
+                double newval = CurrentContentScore + Convert.ToDouble(CurrentSubjugationLevel) * gainPerTickPerPerk;
+                CurrentContentScore = newval > ContentScoreLimit ? ContentScoreLimit : newval;
+            }
+
+            base.CompTick();
+        }
+        public override void CompTickRare()
+        {
+
+            base.CompTickRare();
+
+
+            if (Pawn.gender==Gender.Female && Pawn.IsSlave)
+                if (CurrentContentScore == ContentScoreLimit)
+                {
+                    if (!IsContent)
+                        SetContent(true);
+                }
+        }
+
+        private void SetContent(bool v)
+        {
+            if (v)
+            {
+                IsContent = true;
+                Log.Message(Pawn.Name.ToStringShort + " is content");
+            } else
+            {
+                IsContent = false;
+                Log.Message(Pawn.Name.ToStringShort + " is not content");
+            }
+        }
 
         public override void PostDeSpawn(Map map)
         {
             Repo.Remove(Pawn);
             base.PostDeSpawn(map);
         }
-        
-        public override void Initialize(CompProperties props)
-        {
-
-            base.Initialize(props);
-        }
-
+     
 
 
         public void ActivateSubjugation()
@@ -86,6 +123,7 @@ namespace Adjustments
             }
 
             SubjugationActive =true;
+
             CurrentRating = 0f;
 
             ResistanceCap = GenResistance();
@@ -102,6 +140,10 @@ namespace Adjustments
             Scribe_Values.Look(ref SubjugationActive, "subjugate-active" );
             Scribe_Values.Look(ref CurrentRating, "subjugate-current-rating" );
             Scribe_Values.Look(ref ResistanceCap, "subjugate-res" );
+            Scribe_Values.Look(ref CurrentContentScore, "subjugate-cur-cont-scor");
+            Scribe_Values.Look(ref ContentScoreLimit, "subjugate-cont-scor-lim");
+            Scribe_Values.Look(ref IsContent, "subjugate-is-cont");
+            
 
 
             if (!Repo.ContainsKey(Pawn))
@@ -127,15 +169,21 @@ namespace Adjustments
             return (float)GenMath.RoundRandom(single);
         }
 
-        public void RegisterSeverity(float suffering)
+        public void RegisterSeverity(float severity)
         {
             if (!SubjugationActive)
                 return;
 
-            CurrentRating = Mathf.Min(ResistanceCap, CurrentRating + suffering * .1f);
+            ContentScoreLimit += severity;
+            if (IsContent)
+                SetContent(false);
+
+            CurrentRating = Mathf.Min(ResistanceCap, CurrentRating + severity * .1f);
+            
+
 
             /*lower resistance by the beating amount*/
-            Pawn.guest.will = Mathf.Max(.1f, Pawn.guest.will - suffering * .01f);
+            Pawn.guest.will = Mathf.Max(.1f, Pawn.guest.will - severity * .01f);
 
             if (CurrentRating>=ResistanceCap)
             {
@@ -146,11 +194,16 @@ namespace Adjustments
         private void UpgradeSubjugation()
         {
             Log.Message("ADDING TRAIT");
-            var trait = Pawn.story.traits.GetTrait(SubjugatedDefs.Subjugated);
-            
-            if (trait==null) {
+
+            var t = Pawn.story.traits.GetTrait(SubjugatedDefs.Subjugated);
+            if (t==null) {
                 Pawn.story.traits.GainTrait(new Trait(SubjugatedDefs.Subjugated, 0, true));
+            } else
+            {
+                Pawn.story.traits.RemoveTrait(t);
+                Pawn.story.traits.GainTrait(new Trait(SubjugatedDefs.Subjugated));
             }
+            
 
             CurrentSubjugationLevel++;
 

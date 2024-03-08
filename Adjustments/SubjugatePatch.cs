@@ -19,15 +19,12 @@ namespace Adjustments
         [HarmonyPrefix]
         public static bool patch(RecipeDef recipeDef, Pawn worker, List<Thing> ingredients, Thing dominantIngredient, IBillGiver billGiver, Precept_ThingStyle precept, ThingStyleDef style, int? overrideGraphicIndex)
         {
-Log.Message(worker.CurJob.workGiverDef.workType.defName);
 
-            var hasTailoringTrait = PerkTailoring.HasTailoringPerk(worker);
-
-
-
-            if (hasTailoringTrait && worker.CurJob.workGiverDef.workType.defName=="Tailoring")
+            if (worker.CurJob.workGiverDef.workType.defName=="Tailoring")
             {
-                if (ingredients != null)
+                var hasTailoringTrait = PerkTailoring.HasTailoringPerk(worker);
+
+                if (ingredients != null && hasTailoringTrait)
                     foreach(var i in ingredients)
                     {
                         var stackcount = Mathf.Floor(i.stackCount * .2f);
