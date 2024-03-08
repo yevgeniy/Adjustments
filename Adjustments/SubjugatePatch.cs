@@ -100,7 +100,7 @@ namespace Adjustments
     }
 
     [HarmonyPatch(typeof(Trait), "TipString")]
-    public class trait_should_include_perk_descriptions
+    public class trait_should_include_perk_descriptions_and_subjugation_notes
     {
         [HarmonyPostfix]
         public static void postfix(Trait __instance, ref string __result, Pawn pawn)
@@ -109,6 +109,11 @@ namespace Adjustments
                 return;
 
             var comp = SubjugateComp.GetComp(pawn);
+
+
+            var content = comp.ContentStr;
+
+            __result += "\n\n" + content;
 
             var explanations = comp.Perks.Select(v => v.Describe(pawn)).ToList();
             __result = __result + "\n\n" + string.Join("\n", explanations);

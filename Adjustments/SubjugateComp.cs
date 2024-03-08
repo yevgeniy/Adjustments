@@ -4,6 +4,7 @@ using System;
 using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -41,10 +42,18 @@ namespace Adjustments
         private float ResistanceCap;
         private double CurrentContentScore;
         private double ContentScoreLimit;
-        static double gainPerTickPerPerk = Convert.ToDouble(20) / Convert.ToDouble(GenDate.TicksPerYear/2f);
+        static double gainPerTickPerPerk = Convert.ToDouble(20) / Convert.ToDouble(GenDate.TicksPerHour);
 
         public List<BasePerk> Perks = new List<BasePerk>();
         private bool IsContent;
+        private Need_Suppression SupNeed;
+
+        public float ContentPercent { get
+            {
+                if (IsContent)
+                    return 100f;
+                return Mathf.Floor( (float)( CurrentContentScore / ContentScoreLimit * 100f) ) ;
+            } }
 
         private Pawn Pawn
         {
@@ -57,8 +66,14 @@ namespace Adjustments
                 return null;
             }
         }
+
+        public object ContentStr => IsContent
+            ? Pawn.Name.ToStringShort + " is happy being a slave"
+            : "Content: " + ContentPercent + "%";
+
         static SubjugateComp()
         {
+            /*add subjugate comp to all defs having a race */
             foreach (ThingDef thingDef in DefDatabase<ThingDef>.AllDefs.Where(thingDef =>
                     thingDef.race != null))
             {
@@ -70,41 +85,33 @@ namespace Adjustments
             CurrentRating = 0f;
             ResistanceCap = 0f;
         }
+        long ticksbuffer = 0;
         public override void CompTick()
         {
-            if (Pawn.gender == Gender.Female && Pawn.IsSlave)
+            ticksbuffer++;
+            if (IsContent)
             {
-                double newval = CurrentContentScore + Convert.ToDouble(CurrentSubjugationLevel) * gainPerTickPerPerk;
-                CurrentContentScore = newval > ContentScoreLimit ? ContentScoreLimit : newval;
+                SupNeed = SupNeed ?? Pawn.needs.TryGetNeed<Need_Suppression>();
+                SupNeed.CurLevel = 1f;
             }
 
             base.CompTick();
         }
         public override void CompTickRare()
         {
-
             base.CompTickRare();
 
 
-            if (Pawn.gender==Gender.Female && Pawn.IsSlave)
-                if (CurrentContentScore == ContentScoreLimit)
-                {
-                    if (!IsContent)
-                        SetContent(true);
-                }
-        }
+            if (!IsContent && Pawn.gender == Gender.Female && Pawn.IsSlave)
+            {
+                double newval = CurrentContentScore + Convert.ToDouble(CurrentSubjugationLevel) * gainPerTickPerPerk * ticksbuffer;
+                CurrentContentScore = newval > ContentScoreLimit ? ContentScoreLimit : newval;
 
-        private void SetContent(bool v)
-        {
-            if (v)
-            {
-                IsContent = true;
-                Log.Message(Pawn.Name.ToStringShort + " is content");
-            } else
-            {
-                IsContent = false;
-                Log.Message(Pawn.Name.ToStringShort + " is not content");
+                if (CurrentContentScore == ContentScoreLimit)
+                    IsContent = true;
             }
+
+            ticksbuffer = 0;
         }
 
         public override void PostDeSpawn(Map map)
@@ -151,6 +158,13 @@ namespace Adjustments
 
             if (Perks == null)
                 Perks = new List<BasePerk>();
+
+            Log.Message("POST INIT " + Pawn);
+            if (Pawn.gender!=Gender.Female || Pawn.RaceProps.Animal)
+            {
+                Log.Message("REMOVING: " + Pawn);
+                Pawn.AllComps.Remove(this);
+            }
         }
         
 
@@ -175,8 +189,7 @@ namespace Adjustments
                 return;
 
             ContentScoreLimit += severity;
-            if (IsContent)
-                SetContent(false);
+            IsContent = false;
 
             CurrentRating = Mathf.Min(ResistanceCap, CurrentRating + severity * .1f);
             
