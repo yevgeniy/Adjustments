@@ -45,7 +45,7 @@ namespace Adjustments
         static double gainPerTickPerPerk = Convert.ToDouble(20) / Convert.ToDouble(GenDate.TicksPerHour);
 
         public List<BasePerk> Perks = new List<BasePerk>();
-        private bool IsContent;
+        public bool IsContent;
         private Need_Suppression SupNeed;
 
         public float ContentPercent { get
@@ -159,10 +159,8 @@ namespace Adjustments
             if (Perks == null)
                 Perks = new List<BasePerk>();
 
-            Log.Message("POST INIT " + Pawn);
             if (Pawn.gender!=Gender.Female || Pawn.RaceProps.Animal)
             {
-                Log.Message("REMOVING: " + Pawn);
                 Pawn.AllComps.Remove(this);
             }
         }

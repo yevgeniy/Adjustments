@@ -13,6 +13,22 @@ using Verse.AI;
 
 namespace Adjustments
 {
+    [HarmonyPatch(typeof(SlaveRebellionUtility), "CanParticipateInSlaveRebellion")]
+    public class cant_participate_in_rebellion
+    {
+        [HarmonyPrefix]
+        public static bool patch(Pawn pawn, ref bool __result)
+        {
+            if (SubjugateComp.GetComp(pawn).IsContent)
+            {
+                __result = false;
+                return false;
+            }
+
+            return true;
+        }
+    }
+
     [HarmonyPatch(typeof(GenRecipe), "MakeRecipeProducts")]
     public class check_thigs_produced_for_tailoring
     {

@@ -13,11 +13,17 @@ namespace Adjustments.SubjucationPerks
         public override bool CanHandle(Pawn pawn)
         {
             var skill = pawn.skills.GetSkill(SkillDef);
+            if (skill.PermanentlyDisabled)
+            {
+                return false;
+            }
+
             if (SubjugateComp.Repo.ContainsKey(pawn))
             {
                 var existing =  SubjugateComp.GetComp(pawn).Perks.FirstOrDefault(v => v.SkillDef == SkillDef);
                 if (existing == null)
                     return true;
+
                 return existing.Disabled == false;
             }
             return false;
