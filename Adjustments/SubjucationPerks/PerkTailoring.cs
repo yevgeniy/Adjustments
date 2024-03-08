@@ -38,7 +38,7 @@ namespace Adjustments.SubjucationPerks
             pawn.Notify_DisabledWorkTypesChanged();
         }
 
-        internal static bool OnlyDoesTailoring(Pawn pawn)
+        public static bool HasTailoringPerk(Pawn pawn)
         {
             return SubjugateComp.GetComp(pawn).Perks.Any(v => v.GetType().Name == typeof(PerkTailoring).Name);
         }

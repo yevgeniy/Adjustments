@@ -25,7 +25,13 @@
 		- cooking increase -- done
 		- artistic activate and increase -- done
 		- adds nudist trait -- done
-		- craft only tailoring but w/ 1/20th less materials, and craft increase
+		- craft -- done
+			- only tailoring -- done
+			- craft increase -- done
+			- spawn 20% of recipe material after completing bill.  -- done
+
+
+
 
 	- after some time sumjugated pawn will like being subjugated
 		- this pawn will never be part of rebellion

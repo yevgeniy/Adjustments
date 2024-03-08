@@ -7,17 +7,49 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 using Verse;
+using Verse.AI;
 
 namespace Adjustments
 {
+    [HarmonyPatch(typeof(GenRecipe), "MakeRecipeProducts")]
+    public class check_thigs_produced_for_tailoring
+    {
+        [HarmonyPrefix]
+        public static bool patch(RecipeDef recipeDef, Pawn worker, List<Thing> ingredients, Thing dominantIngredient, IBillGiver billGiver, Precept_ThingStyle precept, ThingStyleDef style, int? overrideGraphicIndex)
+        {
+Log.Message(worker.CurJob.workGiverDef.workType.defName);
+
+            var hasTailoringTrait = PerkTailoring.HasTailoringPerk(worker);
+
+
+
+            if (hasTailoringTrait && worker.CurJob.workGiverDef.workType.defName=="Tailoring")
+            {
+                if (ingredients != null)
+                    foreach(var i in ingredients)
+                    {
+                        var stackcount = Mathf.Floor(i.stackCount * .2f);
+                        if (stackcount > 0)
+                        {
+                            var thing = ThingMaker.MakeThing(i.def, i.Stuff);
+                            thing.stackCount = (int)stackcount;
+                            GenPlace.TryPlaceThing(thing, worker.Position, worker.Map, ThingPlaceMode.Near);
+                        }
+                    }
+            }
+            return true;
+        }
+    }
+
     [HarmonyPatch(typeof(Pawn), "GetDisabledWorkTypes")]
     public class check_for_disabled_crafting_work_types
     {
         [HarmonyPostfix]
         public static void patcher(Pawn __instance, ref List<WorkTypeDef> __result)
         {
-            if (PerkTailoring.OnlyDoesTailoring(__instance))
+            if (PerkTailoring.HasTailoringPerk(__instance))
             {
                 __result.AddDistinct(WorkTypeDefOf.Smithing);
 
