@@ -1,6 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Defs>
-	  <ThoughtDef>
+	 <PreceptDef>
+		<defName>Females_must_be_slaves</defName>
+		<issue>Slavery</issue>
+		<label>Female Slavery</label>
+		<description>All women need to submit to men as slaves.</description>
+		<impact>High</impact>
+		<displayOrderInIssue>1</displayOrderInIssue>
+		<displayOrderInImpact>999</displayOrderInImpact>
+		<associatedMemes>
+		  <li>MaleSupremacy</li>
+		</associatedMemes>
+		<comps>
+		  <li Class="PreceptComp_SituationalThought">
+			<thought>UnsubjugatedWomen</thought>
+		  </li>
+		  <li Class="PreceptComp_SituationalThought">
+			<thought>SubjugateAllWomenSlaves</thought>
+		  </li>
+		</comps>
+		<approvesOfSlavery>true</approvesOfSlavery>
+	</PreceptDef>
+
+	<ThoughtDef>
 		<defName>SubjugatePutOnArmour</defName>
 		<durationDays>1</durationDays>
 		<stages>
@@ -10,7 +32,30 @@
 			<baseMoodEffect>-30</baseMoodEffect>
 		  </li>
 		</stages>
-	  </ThoughtDef>
+	</ThoughtDef>
+	
+	<ThoughtDef>
+		<defName>UnsubjugatedWomen</defName>
+		<workerClass>Adjustments.SubjugateThoughtWorker</workerClass>
+		<stages>
+		  <li>
+			<label>has unsubjugated women</label>
+			<description>There are unsubjugated women</description>
+			<baseMoodEffect>-3</baseMoodEffect>
+		  </li>
+		</stages>
+    </ThoughtDef>
+	<ThoughtDef>
+		<defName>AllWomenSlaves</defName>
+		<workerClass>Adjustments.SubjugateAllWomenSlaves</workerClass>
+		<stages>
+		  <li>
+			<label>all women are slaves</label>
+			<description>All women subjugated</description>
+			<baseMoodEffect>1</baseMoodEffect>
+		  </li>
+		</stages>
+    </ThoughtDef>
 
 
 	<TraitDef>

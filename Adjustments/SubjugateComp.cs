@@ -79,6 +79,14 @@ namespace Adjustments
             {
                 thingDef.comps.Add(new CompProperties { compClass = typeof(SubjugateComp) });
             }
+
+            ///* precept def to include subjugation */
+            //foreach (PreceptDef preceptDef in DefDatabase<PreceptDef>.AllDefs )
+            //{
+            //    preceptDef.comps.Add(new PreceptComp_SituationalThought { thought=SubjugatedDefs.UnsubjugatedWomen });
+            //}
+
+
         }
         public SubjugateComp()
         {
@@ -97,18 +105,44 @@ namespace Adjustments
 
             base.CompTick();
         }
+        private int LastCheck;
         public override void CompTickRare()
         {
             base.CompTickRare();
 
-
-            if (!IsContent && Pawn.gender == Gender.Female && Pawn.IsSlave)
+            if (Pawn.gender==Gender.Female)
             {
-                double newval = CurrentContentScore + Convert.ToDouble(CurrentSubjugationLevel) * gainPerTickPerPerk * ticksbuffer;
-                CurrentContentScore = newval > ContentScoreLimit ? ContentScoreLimit : newval;
+                if (!IsContent && Pawn.IsSlave)
+                {
+                    double newval = CurrentContentScore + Convert.ToDouble(CurrentSubjugationLevel) * gainPerTickPerPerk * ticksbuffer;
+                    CurrentContentScore = newval > ContentScoreLimit ? ContentScoreLimit : newval;
 
-                if (CurrentContentScore == ContentScoreLimit)
-                    IsContent = true;
+                    if (CurrentContentScore == ContentScoreLimit)
+                        IsContent = true;
+                }
+            }
+            else if (Pawn.gender==Gender.Male && Pawn.IsColonist)
+            {
+                //if (LastCheck==0)
+                //{
+                //    Log.Message("CHECKING: " + Pawn);
+                //    var freeWomen = Find.CurrentMap.mapPawns.AllPawns.Any(v => v.IsColonist && v.gender == Gender.Female);
+                //    if (freeWomen)
+                //    {
+                //        var memory = Pawn.needs.mood.thoughts.memories.GetFirstMemoryOfDef(SubjugatedDefs.UnsubjugatedWomen);
+                //        if (memory == null)
+                //        {
+                //            Pawn.needs.mood.thoughts.memories.TryGainMemory(SubjugatedDefs.UnsubjugatedWomen);
+                //        }
+                //    }
+                //    else
+                //    {
+                //        Pawn.needs.mood.thoughts.memories.RemoveMemoriesOfDef(SubjugatedDefs.UnsubjugatedWomen);
+                //    }
+                //}
+                //LastCheck++;
+                //if (LastCheck > 100)
+                //    LastCheck = 0;
             }
 
             ticksbuffer = 0;
@@ -159,7 +193,7 @@ namespace Adjustments
             if (Perks == null)
                 Perks = new List<BasePerk>();
 
-            if (Pawn.gender!=Gender.Female || Pawn.RaceProps.Animal)
+            if (Pawn.RaceProps.Animal)
             {
                 Pawn.AllComps.Remove(this);
             }
@@ -273,4 +307,5 @@ namespace Adjustments
 
         }
     }
+
 }

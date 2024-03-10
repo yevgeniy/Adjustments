@@ -14,6 +14,8 @@ namespace Adjustments
         public static TraitDef Subjugated;
 
         public static ThoughtDef SubjugatePutOnArmour;
+        public static ThoughtDef UnsubjugatedWomen;
+        
     }
 }
 

@@ -253,6 +253,7 @@
     <Compile Include="SubjugateComp.cs" />
     <Compile Include="SubjugatedDefs.cs" />
     <Compile Include="SubjugatePatch.cs" />
+    <Compile Include="SubjugateThoughtWorker.cs" />
     <Compile Include="WorkGiverDefOf.cs" />
     <Compile Include="AmmoProxy.cs" />
     <Compile Include="Driver_ReloadInStorage.cs" />
