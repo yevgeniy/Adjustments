@@ -51,7 +51,7 @@ namespace Adjustments
 
         private static bool IsPlayerPawn(Pawn srcPawn)
         {
-            return srcPawn.IsColonist || srcPawn.IsSlaveOfColony || srcPawn.IsPrisonerOfColony;
+            return srcPawn.IsColonist || srcPawn.IsSlave || srcPawn.IsPrisonerOfColony;
         }
     }
 }

@@ -60,14 +60,12 @@ namespace Adjustments
 
             if (thing != null && thing is ThingWithComps compsThing )
             { 
-                Log.Message("LOOKING AT: " + compsThing.def.defName);
 
                 var gun = new GunProxy(compsThing);
                 var comp = gun.CompAmmoUser;
 
                 if (comp!=null)
                 {
-                    Log.Message("WE GOT A GUN: " + compsThing.def.defName);
                     ManagerReloadWeapons.AddWeapon(compsThing);
                 }
 

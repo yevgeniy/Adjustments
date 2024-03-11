@@ -13,13 +13,48 @@ using Verse.AI;
 
 namespace Adjustments
 {
+
+
+    [HarmonyPatch(typeof(StatExtension), "GetStatValue")]
+    public class asjust_slave_suppression_rate
+    {
+        [HarmonyPostfix]
+        public static void fixer(Thing thing, StatDef stat, bool applyPostProcess, int cacheStaleAfterTicks, ref float __result)
+        {
+            if (thing is Pawn pawn)
+            {
+                if (stat != StatDefOf.SlaveSuppressionFallRate)
+                    return;
+
+                var comp = SubjugateComp.GetComp(pawn);
+                if (comp == null)
+                    return;
+
+                if (comp.IsContent)
+                {
+                    __result = 0;
+                    return;
+                }
+
+                var percentleft = 100f - comp.ContentPercent;
+                percentleft = percentleft / 100f;
+
+                __result *= percentleft;
+
+            }
+        }
+    }
+
+
     [HarmonyPatch(typeof(SlaveRebellionUtility), "CanParticipateInSlaveRebellion")]
     public class cant_participate_in_rebellion
     {
         [HarmonyPrefix]
         public static bool patch(Pawn pawn, ref bool __result)
         {
-            if (SubjugateComp.GetComp(pawn).IsContent)
+            var comp = SubjugateComp.GetComp(pawn);
+
+            if (comp!=null && comp.IsContent)
             {
                 __result = false;
                 return false;
@@ -190,12 +225,12 @@ namespace Adjustments
             if (hediff!=null)
             {
                 var pawn = __instance.pawn;
-                if (pawn.gender == Gender.Female)
+                if (pawn.gender == Gender.Female && dinfo.Instigator is Pawn bypawn)
                 {
                     var comp = SubjugateComp.GetComp(pawn);
-                    if (comp != null)
+                    if (comp != null )
                     {
-                        comp.RegisterSeverity(hediff.Severity);
+                        comp.RegisterSeverity(hediff.Severity, bypawn);
                     }
                 }
 

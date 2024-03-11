@@ -42,7 +42,10 @@ namespace Adjustments
         private float ResistanceCap;
         private double CurrentContentScore;
         private double ContentScoreLimit;
-        static double gainPerTickPerPerk = Convert.ToDouble(20) / Convert.ToDouble(GenDate.TicksPerHour);
+        static double gainPerTickPerPerk = Convert.ToDouble(20) / Convert.ToDouble(GenDate.TicksPerYear/2);
+
+
+        public float DisciplineDealtRating;
 
         public List<BasePerk> Perks = new List<BasePerk>();
         public bool IsContent;
@@ -80,7 +83,7 @@ namespace Adjustments
                 thingDef.comps.Add(new CompProperties { compClass = typeof(SubjugateComp) });
             }
 
-            ///* precept def to include subjugation */
+            ///* Add thought to precept */
             //foreach (PreceptDef preceptDef in DefDatabase<PreceptDef>.AllDefs )
             //{
             //    preceptDef.comps.Add(new PreceptComp_SituationalThought { thought=SubjugatedDefs.UnsubjugatedWomen });
@@ -93,59 +96,35 @@ namespace Adjustments
             CurrentRating = 0f;
             ResistanceCap = 0f;
         }
-        long ticksbuffer = 0;
-        public override void CompTick()
-        {
-            ticksbuffer++;
-            if (IsContent)
-            {
-                SupNeed = SupNeed ?? Pawn.needs.TryGetNeed<Need_Suppression>();
-                SupNeed.CurLevel = 1f;
-            }
-
-            base.CompTick();
-        }
-        private int LastCheck;
+        
         public override void CompTickRare()
         {
             base.CompTickRare();
+
+            if (Find.TickManager.TicksGame % 2000==0) /* long tick shim */
+            {
+                DisciplineDealtRating = Mathf.Max(0, DisciplineDealtRating - 1);
+            }
+                
 
             if (Pawn.gender==Gender.Female)
             {
                 if (!IsContent && Pawn.IsSlave)
                 {
-                    double newval = CurrentContentScore + Convert.ToDouble(CurrentSubjugationLevel) * gainPerTickPerPerk * ticksbuffer;
+                    double newval = CurrentContentScore + Convert.ToDouble(CurrentSubjugationLevel) * gainPerTickPerPerk * 250f; /*250 ticks in rare tick*/
+
                     CurrentContentScore = newval > ContentScoreLimit ? ContentScoreLimit : newval;
 
                     if (CurrentContentScore == ContentScoreLimit)
+                    {
                         IsContent = true;
+                        SupNeed = SupNeed ?? Pawn.needs.TryGetNeed<Need_Suppression>();
+                        SupNeed.CurLevel = 1f;
+                    }
+                    
                 }
             }
-            else if (Pawn.gender==Gender.Male && Pawn.IsColonist)
-            {
-                //if (LastCheck==0)
-                //{
-                //    Log.Message("CHECKING: " + Pawn);
-                //    var freeWomen = Find.CurrentMap.mapPawns.AllPawns.Any(v => v.IsColonist && v.gender == Gender.Female);
-                //    if (freeWomen)
-                //    {
-                //        var memory = Pawn.needs.mood.thoughts.memories.GetFirstMemoryOfDef(SubjugatedDefs.UnsubjugatedWomen);
-                //        if (memory == null)
-                //        {
-                //            Pawn.needs.mood.thoughts.memories.TryGainMemory(SubjugatedDefs.UnsubjugatedWomen);
-                //        }
-                //    }
-                //    else
-                //    {
-                //        Pawn.needs.mood.thoughts.memories.RemoveMemoriesOfDef(SubjugatedDefs.UnsubjugatedWomen);
-                //    }
-                //}
-                //LastCheck++;
-                //if (LastCheck > 100)
-                //    LastCheck = 0;
-            }
 
-            ticksbuffer = 0;
         }
 
         public override void PostDeSpawn(Map map)
@@ -156,22 +135,7 @@ namespace Adjustments
      
 
 
-        public void ActivateSubjugation()
-        {
-            
-            if (SubjugationActive) {
-                return;
-            }
-
-            SubjugationActive =true;
-
-            CurrentRating = 0f;
-
-            ResistanceCap = GenResistance();
-
-
-            Log.Message("SUBJUGATION ACTIVATED: CAP: " + ResistanceCap);
-        }
+      
         public override void PostExposeData()
         {
             base.PostExposeData();
@@ -184,8 +148,7 @@ namespace Adjustments
             Scribe_Values.Look(ref CurrentContentScore, "subjugate-cur-cont-scor");
             Scribe_Values.Look(ref ContentScoreLimit, "subjugate-cont-scor-lim");
             Scribe_Values.Look(ref IsContent, "subjugate-is-cont");
-            
-
+            Scribe_Values.Look(ref DisciplineDealtRating, "subjugate-dic-dealt-rat");
 
             if (!Repo.ContainsKey(Pawn))
                 Repo.Add(Pawn, this);
@@ -198,8 +161,22 @@ namespace Adjustments
                 Pawn.AllComps.Remove(this);
             }
         }
-        
 
+        public void ActivateSubjugation()
+        {
+
+            if (SubjugationActive)
+            {
+                return;
+            }
+
+            SubjugationActive = true;
+
+            CurrentRating = 0f;
+
+            ResistanceCap = GenResistance();
+
+        }
         private float GenResistance()
         {
             FloatRange value = Pawn.kindDef.initialResistanceRange.Value;
@@ -215,30 +192,32 @@ namespace Adjustments
             return (float)GenMath.RoundRandom(single);
         }
 
-        public void RegisterSeverity(float severity)
+        public void RegisterSeverity(float severity, Pawn bypawn)
         {
             if (!SubjugationActive)
                 return;
 
-            ContentScoreLimit += severity;
-            IsContent = false;
-
-            CurrentRating = Mathf.Min(ResistanceCap, CurrentRating + severity * .1f);
-            
-
-
-            /*lower resistance by the beating amount*/
-            Pawn.guest.will = Mathf.Max(.1f, Pawn.guest.will - severity * .01f);
-
-            if (CurrentRating>=ResistanceCap)
+            if (bypawn.IsColonist && !bypawn.IsSlave)
             {
-                UpgradeSubjugation();
+                SubjugateComp.GetComp(bypawn).DisciplineDealtRating += severity;
+                ContentScoreLimit += severity;
+                IsContent = false;
+
+                CurrentRating = Mathf.Min(ResistanceCap, CurrentRating + severity * .1f);
+
+                /*lower resistance by the beating amount*/
+                Pawn.guest.will = Mathf.Max(.1f, Pawn.guest.will - severity * .01f);
+
+                if (CurrentRating >= ResistanceCap)
+                {
+                    UpgradeSubjugation();
+                }
             }
+            
         }
 
         private void UpgradeSubjugation()
         {
-            Log.Message("ADDING TRAIT");
 
             var t = Pawn.story.traits.GetTrait(SubjugatedDefs.Subjugated);
             if (t==null) {
@@ -253,8 +232,6 @@ namespace Adjustments
             CurrentSubjugationLevel++;
 
             AddPerks();
-
-            Messages.Message("Subjugated: " + Pawn.Name.ToStringShort, MessageTypeDefOf.NeutralEvent, true);
 
             SubjugationActive=false;
         }

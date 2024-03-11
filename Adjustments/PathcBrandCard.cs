@@ -74,7 +74,7 @@ namespace Adjustments
             TooltipHandler.TipRegion(rectNew, "branding");
             if (Widgets.ButtonInvisible(rectNew))
             {
-                Log.Message("CLICKED");
+
 
                 SoundDefOf.InfoCard_Open.PlayOneShotOnCamera();
                 BrandComp.ShowDialog(pawn);

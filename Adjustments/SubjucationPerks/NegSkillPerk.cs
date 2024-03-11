@@ -37,14 +37,14 @@ namespace Adjustments.SubjucationPerks
             byte x = (byte)currPassion;
             if (x==1 || x == 2 || x == 4 || x == 5) /*minor, major, natural, critical */
             {
-                Log.Message("NO PASSION");
+
                 Explain = "No longer passionate about SKILL.";
                 byte p = (byte)(Adjustments.HassVanillaSkillMod ? 3 : 0);
                 skill.passion = (Passion)p;
             }
             else /* apathy or no passion */
             {
-                Log.Message("SKILL DISABLED");
+
                 Disabled = true;
                 Explain = "PAWN will no longer do SKILL.";
                 skill.passion = Passion.None;

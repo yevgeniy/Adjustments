@@ -65,6 +65,7 @@ namespace Adjustments
 
             harmony.PatchAll();
 
+
             Log.Message("ADJUSTMENTS PATCHED.");
 
             AttachComps();
@@ -75,7 +76,6 @@ namespace Adjustments
             foreach (ThingDef thingDef in DefDatabase<ThingDef>.AllDefs.Where(thingDef =>
                     thingDef.race != null))
             {
-                Log.Message("Adding to: " + thingDef.race);
                 thingDef.comps.Add(new CompProperties { compClass = typeof(BrandComp) });
             }
         }

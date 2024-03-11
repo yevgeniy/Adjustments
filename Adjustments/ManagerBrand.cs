@@ -34,8 +34,7 @@ namespace Adjustments
             {
                 if (Invalidate || _brands==null)
                 {
-                    var pawns = Find.CurrentMap.mapPawns.SlavesOfColonySpawned.Concat(Find.CurrentMap.mapPawns.FreeColonistsSpawned)
-                        .Concat(SpawnedColonyMechs());
+                    var pawns = Find.CurrentMap.mapPawns.AllPawns;
 
                     _brands = pawns.Select(v => v.GetComp<BrandComp>()).SelectMany(v => v.Brands).ToList();
 

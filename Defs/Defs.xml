@@ -16,8 +16,12 @@
 			<thought>UnsubjugatedWomen</thought>
 		  </li>
 		  <li Class="PreceptComp_SituationalThought">
-			<thought>SubjugateAllWomenSlaves</thought>
+			<thought>AllWomenSlaves</thought>
 		  </li>
+		  <li Class="PreceptComp_SituationalThought">
+			<thought>DisciplinedAWomen</thought>
+		  </li>
+		  
 		</comps>
 		<approvesOfSlavery>true</approvesOfSlavery>
 	</PreceptDef>
@@ -52,6 +56,17 @@
 		  <li>
 			<label>all women are slaves</label>
 			<description>All women subjugated</description>
+			<baseMoodEffect>1</baseMoodEffect>
+		  </li>
+		</stages>
+    </ThoughtDef>
+	<ThoughtDef>
+		<defName>DisciplinedAWomen</defName>
+		<workerClass>Adjustments.RecentlyDisciplinedAWoman</workerClass>
+		<stages>
+		  <li>
+			<label>recently disciplined a woman</label>
+			<description>Recently disciplined a woman</description>
 			<baseMoodEffect>1</baseMoodEffect>
 		  </li>
 		</stages>

@@ -45,7 +45,6 @@
 - show message when subjugated -- done
 
 - ladies can only be slaves, else men get a daily accumulating debuf -3/day/non-slave-lady, max 30 -- done
-	NOTE: currently attached to all precepts.  Should create a subjugation precept.
 
 
 	(look at Jealous to see mood impact)
