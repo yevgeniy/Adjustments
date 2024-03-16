@@ -74,6 +74,3 @@ namespace Adjustments
         }
     }
 }
-
-
-//SlotGroup slotGroup = pawn.Map.haulDestinationManager.SlotGroupAt(cell);

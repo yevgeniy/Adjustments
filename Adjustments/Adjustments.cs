@@ -78,6 +78,15 @@ namespace Adjustments
             {
                 thingDef.comps.Add(new CompProperties { compClass = typeof(BrandComp) });
             }
+
+            /*replace all fat and hulking female bodytypes to normal*/
+            var femaleBodyType = DefDatabase<BodyTypeDef>.AllDefs.First(v => v.defName == "Female");
+            Log.Message("FEMALE BODY TYPE: " + femaleBodyType);
+            foreach (var i in DefDatabase<BackstoryDef>.AllDefs)
+            {
+                if (i.bodyTypeFemale != null && (i.bodyTypeFemale.defName == "Fat" || i.bodyTypeFemale.defName == "Hulk"))
+                    i.bodyTypeFemale = femaleBodyType;
+            }
         }
     }
 

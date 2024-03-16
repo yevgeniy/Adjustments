@@ -233,27 +233,8 @@
   <ItemGroup>
     <Compile Include="BrandComp.cs" />
     <Compile Include="BrandDialog.cs" />
-    <Compile Include="PatchDamageWorker_Blunt.cs" />
     <Compile Include="PathcBrandCard.cs" />
     <Compile Include="ManagerBrand.cs" />
-    <Compile Include="SubjucationPerks\BasePerk.cs" />
-    <Compile Include="SubjucationPerks\INegSkillPerk.cs" />
-    <Compile Include="SubjucationPerks\IPerk.cs" />
-    <Compile Include="SubjucationPerks\NegSkillPerk.cs" />
-    <Compile Include="SubjucationPerks\PerkNegSkillMining.cs" />
-    <Compile Include="SubjucationPerks\PerkNegSkillConstruction.cs" />
-    <Compile Include="SubjucationPerks\PerkNegSkillMelee.cs" />
-    <Compile Include="SubjucationPerks\PerkNegSkillShooting.cs" />
-    <Compile Include="SubjucationPerks\PerkCooking.cs" />
-    <Compile Include="SubjucationPerks\PerkArtistic.cs" />
-    <Compile Include="SubjucationPerks\PerkNudistTrait.cs" />
-    <Compile Include="SubjucationPerks\PerkNegHateArmor.cs" />
-    <Compile Include="SubjucationPerks\PerkTailoring.cs" />
-    <Compile Include="SubjucationPerks\PerkPlant.cs" />
-    <Compile Include="SubjugateComp.cs" />
-    <Compile Include="SubjugatedDefs.cs" />
-    <Compile Include="SubjugatePatch.cs" />
-    <Compile Include="SubjugateThoughtWorker.cs" />
     <Compile Include="WorkGiverDefOf.cs" />
     <Compile Include="AmmoProxy.cs" />
     <Compile Include="Driver_ReloadInStorage.cs" />
@@ -267,9 +248,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="TODO.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
