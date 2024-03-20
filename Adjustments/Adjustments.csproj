@@ -229,10 +229,15 @@
     <Reference Include="UnityEngine.XRModule">
       <HintPath>..\..\..\RimWorldWin64_Data\Managed\UnityEngine.XRModule.dll</HintPath>
     </Reference>
+    <Reference Include="VFECore">
+      <HintPath>..\..\..\..\..\workshop\content\294100\2023507013\1.4\Assemblies\VFECore.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BrandComp.cs" />
     <Compile Include="BrandDialog.cs" />
+    <Compile Include="Mag_Hediff_Subjugation.cs" />
+    <Compile Include="Mag_SubjugateAbilityExtention.cs" />
     <Compile Include="PathcBrandCard.cs" />
     <Compile Include="ManagerBrand.cs" />
     <Compile Include="WorkGiverDefOf.cs" />
