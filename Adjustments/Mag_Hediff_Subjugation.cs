@@ -27,13 +27,17 @@ namespace Adjustments
                 /*attach master ref on haddif after cast */
                 subjabil.modExtensions.Add(new Mag_SubjugateAbilityExtention());
 
-                /*can cast on any pawn.  Use brain leech validations (can be cast on prisoners and colonists)*/
-                var brainleechabil = DefDatabase<VFECore.Abilities.AbilityDef>.AllDefs.FirstOrDefault(v => v.defName == "VPEP_BrainLeech");
-                var brainleechvalid = brainleechabil.modExtensions.First(v => v.GetType().Name == "AbilityExtension_TargetValidator");
-                subjabil.modExtensions.Select(v => v.GetType().Name == "AbilityExtension_TargetValidator" ? brainleechvalid : v);
-
-
+                /*can cast on any pawn.*/
+                subjabil.modExtensions.RemoveAll(v => v.GetType().Name == "AbilityExtension_TargetValidator");
+                
                 Log.Message("ATTACHED2");
+            }
+            var brainleechabil = DefDatabase<VFECore.Abilities.AbilityDef>.AllDefs.FirstOrDefault(v => v.defName == "VPEP_BrainLeech");
+            if (brainleechabil != null)
+            {
+                /*can cast on any pawn.*/
+                brainleechabil.modExtensions.RemoveAll(v => v.GetType().Name == "AbilityExtension_TargetValidator");
+                Log.Message("ATTACHED3");
             }
         }
         public Mag_Hediff_Subjugation() : base()
