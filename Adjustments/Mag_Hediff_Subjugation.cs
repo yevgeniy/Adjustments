@@ -57,59 +57,70 @@ namespace Adjustments
                 return;
 
             var mode = pawn.guest.interactionMode;
-            if (mode.defName== "ReduceWill" || mode.defName== "Enslave")
+            if (mode.defName == "Convert" || !pawn.IsPrisoner)
+            {
+                Log.Message("CONVERT");
+                ConvertToIdeo();
+            }
+            else if (mode.defName== "ReduceWill" || mode.defName== "Enslave")
             {
                 Log.Message("LOWER WILL");
                 LowerWill();
             }
+            
 
+        }
+
+        private void ConvertToIdeo()
+        {
+            if (pawn.Ideo.name == MasterPawn.Ideo.name)
+                return;
+
+            Precept_Role role;
+            var basestat= MasterPawn.GetPsylinkLevel() * .01f;
+            float statValue = 0.06f * basestat *  pawn.GetStatValue(StatDefOf.CertaintyLossFactor, true, -1) * ConversionUtility.ConversionPowerFactor_MemesVsTraits(MasterPawn, pawn, null) * ReliquaryUtility.GetRelicConvertPowerFactorForPawn(pawn, null) * Find.Storyteller.difficulty.CertaintyReductionFactor(MasterPawn, pawn);
+            Ideo ideo = pawn.Ideo;
+            if (ideo != null)
+            {
+                role = ideo.GetRole(pawn);
+            }
+            else
+            {
+                role = null;
+            }
+            Precept_Role preceptRole = role;
+            if (preceptRole != null)
+            {
+                statValue *= preceptRole.def.certaintyLossFactor;
+            }
+
+            pawn.ideo.IdeoConversionAttempt(statValue, MasterPawn.Ideo, true);
         }
 
         private void LowerWill()
         {
-            //if (pawn.guest.will > 0f)
-            //{
-            //    float statValue = 1f;
-            //    statValue *= initiator.GetStatValue(StatDefOf.NegotiationAbility, true, -1);
-            //    statValue = Mathf.Min(statValue, recipient.guest.will);
-            //    float single = recipient.guest.will;
-            //    recipient.guest.will = Mathf.Max(0f, recipient.guest.will - statValue);
-            //    float single1 = recipient.guest.will;
-            //    string str = "TextMote_WillReduced".Translate(single.ToString("F1"), recipient.guest.will.ToString("F1"));
-            //    if (recipient.needs.mood != null && recipient.needs.mood.CurLevelPercentage < 0.4f)
-            //    {
-            //        str = str + ("\n(" + "lowMood".Translate()) + ")";
-            //    }
-            //    MoteMaker.ThrowText((initiator.DrawPos + recipient.DrawPos) / 2f, initiator.Map, str, 8f);
-            //    if (recipient.guest.will == 0f)
-            //    {
-            //        TaggedString taggedString = "MessagePrisonerWillBroken".Translate(initiator, recipient);
-            //        if (recipient.guest.interactionMode == PrisonerInteractionModeDefOf.AttemptRecruit)
-            //        {
-            //            taggedString = taggedString + " " + "MessagePrisonerWillBroken_RecruitAttempsWillBegin".Translate();
-            //        }
-            //        Messages.Message(taggedString, recipient, MessageTypeDefOf.PositiveEvent, true);
-            //        return;
-            //    }
-            //}
-            //else if (recipient.guest.interactionMode != PrisonerInteractionModeDefOf.ReduceWill)
-            //{
-            //    QuestUtility.SendQuestTargetSignals(recipient.questTags, "Enslaved", recipient.Named("SUBJECT"));
-            //    GenGuest.EnslavePrisoner(initiator, recipient);
-            //    if (!letterLabel.NullOrEmpty())
-            //    {
-            //        letterDef = LetterDefOf.PositiveEvent;
-            //    }
-            //    letterLabel = ("LetterLabelEnslavementSuccess".Translate() + ": ") + recipient.LabelCap;
-            //    letterText = "LetterEnslavementSuccess".Translate(initiator, recipient);
-            //    letterDef = LetterDefOf.PositiveEvent;
-            //    lookTargets = new LookTargets(new TargetInfo[] { recipient, initiator });
-            //    if (inspirationDef)
-            //    {
-            //        initiator.mindState.inspirationHandler.EndInspiration(InspirationDefOf.Inspired_Recruitment);
-            //    }
-            //    extraSentencePacks.Add(RulePackDefOf.Sentence_RecruitAttemptAccepted);
-            //}
+            if (pawn.guest.will > 0f)
+            {
+                float statValue = MasterPawn.GetPsylinkLevel() * .01f;
+                statValue = Mathf.Min(statValue, pawn.guest.will);
+
+                float single = pawn.guest.will;
+                pawn.guest.will = Mathf.Max(0f, pawn.guest.will - statValue);
+                string str = "TextMote_WillReduced".Translate(single.ToString("F1"), pawn.guest.will.ToString("F1"));
+                
+                MoteMaker.ThrowText(pawn.DrawPos, pawn.Map, str, 8f);
+                if (pawn.guest.will == 0f)
+                {
+                    TaggedString taggedString = "MessagePrisonerWillBroken".Translate(MasterPawn, pawn);
+                    if (pawn.guest.interactionMode == PrisonerInteractionModeDefOf.AttemptRecruit)
+                    {
+                        taggedString = taggedString + " " + "MessagePrisonerWillBroken_RecruitAttempsWillBegin".Translate();
+                    }
+                    Messages.Message(taggedString, pawn, MessageTypeDefOf.PositiveEvent, true);
+                    return;
+                }
+            }
+
         }
         private Pawn Instigator;
         public override void PostAdd(DamageInfo? dinfo)

@@ -12,13 +12,6 @@ namespace Adjustments
 {
     public class Mag_SubjugateAbilityExtention: AbilityExtension_AbilityMod
     {
-        public override void Cast(GlobalTargetInfo[] targets, Ability ability)
-        {
-            
-
-            base.Cast(targets, ability);
-        }
-
         public override void PostCast(GlobalTargetInfo[] targets, Ability ability)
         {
 
@@ -34,8 +27,6 @@ namespace Adjustments
                     continue;
                 }
                 hediff.MasterPawn = ability.pawn;
-
-                Log.Message("MASTER SET");
             }
 
             base.PostCast(targets, ability);
