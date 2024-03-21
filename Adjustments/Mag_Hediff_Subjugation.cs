@@ -53,11 +53,13 @@ namespace Adjustments
         private void Act()
         {
             Log.Message("ACTING");
-            if (pawn.guest == null)
-                return;
-
-            var mode = pawn.guest.interactionMode;
-            if (mode.defName == "Convert" || !pawn.IsPrisoner)
+            var mode = PrisonerInteractionModeDefOf.NoInteraction;
+            if (pawn.guest != null)
+            {
+                mode = pawn.guest.interactionMode;
+            }
+                
+            if (!pawn.IsPrisoner || mode.defName == "Convert" )
             {
                 Log.Message("CONVERT");
                 ConvertToIdeo();
@@ -67,10 +69,40 @@ namespace Adjustments
                 Log.Message("LOWER WILL");
                 LowerWill();
             }
+            else if (mode.defName== "AttemptRecruit" || mode.defName== "ReduceResistance")
+            {
+                Log.Message("LOWER RES");
+                LowerRes();
+            }
             
 
         }
+        private void LowerRes()
+        {
+            if (pawn.guest.resistance>0f)
+            {
+                
+                float statValue = MasterPawn.GetPsylinkLevel() * .01f;
 
+                statValue = Mathf.Min(statValue, pawn.guest.resistance);
+                float single6 = pawn.guest.resistance;
+                pawn.guest.resistance = Mathf.Max(0f, pawn.guest.resistance - statValue);
+                
+                string str = "TextMote_ResistanceReduced".Translate(single6.ToString("F1"), pawn.guest.resistance.ToString("F1"));
+                
+                MoteMaker.ThrowText(pawn.DrawPos, pawn.Map, str, 8f);
+                if (pawn.guest.resistance == 0f)
+                {
+                    TaggedString taggedString1 = "MessagePrisonerResistanceBroken".Translate(pawn.LabelShort, MasterPawn.LabelShort, MasterPawn.Named("WARDEN"), pawn.Named("PRISONER"));
+                    if (pawn.guest.interactionMode == PrisonerInteractionModeDefOf.AttemptRecruit)
+                    {
+                        taggedString1 = taggedString1 + " " + "MessagePrisonerResistanceBroken_RecruitAttempsWillBegin".Translate();
+                    }
+                    Messages.Message(taggedString1, pawn, MessageTypeDefOf.PositiveEvent, true);
+                    return;
+                }
+            }
+        }
         private void ConvertToIdeo()
         {
             if (pawn.Ideo.name == MasterPawn.Ideo.name)
