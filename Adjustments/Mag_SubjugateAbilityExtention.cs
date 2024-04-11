@@ -10,12 +10,12 @@ using Ability = VFECore.Abilities.Ability;
 
 namespace Adjustments
 {
-    public class Mag_SubjugateAbilityExtention: AbilityExtension_AbilityMod
+    public class Mag_SubjugateAbilityExtention : AbilityExtension_AbilityMod
     {
         public override void PostCast(GlobalTargetInfo[] targets, Ability ability)
         {
 
-            foreach(Pawn p in targets)
+            foreach (Pawn p in targets)
             {
                 if (p == null)
                     continue;

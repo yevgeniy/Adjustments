@@ -68,10 +68,10 @@ namespace Adjustments
 
             Log.Message("ADJUSTMENTS PATCHED.");
 
-            AttachComps();
+            AdjustDict();
         }
 
-        private static void AttachComps()
+        private static void AdjustDict()
         {
             foreach (ThingDef thingDef in DefDatabase<ThingDef>.AllDefs.Where(thingDef =>
                     thingDef.race != null))
@@ -87,6 +87,12 @@ namespace Adjustments
                 if (i.bodyTypeFemale != null && (i.bodyTypeFemale.defName == "Fat" || i.bodyTypeFemale.defName == "Hulk"))
                     i.bodyTypeFemale = femaleBodyType;
             }
+
+
+            var haulUrgent = DefDatabase<WorkTypeDef>.AllDefs.First(v => v.defName == "HaulingUrgent");
+            var reloadDef= DefDatabase<WorkGiverDef>.AllDefs.First(v => v.defName == "ReloadTurrets");
+            reloadDef.workType = haulUrgent;
+
         }
     }
 

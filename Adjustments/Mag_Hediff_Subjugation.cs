@@ -2,9 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using VanillaPsycastsExpanded;
 using Verse;
 using VFECore.Abilities;
 
@@ -13,8 +15,15 @@ namespace Adjustments
     [StaticConstructorOnStartup]
     public class Mag_Hediff_Subjugation : HediffWithComps
     {
+        public static FieldInfo Master;
+
         static Mag_Hediff_Subjugation()
         {
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            var type = assemblies.SelectMany(assembly => assembly.GetTypes())
+                .FirstOrDefault(v => v.Name == "Hediff_Puppet");
+            Master = type.GetField("master", BindingFlags.Public | BindingFlags.Instance);
+
             var subjhedd= DefDatabase<HediffDef>.AllDefs.FirstOrDefault(v => v.defName == "VPEP_Subjugation");
             if (subjhedd!=null)
             {
@@ -39,6 +48,11 @@ namespace Adjustments
                 brainleechabil.modExtensions.RemoveAll(v => v.GetType().Name == "AbilityExtension_TargetValidator");
                 Log.Message("ATTACHED3");
             }
+
+
+            var pupptree = DefDatabase<PsycasterPathDef>.AllDefs.First(v => v.defName == "VPEP_Puppeteer");
+            pupptree.requiredBackstoriesAny.Clear();
+
         }
         public Mag_Hediff_Subjugation() : base()
         {
