@@ -9,27 +9,30 @@ using Verse.AI;
 
 namespace Adjustments
 {
-    public class WorkGiver_ReloadInStorage: WorkGiver_Scanner
+    public class Rel_WorkGiver_ReloadInStorage: WorkGiver_Scanner
     {
         public override PathEndMode PathEndMode => PathEndMode.OnCell;
-        public override ThingRequest PotentialWorkThingRequest => ThingRequest.ForGroup(ThingRequestGroup.Pawn);
+        public override ThingRequest PotentialWorkThingRequest => ThingRequest.ForGroup(ThingRequestGroup.Weapon);
         public override IEnumerable<Thing> PotentialWorkThingsGlobal(Pawn pawn)
         {
-            if (!Adjustments.HasCombatExtended)
+            if (!Rel_Adjustments.HasCombatExtended)
                 return null;
 
-            return ManagerReloadWeapons.ConsiderWeapons();
+            return Rel_ManagerReloadWeapons.ConsiderWeapons();
         }
 
         public override Job JobOnThing(Pawn pawn, Thing t, bool forced = false)
         {
-            if (!ManagerReloadWeapons.IsThingInConsideration(t as ThingWithComps))
+            if (!Rel_Adjustments.HasCombatExtended)
                 return null;
 
-            if (pawn.CurJob != null && pawn.CurJob.def.driverClass == JobDefOf.ReloadInStorage.driverClass)
+            if (!Rel_ManagerReloadWeapons.IsThingInConsideration(t as ThingWithComps))
                 return null;
 
-            var gun = new GunProxy(t as ThingWithComps);
+            if (pawn.CurJob != null && pawn.CurJob.def.driverClass == Rel_JobDefOf.ReloadInStorage.driverClass)
+                return null;
+
+            var gun = new Rel_GunProxy(t as ThingWithComps);
 
             if (!pawn.CanReserveAndReach(gun.Thing, PathEndMode.Touch, Danger.Deadly))
                 return null;
@@ -53,7 +56,7 @@ namespace Adjustments
             if (ammoThing == null)
                 return null;
 
-            var job = JobMaker.MakeJob(JobDefOf.ReloadInStorage, ammoThing, gun.Thing);
+            var job = JobMaker.MakeJob(Rel_JobDefOf.ReloadInStorage, ammoThing, gun.Thing);
             job.count = howMuchNeededForFullReload;
 
             return job;

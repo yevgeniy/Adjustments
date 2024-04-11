@@ -12,48 +12,9 @@ using VFECore.Abilities;
 
 namespace Adjustments
 {
-    [StaticConstructorOnStartup]
     public class Mag_Hediff_Subjugation : HediffWithComps
     {
-        public static FieldInfo Master;
-
-        static Mag_Hediff_Subjugation()
-        {
-            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-            var type = assemblies.SelectMany(assembly => assembly.GetTypes())
-                .FirstOrDefault(v => v.Name == "Hediff_Puppet");
-            Master = type.GetField("master", BindingFlags.Public | BindingFlags.Instance);
-
-            var subjhedd= DefDatabase<HediffDef>.AllDefs.FirstOrDefault(v => v.defName == "VPEP_Subjugation");
-            if (subjhedd!=null)
-            {
-                subjhedd.hediffClass = typeof(Mag_Hediff_Subjugation);
-                Log.Message("ATTACHED");
-            }
-            var subjabil = DefDatabase<VFECore.Abilities.AbilityDef>.AllDefs.FirstOrDefault(v => v.defName == "VPEP_Subjugation");
-            if (subjabil!=null)
-            {
-                /*attach master ref on haddif after cast */
-                subjabil.modExtensions.Add(new Mag_SubjugateAbilityExtention());
-
-                /*can cast on any pawn.*/
-                subjabil.modExtensions.RemoveAll(v => v.GetType().Name == "AbilityExtension_TargetValidator");
-                
-                Log.Message("ATTACHED2");
-            }
-            var brainleechabil = DefDatabase<VFECore.Abilities.AbilityDef>.AllDefs.FirstOrDefault(v => v.defName == "VPEP_BrainLeech");
-            if (brainleechabil != null)
-            {
-                /*can cast on any pawn.*/
-                brainleechabil.modExtensions.RemoveAll(v => v.GetType().Name == "AbilityExtension_TargetValidator");
-                Log.Message("ATTACHED3");
-            }
-
-
-            var pupptree = DefDatabase<PsycasterPathDef>.AllDefs.First(v => v.defName == "VPEP_Puppeteer");
-            pupptree.requiredBackstoriesAny.Clear();
-
-        }
+        
         public Mag_Hediff_Subjugation() : base()
         {
             for (int i = 0; i < actEveryHour.Length; i++)
@@ -79,10 +40,10 @@ namespace Adjustments
         private void Act()
         {
             Log.Message("ACTING");
-            var mode = PrisonerInteractionModeDefOf.NoInteraction;
+            var mode = PrisonerInteractionModeDefOf.MaintainOnly;
             if (pawn.guest != null)
             {
-                mode = pawn.guest.interactionMode;
+                mode = pawn.guest.ExclusiveInteractionMode;
             }
                 
             if (!pawn.IsPrisoner || mode.defName == "Convert" )
@@ -120,7 +81,7 @@ namespace Adjustments
                 if (pawn.guest.resistance == 0f)
                 {
                     TaggedString taggedString1 = "MessagePrisonerResistanceBroken".Translate(pawn.LabelShort, MasterPawn.LabelShort, MasterPawn.Named("WARDEN"), pawn.Named("PRISONER"));
-                    if (pawn.guest.interactionMode == PrisonerInteractionModeDefOf.AttemptRecruit)
+                    if (pawn.guest.ExclusiveInteractionMode == PrisonerInteractionModeDefOf.AttemptRecruit)
                     {
                         taggedString1 = taggedString1 + " " + "MessagePrisonerResistanceBroken_RecruitAttempsWillBegin".Translate();
                     }
@@ -170,7 +131,7 @@ namespace Adjustments
                 if (pawn.guest.will == 0f)
                 {
                     TaggedString taggedString = "MessagePrisonerWillBroken".Translate(MasterPawn, pawn);
-                    if (pawn.guest.interactionMode == PrisonerInteractionModeDefOf.AttemptRecruit)
+                    if (pawn.guest.ExclusiveInteractionMode == PrisonerInteractionModeDefOf.AttemptRecruit)
                     {
                         taggedString = taggedString + " " + "MessagePrisonerWillBroken_RecruitAttempsWillBegin".Translate();
                     }

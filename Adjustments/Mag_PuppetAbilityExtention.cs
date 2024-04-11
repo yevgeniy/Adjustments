@@ -12,14 +12,10 @@ using Ability = VFECore.Abilities.Ability;
 
 namespace Adjustments
 {
-    [StaticConstructorOnStartup]
     public class Mag_PuppetAbilityExtention: AbilityExtension_AbilityMod
     {
-        public static HediffDef VPEP_Puppet;
-        static Mag_PuppetAbilityExtention()
-        {
-            VPEP_Puppet = DefDatabase<HediffDef>.AllDefs.First(v => v.defName == "VPEP_Puppet");
-        }
+        
+ 
         public override void PostCast(GlobalTargetInfo[] targets, Ability ability)
         {
 
@@ -28,7 +24,7 @@ namespace Adjustments
                 if (p == null)
                     continue;
 
-                var hediff = p.health.hediffSet.hediffs.First(v => v.def.defName == VPEP_Puppet.defName);
+                var hediff = p.health.hediffSet.hediffs.First(v => v.def.defName == Mag_Adjustments.VPEP_Puppet.defName);
                 if (hediff == null)
                 {
                     Log.Error("COULD NOT FIND PUPPET HEDIFF");

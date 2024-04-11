@@ -10,20 +10,16 @@ using Verse.AI;
 namespace Adjustments
 {
     [StaticConstructorOnStartup]
-    public static class Adjustments
+    public static class Rel_Adjustments
     {
         public static bool HasCombatExtended;
-        public static bool HasAllowTool;
-        public static bool HassVanillaSkillMod;
         
 
         public static PropertyInfo SelectedAmmoPropInfo = null;
         
-        
-        
         public static StatDef ReloadSpeed = null;
 
-        static Adjustments()
+        static Rel_Adjustments()
         {
             Log.Message("ADJUSTMENTS STARTED.");
 
@@ -39,23 +35,8 @@ namespace Adjustments
 
             }
 
-            var classType = assemblies.SelectMany(assembly => assembly.GetTypes())
-                    .FirstOrDefault(v => v.Name == "Designator_HaulUrgently");
-            if (classType != null)
-            {
-                HasAllowTool = true;
-            }
-
-            classType = assemblies.SelectMany(assembly => assembly.GetTypes())
-                    .FirstOrDefault(v => v.Name == "SkillsMod");
-            if (classType != null)
-                HassVanillaSkillMod = true;
-
-
-            Log.Message("HAS ALLOW TOOL: " + HasAllowTool);
             Log.Message("HAS CE: " + HasCombatExtended);
 
-            Harmony.DEBUG = true;  // Enable Harmony Debug
             Harmony harmony = new Harmony("nimm.adjustments");
 
             if (HasCombatExtended)
@@ -76,7 +57,7 @@ namespace Adjustments
             foreach (ThingDef thingDef in DefDatabase<ThingDef>.AllDefs.Where(thingDef =>
                     thingDef.race != null))
             {
-                thingDef.comps.Add(new CompProperties { compClass = typeof(BrandComp) });
+                thingDef.comps.Add(new CompProperties { compClass = typeof(Brand_Comp) });
             }
 
             /*replace all fat and hulking female bodytypes to normal*/
@@ -89,9 +70,13 @@ namespace Adjustments
             }
 
 
-            var haulUrgent = DefDatabase<WorkTypeDef>.AllDefs.First(v => v.defName == "HaulingUrgent");
-            var reloadDef= DefDatabase<WorkGiverDef>.AllDefs.First(v => v.defName == "ReloadTurrets");
-            reloadDef.workType = haulUrgent;
+            var haulUrgent = DefDatabase<WorkTypeDef>.AllDefs.FirstOrDefault(v => v.defName == "HaulingUrgent");
+            if (haulUrgent!=null)
+            {
+                var reloadDef= DefDatabase<WorkGiverDef>.AllDefs.FirstOrDefault(v => v.defName == "ReloadTurrets");
+                if (reloadDef!=null)
+                    reloadDef.workType = haulUrgent;
+            }
 
         }
     }

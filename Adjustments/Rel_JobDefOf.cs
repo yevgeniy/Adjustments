@@ -1,15 +1,17 @@
-﻿using RimWorld;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using RimWorld;
+using Verse;
+using Verse.AI;
 
 namespace Adjustments
 {
     [DefOf]
-    internal class WorkGiverDefOf
+    public static class Rel_JobDefOf
     {
-        public static WorkGiverDef ReloadWeaponsScan;
+        public static JobDef ReloadInStorage;
     }
 }

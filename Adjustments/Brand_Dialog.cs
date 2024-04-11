@@ -10,7 +10,7 @@ using Verse.Noise;
 
 namespace Adjustments
 {
-    public class BrandDialog : Window
+    public class Brand_Dialog : Window
     {
         private Pawn _pawn;
 
@@ -31,20 +31,20 @@ namespace Adjustments
                 Color.yellow
         };
 
-        public BrandDialog(Pawn pawn, Action<List<string>> onSubmit)
+        public Brand_Dialog(Pawn pawn, Action<List<string>> onSubmit)
         {
             this._pawn = pawn;
             this._onSubmit = onSubmit;
             SelectedIcon = "";
         }
    
-        private BrandComp _comp;
-        private BrandComp Comp
+        private Brand_Comp _comp;
+        private Brand_Comp Comp
         {
             get
             {
                 if (_comp==null)
-                    _comp = _pawn.GetComp<BrandComp>();
+                    _comp = _pawn.GetComp<Brand_Comp>();
                 return _comp;
             }
         }
@@ -65,7 +65,7 @@ namespace Adjustments
 
             var buttonRect = new Rect(40f, 4f, 22f, 22f);
             
-            if (Widgets.ButtonImage(buttonRect, TexButton.DeleteX))
+            if (Widgets.ButtonImage(buttonRect, TexButton.Delete))
             {
                 Comp.RemoveBrand(brand);
             }
@@ -136,7 +136,7 @@ namespace Adjustments
         public static Task<List<string>> Show(Pawn pawn )
         {
             var t = new TaskCompletionSource<List<string>>();
-            Find.WindowStack.Add(new BrandDialog(pawn, onSubmit: (List<string> brands) =>
+            Find.WindowStack.Add(new Brand_Dialog(pawn, onSubmit: (List<string> brands) =>
             {
                 t.TrySetResult(brands);
             }));

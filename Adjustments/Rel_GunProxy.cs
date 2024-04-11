@@ -10,10 +10,10 @@ using Verse;
 
 namespace Adjustments
 {
-    public class GunProxy
+    public class Rel_GunProxy
     {
 
-        public GunProxy(ThingWithComps gun)
+        public Rel_GunProxy(ThingWithComps gun)
         {
             _gun = gun;
         }

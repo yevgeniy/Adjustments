@@ -14,21 +14,21 @@ using static HarmonyLib.Code;
 
 namespace Adjustments
 {
-    public class Driver_ReloadInStorage : JobDriver
+    public class Rel_Driver_ReloadInStorage : JobDriver
     {
 
-        private GunProxy _gun;
+        private Rel_GunProxy _gun;
 
-        private GunProxy Gun { get
+        private Rel_GunProxy Gun { get
             {
                 if (_gun == null)
-                    _gun = new GunProxy(this.job.targetB.Thing as ThingWithComps);
+                    _gun = new Rel_GunProxy(this.job.targetB.Thing as ThingWithComps);
                 return _gun;
             } }
-        private AmmoProxy _ammo;
-        private AmmoProxy Ammo { get {
+        private Rel_AmmoProxy _ammo;
+        private Rel_AmmoProxy Ammo { get {
                 if (_ammo == null)
-                    _ammo = new AmmoProxy(this.job.targetA.Thing as ThingWithComps);
+                    _ammo = new Rel_AmmoProxy(this.job.targetA.Thing as ThingWithComps);
                 return _ammo;
             
             } }
@@ -137,7 +137,7 @@ namespace Adjustments
         {
             Toil reloadWait = ToilMaker.MakeToil("reload-wait");
             reloadWait.defaultCompleteMode = ToilCompleteMode.Delay;
-            reloadWait.defaultDuration = Mathf.CeilToInt(Gun.ReloadTime.SecondsToTicks() / pawn.GetStatValue(Adjustments.ReloadSpeed));
+            reloadWait.defaultDuration = Mathf.CeilToInt(Gun.ReloadTime.SecondsToTicks() / pawn.GetStatValue(Rel_Adjustments.ReloadSpeed));
             reloadWait.WithProgressBarToilDelay(TargetIndex.B);
 
             return reloadWait;

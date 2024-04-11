@@ -8,11 +8,11 @@ using Verse;
 
 namespace Adjustments
 {
-    public class AmmoProxy
+    public class Rel_AmmoProxy
     {
         
 
-        public AmmoProxy(ThingWithComps ammo)
+        public Rel_AmmoProxy(ThingWithComps ammo)
         {
             _ammo = ammo;
         }

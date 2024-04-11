@@ -14,13 +14,13 @@ using Verse.Sound;
 namespace Adjustments
 {
     [HarmonyPatch(typeof(CharacterCardUtility), "DrawCharacterCard")]
-    public class PathcBrandCard
+    public class show_brand_dialog_button
     {
 
         public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
             MethodInfo LifestageAndXenotypeOptions = AccessTools.Method(typeof(CharacterCardUtility), "LifestageAndXenotypeOptions");
-            MethodInfo SexualityCardToggle = AccessTools.Method(typeof(PathcBrandCard), nameof(DesigCardToggle));
+            MethodInfo SexualityCardToggle = AccessTools.Method(typeof(show_brand_dialog_button), nameof(DesigCardToggle));
             bool traits = false;
             bool found = false;
             foreach (CodeInstruction i in instructions)
@@ -57,7 +57,7 @@ namespace Adjustments
         public static void DesigCardToggle(Rect rect, Pawn pawn, Rect creationRect)
         {
             if (pawn == null) return;
-            if (BrandComp.Comp(pawn) == null) return;
+            if (Brand_Comp.Comp(pawn) == null) return;
 
             Rect rectNew = new Rect(CharacterCardUtility.BasePawnCardSize.x - 50f, 2f, 24f, 24f);
             
@@ -77,7 +77,7 @@ namespace Adjustments
 
 
                 SoundDefOf.InfoCard_Open.PlayOneShotOnCamera();
-                BrandComp.ShowDialog(pawn);
+                Brand_Comp.ShowDialog(pawn);
             }
             GUI.color = old;
         }

@@ -11,8 +11,7 @@ using Verse;
 
 namespace Adjustments
 {
-    [StaticConstructorOnStartup]
-    public class ManagerReloadWeapons: MapComponent
+    public class Rel_ManagerReloadWeapons: MapComponent
     {
         private static HashSet<ThingWithComps> weaponsInStorage=new HashSet<ThingWithComps>();
         
@@ -39,12 +38,10 @@ namespace Adjustments
 
             if (mapWeapons.Count == 0)
                 return null;
-
-            var areaManager = new AreaManager(Find.CurrentMap);
             
             foreach (var t in mapWeapons)
             {
-                var gun = new GunProxy(t);
+                var gun = new Rel_GunProxy(t);
                 /* clean up despawned weapons */
                 if (!gun.Thing.Spawned)
                 {
@@ -83,11 +80,7 @@ namespace Adjustments
             return weaponsInStorage.Where(v => v.Map == Find.CurrentMap);
         }
 
-        static ManagerReloadWeapons()
-        {
-
-        }
-        public ManagerReloadWeapons(Map map):base(map)
+        public Rel_ManagerReloadWeapons(Map map):base(map)
         { 
         
         }

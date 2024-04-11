@@ -20,7 +20,7 @@ namespace Adjustments
         {
 
 
-            if (pawn.health.hediffSet.HasHediff(Mag_PuppetAbilityExtention.VPEP_Puppet))
+            if (pawn.health.hediffSet.HasHediff(Mag_Adjustments.VPEP_Puppet))
             {
                 __result = false;
                 return false;
@@ -48,9 +48,9 @@ namespace Adjustments
         {
             var pawn = GetPawn(guest);
 
-            if (pawn.health.hediffSet.HasHediff(Mag_PuppetAbilityExtention.VPEP_Puppet))
+            if (pawn.health.hediffSet.HasHediff(Mag_Adjustments.VPEP_Puppet))
             {
-                __result.RemoveAll(v => v==WorkTypeDefOf.Research || v==WorkTypeDefOf.Art);
+                __result.RemoveAll(v => v==WorkTypeDefOf.Research /*|| v==WorkTypeDefOf.Art*/);
             }
 
         }
@@ -66,10 +66,10 @@ namespace Adjustments
         {
             if (__instance is Pawn pawn)
             {
-                var hediff_Puppet = pawn.health.hediffSet.GetFirstHediffOfDef(Mag_PuppetAbilityExtention.VPEP_Puppet);
+                var hediff_Puppet = pawn.health.hediffSet.GetFirstHediffOfDef(Mag_Adjustments.VPEP_Puppet);
                 if (hediff_Puppet != null)
                 {
-                    var master = Mag_Hediff_Subjugation.Master.GetValue(hediff_Puppet) as Pawn;
+                    var master = Mag_Adjustments.Master.GetValue(hediff_Puppet) as Pawn;
 
                     foreach (var skill in master.skills.skills)
                     {

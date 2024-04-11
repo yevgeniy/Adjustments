@@ -10,9 +10,9 @@ using Verse.Noise;
 
 namespace Adjustments
 {
-    public class ManagerBrand : MapComponent
+    public class Brand_Manager : MapComponent
     {
-        public ManagerBrand(Map map) : base(map)
+        public Brand_Manager(Map map) : base(map)
         {
         }
 
@@ -36,7 +36,7 @@ namespace Adjustments
                 {
                     var pawns = Find.CurrentMap.mapPawns.AllPawns;
 
-                    _brands = pawns.Select(v => v.GetComp<BrandComp>()).SelectMany(v => v.Brands).ToList();
+                    _brands = pawns.Select(v => v.GetComp<Brand_Comp>()).SelectMany(v => v.Brands).ToList();
 
                     Invalidate = false;
                 }
