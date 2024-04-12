@@ -240,6 +240,7 @@
   <ItemGroup>
     <Compile Include="Brand_Comp.cs" />
     <Compile Include="Brand_Dialog.cs" />
+    <Compile Include="Haul_Adjustments.cs" />
     <Compile Include="Mag_Adjustments.cs" />
     <Compile Include="Mag_Hediff_Subjugation.cs" />
     <Compile Include="Mag_Patches.cs" />
