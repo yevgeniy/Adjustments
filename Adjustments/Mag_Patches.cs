@@ -50,7 +50,7 @@ namespace Adjustments
 
             if (pawn.health.hediffSet.HasHediff(Mag_Adjustments.VPEP_Puppet))
             {
-                __result.RemoveAll(v => v==WorkTypeDefOf.Research /*|| v==WorkTypeDefOf.Art*/);
+                __result.RemoveAll(v => v==WorkTypeDefOf.Research || v.defName=="Art");
             }
 
         }
