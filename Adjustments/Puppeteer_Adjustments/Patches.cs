@@ -11,7 +11,25 @@ using static Verse.PawnCapacityUtility;
 
 namespace Adjustments.Puppeteer_Adjustments
 {
-    
+
+    [HarmonyPatch(typeof(PawnCapacityUtility), "CalculateCapacityLevel")]
+    public class calc_mindmerge_capacity
+    {
+        [HarmonyPostfix]
+        public static void postfix(ref float __result, HediffSet diffSet, PawnCapacityDef capacity, List<PawnCapacityUtility.CapacityImpactor> impactors, bool forTradePrice)
+        {
+            if (capacity.defName== "Consciousness")
+            {
+                if (diffSet.HasHediff(Defs.ADJ_MindMerged))
+                {
+                    __result *= 2;
+                    __result = Math.Max(__result, capacity.minValue);
+                }
+            }
+        }
+    }
+
+
     [HarmonyPatch(typeof(PawnCapacityWorker_Consciousness), "CalculateCapacityLevel")]
     public class calc_capacity
     {

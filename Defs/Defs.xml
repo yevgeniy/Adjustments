@@ -141,6 +141,18 @@
 		<label>Mind Merging With</label>
 		<description>Merging own mind with another.</description>
 		<hediffClass>Adjustments.Puppeteer_Adjustments.Hediff_MindMerge</hediffClass>
+		<initialSeverity>0</initialSeverity>
+		<stages>
+			<li>
+				<minSeverity>0</minSeverity>
+				<capMods>
+					<li>
+						<capacity>Consciousness</capacity>
+						<offset>-0.8</offset>
+					</li>
+				</capMods>
+			</li>
+		</stages>
 	</HediffDef>
 
 	<HediffDef>
@@ -148,6 +160,7 @@
 		<label>Mind Merged With</label>
 		<description>Another is merging their mind with me.</description>
 		<hediffClass>Adjustments.Puppeteer_Adjustments.Hediff_MindMerge</hediffClass>
+
 	</HediffDef>
 
 </Defs>
