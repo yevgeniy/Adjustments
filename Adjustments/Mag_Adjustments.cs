@@ -20,24 +20,12 @@ namespace Adjustments
             AttachSubjugation();
             AttachSubjugationAbility();
             AdjustBrainLeech();
-            AdjustPuppeteer();
             GetPuppetDef();
         }
 
         private static void GetPuppetDef()
         {
             VPEP_Puppet = DefDatabase<HediffDef>.AllDefs.FirstOrDefault(v => v.defName == "VPEP_Puppet");
-        }
-
-        private static void AdjustPuppeteer()
-        {
-            var pupptree = DefDatabase<Def>.AllDefs.FirstOrDefault(v => v.defName == "VPEP_Puppeteer");
-            if (pupptree!=null)
-            {
-                var requiredBackstoriesAny = pupptree.GetType().GetField("requiredBackstoriesAny", BindingFlags.Public).GetValue(pupptree);
-                requiredBackstoriesAny.GetType().GetMethod("Clear", BindingFlags.Public).Invoke(requiredBackstoriesAny, new object[] { });
-            }
-            
         }
 
         private static void AdjustBrainLeech()

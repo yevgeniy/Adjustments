@@ -46,6 +46,7 @@ namespace Adjustments
                     "Guest", "Ideo", "Xenotype", 
                     "CopyPasteWorkPriorities","CopyPasteTimetable",
                     "Gender","LifeStage","Pregnant","Bond","Info","MentalState","Faction",
+                    "MedicalCare", "HostilityResponse"
                 };
                 __result.RemoveAll(v => remove.Contains(v.defName));
             }
@@ -65,7 +66,6 @@ namespace Adjustments
 
                     if (Event.current.keyCode == KeyCode.C)
                     {
-                        Log.Message("EVAL");
                         Char_Adjustments.EvalPressed();
                     }
                     break;

@@ -251,6 +251,12 @@
     <Compile Include="Mag_SubjugateAbilityExtention.cs" />
     <Compile Include="Brand_Patches.cs" />
     <Compile Include="Brand_Manager.cs" />
+    <Compile Include="Puppeteer_Adjustments\Ability_Augment.cs" />
+    <Compile Include="Puppeteer_Adjustments\Adjustments.cs" />
+    <Compile Include="Puppeteer_Adjustments\Defs.cs" />
+    <Compile Include="Puppeteer_Adjustments\Hediff_Augment.cs" />
+    <Compile Include="Puppeteer_Adjustments\Patches.cs" />
+    <Compile Include="Puppeteer_Adjustments\ValidatePawnTarget.cs" />
     <Compile Include="Surg_Patches.cs" />
     <Compile Include="Rel_WorkGiverDefOf.cs" />
     <Compile Include="Rel_AmmoProxy.cs" />
@@ -265,6 +271,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Puppeteer_Adjustments\README.md" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
