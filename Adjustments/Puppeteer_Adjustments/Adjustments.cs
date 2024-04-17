@@ -22,22 +22,29 @@ namespace Adjustments.Puppeteer_Adjustments
         {
             Puppeteer_change();
             BrainLeech_change();
-            BrainCut_change();
-        }
 
-        private static void BrainCut_change()
-        {
-            var l = DefDatabase<VFECore.Abilities.AbilityDef>.AllDefs.ToList();
-            l.RemoveAll(v => v.defName == "VPEP_BrainCut");
-
-            DefDatabase<VFECore.Abilities.AbilityDef>.Clear();
-            foreach (var v in l)
-                DefDatabase<VFECore.Abilities.AbilityDef>.Add(v);
+            Remove();
+            
 
             var pupPath = DefDatabase<PsycasterPathDef>.AllDefs.FirstOrDefault(v => v.defName == "VPEP_Puppeteer");
             if (pupPath != null)
                 pupPath.ResolveReferences();
         }
+
+        private static void Remove()
+        {
+
+            var remove = new string[] { "VPEP_PuppetSwarm", "VPEP_SummonPuppet", "VPEP_BrainCut", "VPEP_Ascension", };
+                var l = DefDatabase<VFECore.Abilities.AbilityDef>.AllDefs.ToList();
+            l.RemoveAll(v => remove.Contains(v.defName));
+
+            DefDatabase<VFECore.Abilities.AbilityDef>.Clear();
+            foreach ( var v in l )
+            {
+                DefDatabase<VFECore.Abilities.AbilityDef>.Add(v);
+            }
+        }
+
 
         private static void Puppeteer_change()
         {

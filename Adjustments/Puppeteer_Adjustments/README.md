@@ -1,6 +1,13 @@
 ### brain leech
 
 - take 50 conc from target and add 50 conc to you -- done
-- capacity can never go beyond 120% this way -- done
-- can only be done on 1 target at a time
-- should be cast faster
+
+
+### augment
+
+- takes 50 conc from caster and gives it to target -- done
+
+### mind merge
+
+- sets caster conc to 30 for 1 day
+- doubles conc of target

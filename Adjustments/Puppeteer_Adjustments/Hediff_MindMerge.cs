@@ -8,7 +8,7 @@ using Verse;
 
 namespace Adjustments.Puppeteer_Adjustments
 {
-    public class Hediff_Augment: HediffWithComps
+    public class Hediff_MindMerge: HediffWithComps
     {
         public Pawn Master;
         public Pawn Subject;
@@ -17,8 +17,10 @@ namespace Adjustments.Puppeteer_Adjustments
         private int startAt;
 
         public override bool ShouldRemove => shouldRemove;
-        public override string Label => base.Label + ": " + (pawn == Master ? Subject : Master).LabelShort;
-
+        public override string Label => pawn == Master
+            ? ("Mind merging with: " + Subject.LabelShort)
+            : ("Mind merged with: " + Master.LabelShort);
+            
         public override void PostAdd(DamageInfo? dinfo)
         {
             startAt = Find.TickManager.TicksGame;
@@ -27,7 +29,7 @@ namespace Adjustments.Puppeteer_Adjustments
         {
             base.Tick();
 
-            if (Find.TickManager.TicksGame > startAt + GenDate.TicksPerHour * 12f)
+            if (Find.TickManager.TicksGame > startAt + GenDate.TicksPerHour * 3f)
                 shouldRemove = true;
 
         }
@@ -36,10 +38,10 @@ namespace Adjustments.Puppeteer_Adjustments
         {
             base.ExposeData();
 
-            Scribe_Values.Look(ref Master, "hed-aug-m");
-            Scribe_Values.Look(ref Subject, "hed-aug-subj");
-            Scribe_Values.Look(ref shouldRemove, "hed-aug-should-rem");
-            Scribe_Values.Look(ref startAt, "hed-aug-start-at");
+            Scribe_Values.Look(ref Master, "hed-mm-mast");
+            Scribe_Values.Look(ref Subject, "hed-mm-sub");
+            Scribe_Values.Look(ref shouldRemove, "hed-mm-should-rem");
+            Scribe_Values.Look(ref startAt, "hed-mm-start-at");
 
         }
 

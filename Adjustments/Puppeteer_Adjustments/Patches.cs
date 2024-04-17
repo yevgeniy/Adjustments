@@ -33,7 +33,7 @@ namespace Adjustments.Puppeteer_Adjustments
                 __result -= .5f;
             }
 
-            if (diffSet.HasHediff(Defs.AJD_Augmented))
+            if (diffSet.HasHediff(Defs.ADJ_Augmented))
             {
                 __result += .5f;
             }

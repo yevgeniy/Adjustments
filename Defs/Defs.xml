@@ -70,6 +70,57 @@
 		</modExtensions>
 	</VFECore.Abilities.AbilityDef>
 	
+	<VFECore.Abilities.AbilityDef >
+	
+		<defName>ADJ_MindMerge</defName>
+		
+		<label>mind merge</label>
+		<description>The caster merges his mind with a willing target helping the host body with all his motor functions effectively doubling his consciousness.  It's like having two brains in one body.  The effect will last for for 3 hours and will leave the caster comatose for duration of effect plus additional hour afterwards.</description>
+		<warmupSound>VPE_PsycastCastingEffect</warmupSound>
+        <warmupMote>VPE_Mote_CastPsycast</warmupMote>
+		<gizmoClass>VanillaPsycastsExpanded.Command_Ability_Psycast</gizmoClass>
+		<cooldownTime>120</cooldownTime>
+		<rangeRingColor>(1, 1, 1)</rangeRingColor>
+		<radiusRingColor>(0.3, 0.8, 1)</radiusRingColor>
+		<requireLineOfSight>false</requireLineOfSight>
+		<jobDef>VFEA_GotoTargetAndUseAbility</jobDef>
+		<targetMode>Pawn</targetMode>
+		<range>999999</range>
+		<iconPath>Abilities/Puppeteer/SummonPuppet</iconPath>
+		<abilityClass>Adjustments.Puppeteer_Adjustments.Ability_MindMerge</abilityClass>
+		<castSound>VPEP_Brainleech_Cast</castSound>
+		<targetMode>Pawn</targetMode>
+		<distanceToTarget>1.5</distanceToTarget>
+		<needsTicking>true</needsTicking>
+		<drawAimPie>false</drawAimPie>
+		<targetingParameters>
+			<canTargetBuildings>False</canTargetBuildings>
+			<canTargetSelf>False</canTargetSelf>
+			<canTargetAnimals>False</canTargetAnimals>
+			<canTargetPawns>True</canTargetPawns>
+			<canTargetHumans>True</canTargetHumans>
+			<canTargetMechs>False</canTargetMechs>
+			
+		</targetingParameters>
+		<castTime>50</castTime>
+		<modExtensions>
+			<li Class="VanillaPsycastsExpanded.AbilityExtension_Psycast">
+				<path>VPEP_Puppeteer</path>
+				<level>4</level>
+				<order>1</order>
+				<psyfocusCost>0.25</psyfocusCost>
+				<entropyGain>0</entropyGain>
+				<psychic>True</psychic>
+				<prerequisites>
+					<li>VPEP_Puppet</li>
+				</prerequisites>
+			</li>
+			<li Class="Adjustments.Puppeteer_Adjustments.ValidatePawnTarget">
+			</li>
+		</modExtensions>
+		
+	</VFECore.Abilities.AbilityDef >
+	
 	
 	<HediffDef>
 		<defName>ADJ_Augmenting</defName>
@@ -79,10 +130,24 @@
 	</HediffDef>
 
 	<HediffDef>
-		<defName>AJD_Augmented</defName>
+		<defName>ADJ_Augmented</defName>
 		<label>Augmented Consciousness</label>
 		<description>Consciousness augmented by a puppeteer.</description>
 		<hediffClass>Adjustments.Puppeteer_Adjustments.Hediff_Augment</hediffClass>
+	</HediffDef>
+	
+	<HediffDef>
+		<defName>ADJ_MindMerging</defName>
+		<label>Mind Merging With</label>
+		<description>Merging own mind with another.</description>
+		<hediffClass>Adjustments.Puppeteer_Adjustments.Hediff_MindMerge</hediffClass>
+	</HediffDef>
+
+	<HediffDef>
+		<defName>ADJ_MindMerged</defName>
+		<label>Mind Merged With</label>
+		<description>Another is merging their mind with me.</description>
+		<hediffClass>Adjustments.Puppeteer_Adjustments.Hediff_MindMerge</hediffClass>
 	</HediffDef>
 
 </Defs>

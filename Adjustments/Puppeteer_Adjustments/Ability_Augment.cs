@@ -28,7 +28,7 @@ namespace Adjustments.Puppeteer_Adjustments
                 pawn.health.RemoveHediff(augmenting);
             }
             
-            var augmented = target.health.hediffSet.GetFirstHediffOfDef(Defs.AJD_Augmented) as Hediff_Augment;
+            var augmented = target.health.hediffSet.GetFirstHediffOfDef(Defs.ADJ_Augmented) as Hediff_Augment;
             
             if (augmented != null)
             {
@@ -41,7 +41,7 @@ namespace Adjustments.Puppeteer_Adjustments
             augmenting.Master = pawn;
             augmenting.Subject = target;
 
-            augmented = HediffMaker.MakeHediff(Defs.AJD_Augmented, target, target.health.hediffSet.GetBrain()) as Hediff_Augment;
+            augmented = HediffMaker.MakeHediff(Defs.ADJ_Augmented, target, target.health.hediffSet.GetBrain()) as Hediff_Augment;
             
             augmented.Master = pawn;
             augmented.Subject = target;
