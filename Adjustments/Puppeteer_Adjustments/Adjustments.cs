@@ -17,14 +17,19 @@ namespace Adjustments.Puppeteer_Adjustments
     {
         public static HediffDef BrainLeechHediff;
         public static HediffDef BrainLeechingHdeiff;
+        public static HediffDef VPEP_PuppetHediff;
+        public static FieldInfo Master;
 
         static Adjustments()
         {
             Puppeteer_change();
             BrainLeech_change();
+            GetMasterField();
 
             Remove();
-            
+
+
+            VPEP_PuppetHediff = DefDatabase<HediffDef>.AllDefs.FirstOrDefault(v => v.defName == "VPEP_Puppet");
 
             var pupPath = DefDatabase<PsycasterPathDef>.AllDefs.FirstOrDefault(v => v.defName == "VPEP_Puppeteer");
             if (pupPath != null)
@@ -70,6 +75,17 @@ namespace Adjustments.Puppeteer_Adjustments
             if (brainLeechAbility == null)
                 return;
             brainLeechAbility.castTime = 50;
+        }
+        private static void GetMasterField()
+        {
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            var type = assemblies.SelectMany(assembly => assembly.GetTypes())
+                .FirstOrDefault(v => v.Name == "Hediff_Puppet");
+
+            if (type == null)
+                return;
+
+            Master = type.GetField("master", BindingFlags.Public | BindingFlags.Instance);
         }
     }
 

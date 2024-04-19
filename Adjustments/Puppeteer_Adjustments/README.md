@@ -11,3 +11,7 @@
 
 - sets caster conc to 30 for 1 day
 - doubles conc of target
+
+### psychic surgew
+
+- master pours his mind to the pawn making them better but this will eventually hurt the host.
