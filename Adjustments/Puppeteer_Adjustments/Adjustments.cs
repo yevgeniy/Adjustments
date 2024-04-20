@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 using VanillaPsycastsExpanded;
@@ -17,18 +18,39 @@ namespace Adjustments.Puppeteer_Adjustments
     {
         public static HediffDef BrainLeechHediff;
         public static HediffDef BrainLeechingHdeiff;
+        public static HediffDef VPEP_PuppetHediff;
+        public static FieldInfo Master;
 
         static Adjustments()
         {
             Puppeteer_change();
             BrainLeech_change();
+            GetMasterField();
+            GetPuppetHediff();
 
             Remove();
-            
 
             var pupPath = DefDatabase<PsycasterPathDef>.AllDefs.FirstOrDefault(v => v.defName == "VPEP_Puppeteer");
             if (pupPath != null)
                 pupPath.ResolveReferences();
+
+        }
+
+        private static void GetPuppetHediff()
+        {
+            VPEP_PuppetHediff = DefDatabase<HediffDef>.AllDefs.FirstOrDefault(v => v.defName == "VPEP_Puppet");
+        }
+
+        private static void GetMasterField()
+        {
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            var type = assemblies.SelectMany(assembly => assembly.GetTypes())
+                .FirstOrDefault(v => v.Name == "Hediff_Puppet");
+
+            if (type == null)
+                return;
+
+            Master = type.GetField("master", BindingFlags.Public | BindingFlags.Instance);
         }
 
         private static void Remove()

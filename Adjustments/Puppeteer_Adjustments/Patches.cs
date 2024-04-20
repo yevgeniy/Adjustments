@@ -6,11 +6,40 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using VanillaPsycastsExpanded;
 using Verse;
 using static Verse.PawnCapacityUtility;
 
 namespace Adjustments.Puppeteer_Adjustments
 {
+    
+   [HarmonyPatch(typeof(Pawn_PsychicEntropyTracker), "EntropyToRelativeValue")]
+   public class entropy_relative_val
+    {
+        [HarmonyPrefix]
+        public static void prefix(Pawn_PsychicEntropyTracker __instance, ref float val)
+        {
+            var pawn = __instance.Psylink.pawn;
+
+            var c = pawn.health.hediffSet.hediffs.Where(v => v.def == Defs.ADJ_PsySurging).Count();
+            val += c * 20;
+        }
+    }
+
+   [HarmonyPatch(typeof(Pawn_PsychicEntropyTracker), "EntropyValue", MethodType.Getter)]
+    public class min_heat_fix
+    {
+        public static Type Hediff_PsycastAbilitiesType;
+        [HarmonyPostfix]
+        public static void prefix(Pawn_PsychicEntropyTracker __instance, ref float __result)
+        {
+            var pawn = __instance.Psylink.pawn;
+
+            var c = pawn.health.hediffSet.hediffs.Where(v => v.def == Defs.ADJ_PsySurging).Count();
+            __result += c * 20;
+                
+        }
+    }
 
     [HarmonyPatch(typeof(PawnCapacityUtility), "CalculateCapacityLevel")]
     public class calc_mindmerge_capacity
