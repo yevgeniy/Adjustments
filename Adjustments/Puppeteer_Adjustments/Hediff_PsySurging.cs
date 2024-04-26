@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using VanillaPsycastsExpanded;
@@ -12,6 +13,7 @@ namespace Adjustments.Puppeteer_Adjustments
 {
     public class Hediff_PsySurging : HediffWithComps
     {
+
         public override string Label => string.Join("\n", Subjects.Select(v => "Psy surging: " + v.LabelShort));
         public Pawn Master;
         public List<Pawn> Subjects=new List<Pawn>();
@@ -22,8 +24,10 @@ namespace Adjustments.Puppeteer_Adjustments
             base.PostAdd(dinfo);
         }
 
+
         public override void ExposeData()
         {
+            
             base.ExposeData();
 
             Scribe_Deep.Look(ref Master, "hed-mm-mast");
@@ -31,14 +35,17 @@ namespace Adjustments.Puppeteer_Adjustments
 
             if (Subjects == null)
                 Subjects = new List<Pawn>();
+
         }
         public void AddSubject(Pawn n)
         {
             Subjects.Add(n);
+
         }
         public void RemoveSubject(Pawn n)
         {
             Subjects.RemoveAll(v => v == n);
+
         }
     }
 }

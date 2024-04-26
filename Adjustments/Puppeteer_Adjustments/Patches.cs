@@ -4,9 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.SocialPlatforms;
 using VanillaPsycastsExpanded;
 using Verse;
 using static HarmonyLib.Code;
@@ -14,80 +16,80 @@ using static Verse.PawnCapacityUtility;
 
 namespace Adjustments.Puppeteer_Adjustments
 {
+
+
+
     [HarmonyPatch]
-    public class Pawn_PsychicEntropyTracker_should_use_prop_not_field
+    public class adjust_for_heat
     {
         [HarmonyTargetMethods]
         static IEnumerable<MethodBase> TargetMethods()
         {
-            var ignore = new string[] { "get_EntropyValue", "GetType" };
-            foreach (var meth in typeof(Pawn_PsychicEntropyTracker).GetMethods())
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            var type = assemblies.SelectMany(v => v.GetTypes()).FirstOrDefault(v => v.Name == "Hediff_PsycastAbilities");
+            yield return type.GetMethod("RecacheCurStage", BindingFlags.NonPublic | BindingFlags.Instance);
+        }
+        static void Adjust(object psyHediff)
+        {
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            var type = assemblies.SelectMany(v => v.GetTypes()).FirstOrDefault(v => v.Name == "Hediff_PsycastAbilities");
+            var field = type.GetField("pawn", BindingFlags.Public | BindingFlags.Instance);
+
+            var pawn = field.GetValue(psyHediff) as Pawn;
+            if (pawn == null)
             {
-                if (ignore.Contains(meth.Name))
-                    continue;
-                
-                yield return meth;
+                Log.Message("NO PAWN");
+                return;
             }
-                
+
+            var surgingHediff = pawn.health.hediffSet.GetFirstHediffOfDef(Defs.ADJ_PsySurging) as Hediff_PsySurging;
+            if (surgingHediff==null)
+            {
+                Log.Message("NOT SURGING");
+                return;
+            }
+
+
+            var c = surgingHediff.Subjects.Count;
+            var curStage = type.GetField("curStage", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(psyHediff) as HediffStage;
+            if (curStage==null)
+            {
+                Log.Message("NO CUR STAGE");
+                return;
+            }
+
+            curStage.statOffsets.FirstOrDefault(v => v.stat.defName == "VPE_PsychicEntropyMinimum").value += c * 20f;
 
         }
-
         [HarmonyTranspiler]
         static IEnumerable<CodeInstruction> Use_EntropyValue_insteadof_currentEntropy(IEnumerable<CodeInstruction> instructions, MethodBase original)
         {
 
-            //call instance float32 dog::get_Ent()
-            //stloc.0
-
-            foreach (var i in instructions)
+            var newinst = new List<CodeInstruction>();
+            for (var x = 0; x < instructions.ToList().Count; x++)
             {
-                
-                if (i.ToString()== "ldfld System.Single RimWorld.Pawn_PsychicEntropyTracker::currentEntropy")
+                var i = instructions.ToArray()[x];
+                if (i.ToString().Contains("Notify_HediffChanged") )
                 {
-                    var r = CodeInstruction.Call(typeof(Pawn_PsychicEntropyTracker), "get_EntropyValue");
 
-                    yield return r;
-                    continue;
+                    newinst.Add(CodeInstruction.Call(typeof(adjust_for_heat), nameof(Adjust)));
+                    newinst.Add(new CodeInstruction(OpCodes.Ldarg_0)); /*load this*/
+
                 }
+
+                newinst.Add(i);
+            }
+
+            foreach (var i in newinst)
+            {
+                Log.Message(i.ToString());
 
                 yield return i;
             }
-                
         }
     }
 
 
-   [HarmonyPatch(typeof(Pawn_PsychicEntropyTracker), "EntropyToRelativeValue")]
-   public class entropy_relative_val
-    {
-        [HarmonyPrefix]
-        public static void prefix(Pawn_PsychicEntropyTracker __instance, ref float val)
-        {
-            var pawn = __instance.Psylink.pawn;
-            var h = pawn.health.hediffSet.hediffs.FirstOrDefault(v => v.def == Defs.ADJ_PsySurging);
-            if (h!=null)
-            {
-                val += (h as Hediff_PsySurging).Subjects.Count * 20;
-            }            
-        }
-    }
-
-   [HarmonyPatch(typeof(Pawn_PsychicEntropyTracker), "EntropyValue", MethodType.Getter)]
-    public class min_heat_fix
-    {
-        public static Type Hediff_PsycastAbilitiesType;
-        [HarmonyPostfix]
-        public static void prefix(Pawn_PsychicEntropyTracker __instance, ref float __result)
-        {
-            var pawn = __instance.Psylink?.pawn;
-            if (pawn == null)
-                return;
-
-            var c = pawn.health.hediffSet.hediffs.Where(v => v.def == Defs.ADJ_PsySurging).Count();
-            __result += c * 20;
-                
-        }
-    }
 
     [HarmonyPatch(typeof(PawnCapacityUtility), "CalculateCapacityLevel")]
     public class calc_mindmerge_capacity

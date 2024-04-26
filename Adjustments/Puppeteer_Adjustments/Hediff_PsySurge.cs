@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -43,8 +44,15 @@ namespace Adjustments.Puppeteer_Adjustments
 
             curSleep = pawn.needs.rest.CurLevel;
             curEat = pawn.needs.food.CurLevel;
-        }
 
+            var h = Master.health.hediffSet.hediffs.FirstOrDefault(v => v.def.defName == "VPE_PsycastAbilityImplant");
+
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            var type = assemblies.SelectMany(v => v.GetTypes()).FirstOrDefault(v => v.Name == "Hediff_PsycastAbilities");
+            var meth = type.GetMethod("RecacheCurStage", BindingFlags.NonPublic | BindingFlags.Instance);
+
+            meth.Invoke(h, new object[] { });
+        }
 
         public override IEnumerable<Gizmo> GetGizmos()
         {
@@ -81,8 +89,17 @@ namespace Adjustments.Puppeteer_Adjustments
 
             pawn.needs.rest.CurLevel = curSleep / Paradox;
             pawn.needs.food.CurLevel = curEat / Paradox;
+
+            h = Master.health.hediffSet.hediffs.FirstOrDefault(v => v.def.defName == "VPE_PsycastAbilityImplant");
+
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            var type = assemblies.SelectMany(v => v.GetTypes()).FirstOrDefault(v => v.Name == "Hediff_PsycastAbilities");
+            var meth = type.GetMethod("RecacheCurStage", BindingFlags.NonPublic | BindingFlags.Instance);
+
+            meth.Invoke(h, new object[] { });
         }
 
+       
         public override void Tick()
         {
             base.Tick();

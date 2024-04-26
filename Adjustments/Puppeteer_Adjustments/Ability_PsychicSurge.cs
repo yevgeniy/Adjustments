@@ -3,6 +3,7 @@ using RimWorld.Planet;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -48,12 +49,11 @@ namespace Adjustments.Puppeteer_Adjustments
         }
         public override void Cast(params GlobalTargetInfo[] targets)
         {
-            base.Cast(targets);
 
             var target = targets[0].Thing as Pawn;
 
             Hediff_PsySurging masthed = pawn.health.hediffSet.GetFirstHediffOfDef(Defs.ADJ_PsySurging) as Hediff_PsySurging;
-            if (masthed==null)
+            if (masthed == null)
             {
                 masthed = HediffMaker.MakeHediff(Defs.ADJ_PsySurging, pawn, pawn.health.hediffSet.GetBrain()) as Hediff_PsySurging;
                 masthed.Master = pawn;
@@ -74,6 +74,16 @@ namespace Adjustments.Puppeteer_Adjustments
             {
                 this.AddEffecterToMaintain(SpawnEffecter(effectdef, target, this.pawn.Map, new Vector3(), 0.3f), target.Position, 60);
             }
+
+
+            base.Cast(targets);
+        }
+
+        public override void PostCast(params GlobalTargetInfo[] targets)
+        {
+            base.PostCast(targets);
+
+
         }
 
         public Effecter SpawnEffecter(EffecterDef effecterDef, Thing target, Map map, Vector3 offset, float scale)
