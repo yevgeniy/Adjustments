@@ -36,8 +36,8 @@ namespace Adjustments.Puppeteer_Adjustments
         {
             base.ExposeData();
 
-            Scribe_Values.Look(ref Master, "hed-aug-m");
-            Scribe_Values.Look(ref Subject, "hed-aug-subj");
+            Scribe_Deep.Look(ref Master, "hed-aug-m");
+            Scribe_Deep.Look(ref Subject, "hed-aug-subj");
             Scribe_Values.Look(ref shouldRemove, "hed-aug-should-rem");
             Scribe_Values.Look(ref startAt, "hed-aug-start-at");
 

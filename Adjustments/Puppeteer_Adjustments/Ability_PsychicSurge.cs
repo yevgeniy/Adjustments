@@ -52,18 +52,21 @@ namespace Adjustments.Puppeteer_Adjustments
 
             var target = targets[0].Thing as Pawn;
 
-
-            
-            var masthed = HediffMaker.MakeHediff(Defs.ADJ_PsySurging, pawn, pawn.health.hediffSet.GetBrain()) as Hediff_PsySurging;
-            masthed.Master = pawn;
-            masthed.Subject = target;
-            
+            Hediff_PsySurging masthed = pawn.health.hediffSet.GetFirstHediffOfDef(Defs.ADJ_PsySurging) as Hediff_PsySurging;
+            if (masthed==null)
+            {
+                masthed = HediffMaker.MakeHediff(Defs.ADJ_PsySurging, pawn, pawn.health.hediffSet.GetBrain()) as Hediff_PsySurging;
+                masthed.Master = pawn;
+                masthed.AddSubject(target);
+                pawn.health.AddHediff(masthed, pawn.health.hediffSet.GetBrain());
+            }
+            else
+                masthed.AddSubject(target);
 
             var hed = HediffMaker.MakeHediff(Defs.ADJ_PsySurged, target, target.health.hediffSet.GetBrain()) as Hediff_PsySurge;
             hed.Master = pawn;
             hed.Subject = target;
 
-            pawn.health.AddHediff(masthed, pawn.health.hediffSet.GetBrain());
             target.health.AddHediff(hed, target.health.hediffSet.GetBrain());
 
             var effectdef = DefDatabase<EffecterDef>.AllDefs.FirstOrDefault(v => v.defName == "VPEP_PsycastSkipFlashPurple");

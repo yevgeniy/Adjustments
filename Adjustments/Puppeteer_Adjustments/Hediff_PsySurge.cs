@@ -17,6 +17,8 @@ namespace Adjustments.Puppeteer_Adjustments
         public Pawn Master;
         public Pawn Subject;
 
+        private float curSleep;
+        private float curEat;
         public enum State
         {
             Surge,
@@ -38,7 +40,11 @@ namespace Adjustments.Puppeteer_Adjustments
             lastCheck = Find.TickManager.TicksGame;
             Paradox = 1;
             state = State.Surge;
+
+            curSleep = pawn.needs.rest.CurLevel;
+            curEat = pawn.needs.food.CurLevel;
         }
+
 
         public override IEnumerable<Gizmo> GetGizmos()
         {
@@ -65,13 +71,16 @@ namespace Adjustments.Puppeteer_Adjustments
             lastCheck = Find.TickManager.TicksGame;
 
             var h = Master.health.hediffSet.hediffs.FirstOrDefault(v => 
-                v.def == Defs.ADJ_PsySurging && (v as Hediff_PsySurging).Master == Master && (v as Hediff_PsySurging).Subject==Subject 
+                v.def == Defs.ADJ_PsySurging && (v as Hediff_PsySurging).Master == Master && (v as Hediff_PsySurging).Subjects.Contains(Subject)
             );
             if (h != null)
             {
                 Log.Message("REMOVING");
-                Master.health.RemoveHediff(h);
+                (h as Hediff_PsySurging).RemoveSubject(Subject);
             }
+
+            pawn.needs.rest.CurLevel = curSleep / Paradox;
+            pawn.needs.food.CurLevel = curEat / Paradox;
         }
 
         public override void Tick()
@@ -83,6 +92,9 @@ namespace Adjustments.Puppeteer_Adjustments
 
             if (state == State.Surge)
             {
+                pawn.needs.rest.CurLevel = pawn.needs.rest.MaxLevel;
+                pawn.needs.food.CurLevel = pawn.needs.food.MaxLevel;
+
                 if (Find.TickManager.TicksGame > lastCheck + GenDate.TicksPerHour)
                 {
                     lastCheck = Find.TickManager.TicksGame;
@@ -104,7 +116,7 @@ namespace Adjustments.Puppeteer_Adjustments
                     lastCheck = Find.TickManager.TicksGame;
 
                     Paradox--;
-                    Log.Message("PARADOX empty: " + Paradox);
+                    Log.Message("PARADOX emptying: " + Paradox);
                     ApplyWound();
 
                     if (Paradox == 0)
@@ -126,12 +138,14 @@ namespace Adjustments.Puppeteer_Adjustments
         {
             base.ExposeData();
 
-            Scribe_Values.Look(ref Master, "hed-sp-m");
-            Scribe_Values.Look(ref Subject, "hed-sp-subj");
+            Scribe_Deep.Look(ref Master, "hed-sp-m");
+            Scribe_Deep.Look(ref Subject, "hed-sp-subj");
             Scribe_Values.Look(ref shouldRemove, "hed-sp-should-rem");
             Scribe_Values.Look(ref lastCheck, "hed-sp-lastch");
             Scribe_Values.Look(ref Paradox, "hed-sp-paradox");
             Scribe_Values.Look(ref state, "hed-sp-state");
+            Scribe_Values.Look(ref curSleep, "hed-sp-cursl");
+            Scribe_Values.Look(ref curEat, "hed-sp-cureat");
         }
 
     }

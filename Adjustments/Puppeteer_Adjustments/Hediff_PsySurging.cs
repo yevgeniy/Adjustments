@@ -12,9 +12,10 @@ namespace Adjustments.Puppeteer_Adjustments
 {
     public class Hediff_PsySurging : HediffWithComps
     {
-        public override string Label => "psy surging: " + Subject.LabelShort + " \n" + "That is the question";
+        public override string Label => string.Join("\n", Subjects.Select(v => "Psy surging: " + v.LabelShort));
         public Pawn Master;
-        public Pawn Subject;
+        public List<Pawn> Subjects=new List<Pawn>();
+        public override bool ShouldRemove => Subjects.Count == 0;
 
         public override void PostAdd(DamageInfo? dinfo)
         {
@@ -25,9 +26,19 @@ namespace Adjustments.Puppeteer_Adjustments
         {
             base.ExposeData();
 
-            Scribe_Values.Look(ref Master, "hed-mm-mast");
-            Scribe_Values.Look(ref Subject, "hed-mm-sub");
+            Scribe_Deep.Look(ref Master, "hed-mm-mast");
+            Scribe_Deep.Look(ref Subjects, "hed-mm-sub");
 
+            if (Subjects == null)
+                Subjects = new List<Pawn>();
+        }
+        public void AddSubject(Pawn n)
+        {
+            Subjects.Add(n);
+        }
+        public void RemoveSubject(Pawn n)
+        {
+            Subjects.RemoveAll(v => v == n);
         }
     }
 }
