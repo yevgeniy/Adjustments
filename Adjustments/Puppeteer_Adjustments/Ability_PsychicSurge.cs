@@ -20,6 +20,12 @@ namespace Adjustments.Puppeteer_Adjustments
             var targetPawn = target.Pawn as Pawn;
             if (targetPawn != null)
             {
+                var exclusives = new string[] { "ADJ_Augmented", "ADJ_MindMerged", "ADJ_PsySurged" };
+                if (targetPawn.health.hediffSet.hediffs.Any(v => exclusives.Contains(v.def.defName)))
+                {
+                    return false;
+                }
+
                 var hediff = targetPawn.health.hediffSet.GetFirstHediffOfDef(Adjustments.VPEP_PuppetHediff);
                 if (hediff == null)
                 {
@@ -42,6 +48,7 @@ namespace Adjustments.Puppeteer_Adjustments
                     Log.Message("WRONG MASTER");
                     return false;
                 }
+
 
             }
 

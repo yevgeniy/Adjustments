@@ -101,6 +101,14 @@ namespace Adjustments.Puppeteer_Adjustments
                     __result = Math.Max(__result, capacity.minValue);
                 }
             }
+            else if (capacity.defName == "Moving")
+            {
+                if (diffSet.HasHediff(Defs.ADJ_MindMerged))
+                {
+                    __result += .3f;
+                    __result = Math.Max(__result, capacity.minValue);
+                }
+            }
         }
     }
 

@@ -14,6 +14,17 @@ namespace Adjustments.Puppeteer_Adjustments
 {
     public class Ability_Augment:Ability
     {
+        public override bool ValidateTarget(LocalTargetInfo target, bool showMessages = true)
+        {
+            var exclusives = new string[] { "ADJ_Augmented", "ADJ_MindMerged", "ADJ_PsySurged", "VPEP_Puppet" };
+            var pawn = target.Thing as Pawn;
+            if (pawn.health.hediffSet.hediffs.Any(v => exclusives.Contains(v.def.defName)))
+            {
+                return false;
+            }
+
+            return base.ValidateTarget(target, showMessages);
+        }
         public override void Cast(params GlobalTargetInfo[] targets)
         {
             base.Cast(targets);

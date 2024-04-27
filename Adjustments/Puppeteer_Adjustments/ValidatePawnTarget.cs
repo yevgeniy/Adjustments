@@ -14,6 +14,7 @@ namespace Adjustments.Puppeteer_Adjustments
         {
             if (target.HasThing && target.Pawn!=null)
             {
+                var pawn = target.Pawn;
                 return true;
             }
             return false;

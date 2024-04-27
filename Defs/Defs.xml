@@ -211,7 +211,7 @@
 
 	</HediffDef>
 	
-		<HediffDef>
+	<HediffDef>
 		<defName>ADJ_PsySurged</defName>
 		<label>psychic surge</label>
 		<description>Mind is being pushed beyond safe limits.  Eventually paradox will take over and start damaging the body.</description>
