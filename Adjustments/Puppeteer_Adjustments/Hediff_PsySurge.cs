@@ -20,7 +20,7 @@ namespace Adjustments.Puppeteer_Adjustments
 
         private float curSleep;
         private float curEat;
-        public enum State
+        public enum State : byte
         {
             Surge,
             Paradox
@@ -56,17 +56,17 @@ namespace Adjustments.Puppeteer_Adjustments
 
         public override IEnumerable<Gizmo> GetGizmos()
         {
-
-            yield return new Command_Action
-            {
-                defaultLabel = "Cancel psychic surge",
-                defaultDesc = "Cancel psychic surge and allow paradox to manifest.  New psycic surge cannot be established until all current paradox dissipates.",
-                icon = ContentFinder<Texture2D>.Get("Effects/Technomancer/BreakLink/BreakLinkRockConstruct"),
-                action = delegate
+            if (state==State.Surge)
+                yield return new Command_Action
                 {
-                    CancelSurge();
-                }
-            };
+                    defaultLabel = "Cancel psychic surge",
+                    defaultDesc = "Cancel psychic surge and allow paradox to manifest.  New psycic surge cannot be established until all current paradox dissipates.",
+                    icon = ContentFinder<Texture2D>.Get("Effects/Technomancer/BreakLink/BreakLinkRockConstruct"),
+                    action = delegate
+                    {
+                        CancelSurge();
+                    }
+                };
 
             var basegiz = base.GetGizmos();
             foreach (var i in basegiz)
@@ -148,6 +148,24 @@ namespace Adjustments.Puppeteer_Adjustments
 
         private void ApplyWound()
         {
+            var wounds = new string[] { "Crush", "Burn", "Crack", "Cut", "Shredded", "Frostbite", "AcidBurn"  };
+
+            var allParts = Subject.health.hediffSet.GetNotMissingParts().ToList();
+            var injuredParts = Subject.health.hediffSet.GetInjuredParts().ToList();
+            var nonInjuredParts = allParts.Where(v => !injuredParts.Contains(v)).ToList();
+
+            var n = wounds.RandomElement();
+            Log.Message(n);
+            var def = DefDatabase<HediffDef>.AllDefs.First(v => v.defName == n);
+            var part = nonInjuredParts.Count == 0 ? injuredParts.RandomElement() : nonInjuredParts.RandomElement();
+            Log.Message(part.def.defName);
+            var hediff = HediffMaker.MakeHediff(def, Subject, part);
+            hediff.Severity = 1f;
+
+            Subject.health.AddHediff(hediff);
+
+            //!this.GetNotMissingParts(BodyPartHeight.Undefined, BodyPartDepth.Undefined, null, null).Contains<BodyPartRecord>(hediff.Part)
+
             Log.Message("APPLY WOUND");
         }
 
@@ -155,8 +173,8 @@ namespace Adjustments.Puppeteer_Adjustments
         {
             base.ExposeData();
 
-            Scribe_Deep.Look(ref Master, "hed-sp-m");
-            Scribe_Deep.Look(ref Subject, "hed-sp-subj");
+            Scribe_References.Look(ref Master, "hed-sp-m");
+            Scribe_References.Look(ref Subject, "hed-sp-subj");
             Scribe_Values.Look(ref shouldRemove, "hed-sp-should-rem");
             Scribe_Values.Look(ref lastCheck, "hed-sp-lastch");
             Scribe_Values.Look(ref Paradox, "hed-sp-paradox");

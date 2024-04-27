@@ -30,8 +30,8 @@ namespace Adjustments.Puppeteer_Adjustments
             
             base.ExposeData();
 
-            Scribe_Deep.Look(ref Master, "hed-mm-mast");
-            Scribe_Deep.Look(ref Subjects, "hed-mm-sub");
+            Scribe_References.Look(ref Master, "hed-spi-mast");
+            Scribe_Collections.Look(ref Subjects, "hed-spi-sub", LookMode.Reference);
 
             if (Subjects == null)
                 Subjects = new List<Pawn>();

@@ -71,10 +71,8 @@ namespace Adjustments.Puppeteer_Adjustments
                 var i = instructions.ToArray()[x];
                 if (i.ToString().Contains("Notify_HediffChanged") )
                 {
-
                     newinst.Add(CodeInstruction.Call(typeof(adjust_for_heat), nameof(Adjust)));
                     newinst.Add(new CodeInstruction(OpCodes.Ldarg_0)); /*load this*/
-
                 }
 
                 newinst.Add(i);
@@ -82,8 +80,6 @@ namespace Adjustments.Puppeteer_Adjustments
 
             foreach (var i in newinst)
             {
-                Log.Message(i.ToString());
-
                 yield return i;
             }
         }
@@ -136,6 +132,13 @@ namespace Adjustments.Puppeteer_Adjustments
             }
 
             __result = Mathf.Clamp(__result, 0f, 1.2f);
+
+
+            if (diffSet.HasHediff(Defs.ADJ_PsySurged))
+            {
+                __result += .6f;
+            }
+
             __result = GenMath.RoundedHundredth(__result);
         }
     }

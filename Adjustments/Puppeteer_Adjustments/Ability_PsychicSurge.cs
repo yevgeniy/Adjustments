@@ -83,7 +83,7 @@ namespace Adjustments.Puppeteer_Adjustments
         {
             base.PostCast(targets);
 
-
+            
         }
 
         public Effecter SpawnEffecter(EffecterDef effecterDef, Thing target, Map map, Vector3 offset, float scale)
