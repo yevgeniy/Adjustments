@@ -3,7 +3,9 @@ using RimWorld;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Management.Instrumentation;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -144,4 +146,34 @@ namespace Adjustments
         }
     }
 
+
+    [HarmonyPatch]
+    public class patch_pawn_expose_data
+    {
+
+        [HarmonyTargetMethods]
+        static IEnumerable<MethodBase> TargetMethods()
+        {
+
+            yield return typeof(Pawn).GetMethod("ExposeData", BindingFlags.Public | BindingFlags.Instance);
+        }
+
+        [HarmonyTranspiler]
+        static IEnumerable<CodeInstruction> transpile(IEnumerable<CodeInstruction> instructions, MethodBase original)
+        {
+
+            var newinstructions = new List<CodeInstruction>();
+            foreach(var i in instructions)
+            {
+                if (i.ToString().Contains("ret"))
+                {
+                    newinstructions.Add(new CodeInstruction(OpCodes.Ldarg_0));
+                    newinstructions.Add(CodeInstruction.Call(typeof(Char_Manager), nameof(Char_Manager.ExposeDataSurgeryAndPreach)));
+                }
+                newinstructions.Add(i);
+            }
+
+            return newinstructions;
+        }
+    }
 }

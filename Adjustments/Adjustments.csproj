@@ -241,6 +241,7 @@
     <Compile Include="Brand_Comp.cs" />
     <Compile Include="Brand_Dialog.cs" />
     <Compile Include="Char_Adjustments.cs" />
+    <Compile Include="Char_Manager.cs" />
     <Compile Include="Char_Panel.cs" />
     <Compile Include="Char_Patches.cs" />
     <Compile Include="Haul_Adjustments.cs" />

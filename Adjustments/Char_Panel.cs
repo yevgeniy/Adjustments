@@ -64,6 +64,38 @@ namespace Adjustments
             RenderAssign(new Rect(0,0,r.width, 150f));
             Widgets.EndGroup();
 
+            var r4 = new Rect(r3.x, r3.y + 150f, r.width, 80f);
+            Widgets.BeginGroup(r4);
+            RenderMisc(new Rect(0, 0, r.width, 80f), pawn);
+            Widgets.EndGroup();
+
+        }
+
+        private static void RenderMisc(Rect rect, Pawn pawn)
+        {
+            var anchor = Text.Anchor;
+            var font = Text.Font;
+            
+            Text.Anchor = TextAnchor.MiddleLeft;
+            Text.Font = GameFont.Tiny;
+
+            /* can do surgery label */
+            var text = "Can Do Surgery:";
+            var size = Text.CalcSize(text);
+            var r1 = new Rect(0, 0, size.x + 50f, size.y);
+            var canDoSurgery = Char_Manager.CanDoSurgery(pawn);
+            Widgets.CheckboxLabeled(r1, text, ref canDoSurgery);
+            Char_Manager.CanDoSurgery(pawn, canDoSurgery);
+
+            var text2 = "Can Preach:";
+            var size2 = Text.CalcSize(text2);
+            var r2 = new Rect(size.x + 200f, 0, size2.x + 50f, size2.y);
+            var canDoPreach = Char_Manager.CanDoPreach(pawn);
+            Widgets.CheckboxLabeled(r2, text2, ref canDoPreach);
+            Char_Manager.CanDoPreach(pawn, canDoPreach);
+
+            Text.Anchor = anchor;
+            Text.Font = font;
         }
 
         private static void RenderSchedule(Rect r)
