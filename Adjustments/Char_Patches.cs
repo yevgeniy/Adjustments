@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using Verse;
+using Verse.AI;
 
 namespace Adjustments
 {
@@ -24,7 +25,16 @@ namespace Adjustments
         [HarmonyPostfix]
         public static void Postfix(ref List<PawnColumnDef> __result)
         {
-            MainTabWindow_Inspect tabWindow = (MainTabWindow_Inspect)Find.MainTabsRoot.OpenTab.TabWindow;
+            if (Find.MainTabsRoot?.OpenTab?.TabWindow==null)
+            {
+                return;
+            }
+
+            MainTabWindow_Inspect tabWindow = Find.MainTabsRoot.OpenTab.TabWindow as MainTabWindow_Inspect;
+            if (tabWindow == null)
+            {
+                return;
+            }
 
             if (tabWindow.CurTabs == null)
             {
@@ -112,7 +122,9 @@ namespace Adjustments
         [HarmonyPrefix]
         public static bool prefixer(PawnTable __instance)
         {
-            MainTabWindow_Inspect tabWindow = (MainTabWindow_Inspect)Find.MainTabsRoot.OpenTab.TabWindow;
+            MainTabWindow_Inspect tabWindow = Find.MainTabsRoot.OpenTab.TabWindow as MainTabWindow_Inspect;
+            if (tabWindow == null)
+                return true;
 
             if (tabWindow.CurTabs == null)
             {
@@ -174,6 +186,46 @@ namespace Adjustments
             }
 
             return newinstructions;
+        }
+    }
+
+    [HarmonyPatch(typeof(WorkGiver_Scanner), "HasJobOnThing")]
+    class can_do_preaching
+    {
+        [HarmonyPostfix]
+        public static void HasJobOnThingPatch(WorkGiver_Scanner __instance, ref bool __result, Pawn pawn, Thing t, bool forced = false)
+        {
+            if (__instance is WorkGiver_Warden_Enslave
+                    || __instance is WorkGiver_Warden_Chat
+                    || __instance is WorkGiver_Warden_Convert)
+            {
+                if (__result)
+                {
+                    var canDo = Char_Manager.CanDoPreach(pawn);
+                    if (!canDo)
+                    {
+                        __result = false;
+                        JobFailReason.Is("Not allowed to preach", null);
+                    }
+                }
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(Bill), "PawnAllowedToStartAnew")]
+    class can_do_surgery
+    {
+        [HarmonyPrefix]
+        public static bool PawnAllowedToStartAnewPatch(Bill __instance, ref bool __result, Pawn p)
+        {
+            if (__instance is Bill_Medical)
+            {
+                JobFailReason.Is("Not allowed to do surgery", __instance.Label);
+                __result = Char_Manager.CanDoSurgery(p);
+                return false;
+            }
+
+            return true;
         }
     }
 }

@@ -16,7 +16,10 @@ namespace Adjustments
 
             if (Find.Selector.SingleSelectedThing != null && Find.Selector.SingleSelectedThing is Pawn pawn)
             {
-                MainTabWindow_Inspect tabWindow = (MainTabWindow_Inspect)Find.MainTabsRoot.OpenTab.TabWindow;
+                MainTabWindow_Inspect tabWindow = Find.MainTabsRoot.OpenTab.TabWindow as MainTabWindow_Inspect;
+                if (tabWindow == null)
+                    return;
+
                 if (tabWindow.CurTabs == null)
                 {
                     return;
