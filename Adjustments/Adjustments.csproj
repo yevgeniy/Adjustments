@@ -263,6 +263,9 @@
     <Compile Include="Puppeteer_Adjustments\Hediff_PsySurge.cs" />
     <Compile Include="Puppeteer_Adjustments\Patches.cs" />
     <Compile Include="Puppeteer_Adjustments\ValidatePawnTarget.cs" />
+    <Compile Include="Remember_Weapon\Adjustments.cs" />
+    <Compile Include="Remember_Weapon\Manager.cs" />
+    <Compile Include="Remember_Weapon\Patches.cs" />
     <Compile Include="Surg_Patches.cs" />
     <Compile Include="Rel_WorkGiverDefOf.cs" />
     <Compile Include="Rel_AmmoProxy.cs" />
