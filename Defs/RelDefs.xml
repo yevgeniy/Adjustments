@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Defs>
+
+	
+	
+	<JobDef>
+		<defName>ReloadInStorage</defName>
+		<driverClass>Adjustments.Rel_Driver_ReloadInStorage</driverClass>
+		<reportString>Reloading TargetA in storage</reportString>
+	</JobDef>
+	
+
+	<WorkGiverDef>
+		<defName>ReloadWeaponsScan</defName>
+		<label>reloading in storage</label>
+		<giverClass>Adjustments.Rel_WorkGiver_ReloadInStorage</giverClass>
+		<workType>Hauling</workType>
+		<verb>reload</verb>
+		<gerund>reloading</gerund>
+		<priorityInType>150</priorityInType>
+		<requiredCapacities>
+			<li>Manipulation</li>
+		</requiredCapacities>
+	</WorkGiverDef>
+	
+</Defs>

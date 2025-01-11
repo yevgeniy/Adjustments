@@ -95,11 +95,22 @@ namespace Adjustments.Puppeteer_Adjustments
         {
             if (capacity.defName== "Consciousness")
             {
+                if (diffSet.HasHediff(Adjustments.BrainLeechingHdeiff))
+                {
+                    __result += .5f;
+                }
+                if (diffSet.HasHediff(Defs.ADJ_Augmented))
+                {
+                    __result += .5f;
+                }
+                __result = Mathf.Clamp(__result, 0f, 1.2f);
+
                 if (diffSet.HasHediff(Defs.ADJ_MindMerged))
                 {
                     __result *= 2;
                     __result = Math.Max(__result, capacity.minValue);
                 }
+                __result = GenMath.RoundedHundredth(__result);
             }
             else if (capacity.defName == "Moving")
             {
@@ -107,6 +118,10 @@ namespace Adjustments.Puppeteer_Adjustments
                 {
                     __result += .3f;
                     __result = Math.Max(__result, capacity.minValue);
+                }
+                if (diffSet.HasHediff(Defs.ADJ_PsySurged))
+                {
+                    __result += .6f;
                 }
             }
         }
@@ -124,22 +139,12 @@ namespace Adjustments.Puppeteer_Adjustments
                 __result -= .5f;                    
             }
 
-            if (diffSet.HasHediff(Adjustments.BrainLeechingHdeiff))
-            {
-                __result += .5f;
-            }
-
             if (diffSet.HasHediff(Defs.ADJ_Augmenting))
             {
                 __result -= .5f;
             }
 
-            if (diffSet.HasHediff(Defs.ADJ_Augmented))
-            {
-                __result += .5f;
-            }
-
-            __result = Mathf.Clamp(__result, 0f, 1.2f);
+            __result = Mathf.Max(0f, __result);
 
 
             if (diffSet.HasHediff(Defs.ADJ_PsySurged))

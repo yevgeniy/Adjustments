@@ -10,9 +10,9 @@ using Verse.Noise;
 
 namespace Adjustments
 {
-    public class Brand_Manager : MapComponent
+    public class Brand_Map : MapComponent
     {
-        public Brand_Manager(Map map) : base(map)
+        public Brand_Map(Map map) : base(map)
         {
         }
 
@@ -65,6 +65,9 @@ namespace Adjustments
         public override void MapComponentOnGUI()
         {
             base.MapComponentOnGUI();
+
+            if (!Adjustments_Settings.BrandingActive)
+                return;
 
             if (Paused)
             {                

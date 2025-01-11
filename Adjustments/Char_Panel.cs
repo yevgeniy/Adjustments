@@ -1,4 +1,5 @@
-﻿using RimWorld;
+﻿using Adjustments.Remember_Weapon;
+using RimWorld;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -87,12 +88,20 @@ namespace Adjustments
             Widgets.CheckboxLabeled(r1, text, ref canDoSurgery);
             Char_Manager.CanDoSurgery(pawn, canDoSurgery);
 
+            /* can preach */
             var text2 = "Can Preach:";
             var size2 = Text.CalcSize(text2);
             var r2 = new Rect(size.x + 200f, 0, size2.x + 50f, size2.y);
             var canDoPreach = Char_Manager.CanDoPreach(pawn);
             Widgets.CheckboxLabeled(r2, text2, ref canDoPreach);
             Char_Manager.CanDoPreach(pawn, canDoPreach);
+
+            /* weapon memory */
+            var text3 = Manager.GetWeaponName(pawn);
+            text3 = string.IsNullOrEmpty(text3) ? string.Empty : text3;
+            var size3 = Text.CalcSize(text3);
+            var r3 = new Rect(r2.x + r2.width + 50f, 0, size3.x, size3.y);
+            Widgets.Label(r3, text3);
 
             Text.Anchor = anchor;
             Text.Font = font;

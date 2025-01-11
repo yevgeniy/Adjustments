@@ -42,8 +42,18 @@ namespace Adjustments
             Scribe_Values.Look(ref IconName, "adj-icon-name");
         }
     }
+
+    [StaticConstructorOnStartup]
     public class Brand_Comp : ThingComp
     {
+        static Brand_Comp()
+        {
+            foreach (ThingDef thingDef in DefDatabase<ThingDef>.AllDefs.Where(thingDef =>
+                    thingDef.race != null))
+            {
+                thingDef.comps.Add(new CompProperties { compClass = typeof(Brand_Comp) });
+            }
+        }
         public static Brand_Comp Comp(Pawn pawn)
         {
             return pawn.GetComp<Brand_Comp>();
@@ -77,7 +87,7 @@ namespace Adjustments
         public void RemoveBrand(Brand brand)
         {
             _brands.Remove(brand);
-            Brand_Manager.Invalidate = true;
+            Brand_Map.Invalidate = true;
         }
         public void AddBrand(Color c, string iconName)
         {
@@ -86,7 +96,7 @@ namespace Adjustments
                 Color = c,
                 IconName = iconName
             });
-            Brand_Manager.Invalidate = true;
+            Brand_Map.Invalidate = true;
         }
 
         public static void ShowDialog(Pawn pawn)
@@ -96,6 +106,8 @@ namespace Adjustments
 
         public override void DrawGUIOverlay()
         {
+            if (!Adjustments_Settings.BrandingActive)
+                return;
 
             if (!Paused)
                 return;

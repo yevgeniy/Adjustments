@@ -54,11 +54,7 @@ namespace Adjustments
 
         private static void AdjustDict()
         {
-            foreach (ThingDef thingDef in DefDatabase<ThingDef>.AllDefs.Where(thingDef =>
-                    thingDef.race != null))
-            {
-                thingDef.comps.Add(new CompProperties { compClass = typeof(Brand_Comp) });
-            }
+            
 
             /*replace all fat and hulking female bodytypes to normal*/
             var femaleBodyType = DefDatabase<BodyTypeDef>.AllDefs.First(v => v.defName == "Female");

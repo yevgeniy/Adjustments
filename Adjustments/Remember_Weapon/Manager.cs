@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,14 +10,33 @@ namespace Adjustments.Remember_Weapon
 {
     public class Manager
     {
-        public static void SetWeapon(Pawn pawn, string name)
+        public static Dictionary<Pawn, string> WeaponMemory = new Dictionary<Pawn, string>();
+        public static string GetWeaponName(Pawn pawn)
         {
-
+            return WeaponMemory.ContainsKey(pawn) ? WeaponMemory[pawn] : null;       
+        }
+        public static void SetWeaponName(Pawn pawn, string name)
+        {
+            if (String.IsNullOrEmpty(name))
+            {
+                if (WeaponMemory.ContainsKey(pawn))
+                {
+                    WeaponMemory.Remove(pawn);
+                }
+            }
+            else
+            {
+                WeaponMemory[pawn] = name;
+            }
         }
 
         public static void ExposeWeaponData(Pawn pawn)
         {
-            Log.Message("SAVE WEAPON FOR PAWN: " + pawn);
+            string weaponMemory = GetWeaponName(pawn);
+            Scribe_Values.Look(ref weaponMemory, "pawn-weap-mem");
+
+            SetWeaponName(pawn, weaponMemory);
         }
+
     }
 }

@@ -17,6 +17,7 @@ namespace Adjustments
     public class show_brand_dialog_button
     {
 
+        [HarmonyTranspiler]
         public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
             MethodInfo LifestageAndXenotypeOptions = AccessTools.Method(typeof(CharacterCardUtility), "LifestageAndXenotypeOptions");
@@ -25,6 +26,7 @@ namespace Adjustments
             bool found = false;
             foreach (CodeInstruction i in instructions)
             {
+                Log.Message("looking");
                 if (found)
                 {
                     yield return new CodeInstruction(OpCodes.Ldarg_0) { labels = i.labels.ListFullCopy() };//rect
@@ -56,8 +58,11 @@ namespace Adjustments
 
         public static void DesigCardToggle(Rect rect, Pawn pawn, Rect creationRect)
         {
+            if (!Adjustments_Settings.BrandingActive) return;
+
             if (pawn == null) return;
             if (Brand_Comp.Comp(pawn) == null) return;
+
 
             Rect rectNew = new Rect(CharacterCardUtility.BasePawnCardSize.x - 50f, 2f, 24f, 24f);
             
