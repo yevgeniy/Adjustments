@@ -48,8 +48,8 @@ namespace Adjustments
         private static void ShowMore()
         {
             IsShowMore = !IsShowMore;
-            if (IsShowMore)
-                Char_Panel.Reset();
+            //if (IsShowMore)
+            //    Char_Panel.Reset();
         }
     }
     

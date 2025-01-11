@@ -13,114 +13,156 @@ namespace Adjustments
 {
     public class Char_Panel
     {
-        static MainTabWindow_Work WorkWindow;
-        static MainTabWindow_Assign AssignWindow;
-        static MainTabWindow_Schedule ScheduleWindow;
-        public static void Reset()
-        {
-            WorkWindow = new MainTabWindow_Work
-            {
-                def = DefDatabase<MainButtonDef>.AllDefs.First(v => v.defName == "Work")
-            };
-            WorkWindow.PostOpen();
+        //static MainTabWindow_Work WorkWindow;
+        //static MainTabWindow_Assign AssignWindow;
+        //static MainTabWindow_Schedule ScheduleWindow;
+        //public static void Reset()
+        //{
+        //    WorkWindow = new MainTabWindow_Work
+        //    {
+        //        def = DefDatabase<MainButtonDef>.AllDefs.First(v => v.defName == "Work")
+        //    };
+        //    WorkWindow.PostOpen();
 
 
-            AssignWindow = new MainTabWindow_Assign
-            {
-                def = DefDatabase<MainButtonDef>.AllDefs.First(v => v.defName == "Assign")
-            };
-            AssignWindow.PostOpen();
+        //    AssignWindow = new MainTabWindow_Assign
+        //    {
+        //        def = DefDatabase<MainButtonDef>.AllDefs.First(v => v.defName == "Assign")
+        //    };
+        //    AssignWindow.PostOpen();
 
-            ScheduleWindow = new MainTabWindow_Schedule
-            {
-                def = DefDatabase<MainButtonDef>.AllDefs.First(v => v.defName == "Schedule")
-            };
-            ScheduleWindow.PostOpen();
+        //    ScheduleWindow = new MainTabWindow_Schedule
+        //    {
+        //        def = DefDatabase<MainButtonDef>.AllDefs.First(v => v.defName == "Schedule")
+        //    };
+        //    ScheduleWindow.PostOpen();
 
 
-        }
+        //}
         private static Pawn SelectedPawn = null;
         public static void Fill(Rect inRect, Pawn pawn)
         {
             if (SelectedPawn==null || !Find.Selector.SingleSelectedThing.Equals(SelectedPawn))
             {
-                Reset();
+                //Reset();
                 SelectedPawn = Find.Selector.SingleSelectedThing as Pawn;
             }
+            var anchor = Text.Anchor;
+            var font = Text.Font;
+
+            Text.Anchor = TextAnchor.MiddleLeft;
+            Text.Font = GameFont.Tiny;
+
+
             var r = inRect.ContractedBy(7f);
 
-            var r1 = new Rect(r.x, r.y, r.width, 150f);
-            Widgets.BeginGroup(r1);
-            RenderSchedule(new Rect(0,0, r.width, 150f));
-            Widgets.EndGroup();
+
+            Listing_Standard listingStandard = new Listing_Standard();
+            listingStandard.Begin(new Rect(r.x, r.y, r.width/4, r.height));
+
+            /*surgery*/
+            var surgery=Char_Manager.CanDoSurgery(pawn);
+            listingStandard.CheckboxLabeled("Can Do Surgery:", ref surgery, "Allow pawn to do surgery.");
+            
+            Char_Manager.CanDoSurgery(pawn, surgery);
+
+            
+            listingStandard.Gap();
+
+            /*preaching*/
+            var preaching = Char_Manager.CanDoPreach(pawn);
+            listingStandard.CheckboxLabeled("Can Preach:", ref preaching, "Allow pawn to preach to prisoners.");
+            Char_Manager.CanDoPreach(pawn, preaching);
+
+            listingStandard.Gap();
+
+            /*weapon memory*/
+            var weaponName= Manager.GetWeaponName(pawn);
+            if (!string.IsNullOrEmpty(weaponName))
+            {
+                listingStandard.Label(weaponName);
+            }
+            
+
+            listingStandard.End();
 
 
-            var r2 = new Rect(r1.x, r1.y + 150f, r.width, 150f);
-            Widgets.BeginGroup(r2);
-            RenderWork(new Rect(0, 0, r.width, 150f));
-            Widgets.EndGroup();
+            //r = new Rect(r.x, r.y, r.width, 80f);
+            //Widgets.BeginGroup(r);
+            //RenderMisc(new Rect(0, 0, r.width, 80f), pawn);
+            //Widgets.EndGroup();
 
-            var r3 = new Rect(r2.x, r2.y + 150f, r.width, 150f);
-            Widgets.BeginGroup(r3);
-            RenderAssign(new Rect(0,0,r.width, 150f));
-            Widgets.EndGroup();
 
-            var r4 = new Rect(r3.x, r3.y + 150f, r.width, 80f);
-            Widgets.BeginGroup(r4);
-            RenderMisc(new Rect(0, 0, r.width, 80f), pawn);
-            Widgets.EndGroup();
+            Text.Anchor = anchor;
+            Text.Font = font;
+
+
+
+            //var r1 = new Rect(r.x, r.y, r.width, 150f);
+            //Widgets.BeginGroup(r1);
+            //RenderSchedule(new Rect(0,0, r.width, 150f));
+            //Widgets.EndGroup();
+
+
+            //var r2 = new Rect(r1.x, r1.y + 150f, r.width, 150f);
+            //Widgets.BeginGroup(r2);
+            //RenderWork(new Rect(0, 0, r.width, 150f));
+            //Widgets.EndGroup();
+
+            //var r3 = new Rect(r2.x, r2.y + 150f, r.width, 150f);
+            //Widgets.BeginGroup(r3);
+            //RenderAssign(new Rect(0,0,r.width, 150f));
+            //Widgets.EndGroup();
+
+            
 
         }
 
         private static void RenderMisc(Rect rect, Pawn pawn)
         {
-            var anchor = Text.Anchor;
-            var font = Text.Font;
-            
-            Text.Anchor = TextAnchor.MiddleLeft;
-            Text.Font = GameFont.Tiny;
+            var r = default(Rect);
+            var text = "";
+            var size = default(Vector2);
 
             /* can do surgery label */
-            var text = "Can Do Surgery:";
-            var size = Text.CalcSize(text);
-            var r1 = new Rect(0, 0, size.x + 50f, size.y);
+            text = "Can Do Surgery:";
+            size = Text.CalcSize(text);
+            r = new Rect(0, 0, size.x + 50f, size.y);
             var canDoSurgery = Char_Manager.CanDoSurgery(pawn);
-            Widgets.CheckboxLabeled(r1, text, ref canDoSurgery);
+            Widgets.CheckboxLabeled(r, text, ref canDoSurgery);
             Char_Manager.CanDoSurgery(pawn, canDoSurgery);
 
             /* can preach */
-            var text2 = "Can Preach:";
-            var size2 = Text.CalcSize(text2);
-            var r2 = new Rect(size.x + 200f, 0, size2.x + 50f, size2.y);
+            text = "Can Preach:";
+            size = Text.CalcSize(text);
+            r = new Rect(size.x + 200f, 0, size.x + 50f, size.y);
             var canDoPreach = Char_Manager.CanDoPreach(pawn);
-            Widgets.CheckboxLabeled(r2, text2, ref canDoPreach);
+            Widgets.CheckboxLabeled(r, text, ref canDoPreach);
             Char_Manager.CanDoPreach(pawn, canDoPreach);
 
             /* weapon memory */
-            var text3 = Manager.GetWeaponName(pawn);
-            text3 = string.IsNullOrEmpty(text3) ? string.Empty : text3;
-            var size3 = Text.CalcSize(text3);
-            var r3 = new Rect(r2.x + r2.width + 50f, 0, size3.x, size3.y);
-            Widgets.Label(r3, text3);
+            text = Manager.GetWeaponName(pawn);
+            text = string.IsNullOrEmpty(text) ? string.Empty : text;
+            size = Text.CalcSize(text);
+            r = new Rect(r.x + r.width + 50f, 0, size.x, size.y);
+            Widgets.Label(r, text);
 
-            Text.Anchor = anchor;
-            Text.Font = font;
         }
 
-        private static void RenderSchedule(Rect r)
-        {
-            ScheduleWindow.DoWindowContents(r);
-        }
+        //private static void RenderSchedule(Rect r)
+        //{
+        //    ScheduleWindow.DoWindowContents(r);
+        //}
 
-        private static void RenderAssign(Rect r)
-        {
-            AssignWindow.DoWindowContents(r);
-        }
+        //private static void RenderAssign(Rect r)
+        //{
+        //    AssignWindow.DoWindowContents(r);
+        //}
 
-        private static void RenderWork(Rect r)
-        {
-            WorkWindow.DoWindowContents(r);
-        }
+        //private static void RenderWork(Rect r)
+        //{
+        //    WorkWindow.DoWindowContents(r);
+        //}
 
     }
 }
