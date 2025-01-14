@@ -13,6 +13,9 @@ using static UnityEngine.GraphicsBuffer;
 
 namespace Adjustments
 {
+
+
+    [HarmonyPatch(typeof(SlaveRebellionUtility), "CanParticipateInSlaveRebellion")]
     public class subjugated_ppl_dont_rebell
     {
         [HarmonyPrefix]

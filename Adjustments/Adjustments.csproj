@@ -245,7 +245,7 @@
     <Compile Include="Char_Manager.cs" />
     <Compile Include="Char_Panel.cs" />
     <Compile Include="Char_Patches.cs" />
-    <Compile Include="Haul_Adjustments.cs" />
+    <Compile Include="Haul_Map.cs" />
     <Compile Include="Haul_Patches.cs" />
     <Compile Include="Mag_Adjustments.cs" />
     <Compile Include="Mag_Hediff_Subjugation.cs" />
@@ -271,7 +271,6 @@
     <Compile Include="Rel_GunProxy.cs" />
     <Compile Include="Rel_JobDefOf.cs" />
     <Compile Include="Rel_ManagerReloadWeapons.cs" />
-    <Compile Include="Rel_Patches.cs" />
     <Compile Include="Rel_WorkGiverDefOf.cs" />
     <Compile Include="Rel_WorkGiver_ReloadInStorage.cs" />
     <Compile Include="Remember_Weapon\Adjustments.cs" />

@@ -21,28 +21,28 @@ namespace Adjustments
 
         static Rel_Adjustments()
         {
-            Log.Message("ADJUSTMENTS STARTED.");
+            //Log.Message("ADJUSTMENTS STARTED.");
 
 
-            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            //var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
-            /* find 'haul urgently' class */
-            var compAmmoUserType = assemblies.SelectMany(v => v.GetTypes()).FirstOrDefault(v => v.Name == "CompAmmoUser");
-            if (compAmmoUserType != null)
-            {
-                HasCombatExtended = true;
-                ReloadSpeed = StatDef.Named("ReloadSpeed");
+            ///* find 'haul urgently' class */
+            //var compAmmoUserType = assemblies.SelectMany(v => v.GetTypes()).FirstOrDefault(v => v.Name == "CompAmmoUser");
+            //if (compAmmoUserType != null)
+            //{
+            //    HasCombatExtended = true;
+            //    ReloadSpeed = StatDef.Named("ReloadSpeed");
 
-            }
+            //}
 
-            Log.Message("HAS CE: " + HasCombatExtended);
+            //Log.Message("HAS CE: " + HasCombatExtended);
 
             Harmony harmony = new Harmony("nimm.adjustments");
 
-            if (HasCombatExtended)
-                Pawn_CarryTracker_TryDropCarriedThing.Wire(harmony);
+            //if (HasCombatExtended)
+            //    Pawn_CarryTracker_TryDropCarriedThing.Wire(harmony);
 
-            ApplyOnPawn_CheckSurgeryFail.Wire(harmony);
+            //ApplyOnPawn_CheckSurgeryFail.Wire(harmony);
 
             harmony.PatchAll();
 

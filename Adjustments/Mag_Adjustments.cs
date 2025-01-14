@@ -20,10 +20,10 @@ namespace Adjustments
             AttachSubjugation();
             AttachSubjugationAbility();
             AdjustBrainLeech();
-            GetPuppetDef();
+            GetPuppetHediffDef();
         }
 
-        private static void GetPuppetDef()
+        private static void GetPuppetHediffDef()
         {
             VPEP_Puppet = DefDatabase<HediffDef>.AllDefs.FirstOrDefault(v => v.defName == "VPEP_Puppet");
         }
@@ -35,7 +35,7 @@ namespace Adjustments
             {
                 /*can cast on any pawn.*/
                 brainleechabil.modExtensions.RemoveAll(v => v.GetType().Name == "AbilityExtension_TargetValidator");
-                Log.Message("ATTACHED3");
+                Log.Message("nimm brainleach modified");
             }
         }
 
@@ -50,7 +50,7 @@ namespace Adjustments
                 /*can cast on any pawn.*/
                 subjabil.modExtensions.RemoveAll(v => v.GetType().Name == "AbilityExtension_TargetValidator");
 
-                Log.Message("ATTACHED2");
+                Log.Message("nimm subjugation modifield");
             }
         }
 
@@ -60,7 +60,7 @@ namespace Adjustments
             if (subjhedd != null)
             {
                 subjhedd.hediffClass = typeof(Mag_Hediff_Subjugation);
-                Log.Message("ATTACHED");
+                Log.Message("nimm subjugation hediff modified");
             }
         }
 

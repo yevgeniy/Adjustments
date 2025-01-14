@@ -21,18 +21,17 @@ namespace Adjustments
         public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
             MethodInfo LifestageAndXenotypeOptions = AccessTools.Method(typeof(CharacterCardUtility), "LifestageAndXenotypeOptions");
-            MethodInfo SexualityCardToggle = AccessTools.Method(typeof(show_brand_dialog_button), nameof(DesigCardToggle));
+            MethodInfo RenderCardToggleButton = AccessTools.Method(typeof(show_brand_dialog_button), nameof(DesigCardToggle));
             bool traits = false;
             bool found = false;
             foreach (CodeInstruction i in instructions)
             {
-                Log.Message("looking");
                 if (found)
                 {
                     yield return new CodeInstruction(OpCodes.Ldarg_0) { labels = i.labels.ListFullCopy() };//rect
                     yield return new CodeInstruction(OpCodes.Ldarg_1);//pawn
                     yield return new CodeInstruction(OpCodes.Ldarg_3);//creationRect
-                    yield return new CodeInstruction(OpCodes.Call, SexualityCardToggle);
+                    yield return new CodeInstruction(OpCodes.Call, RenderCardToggleButton);
                     found = false;
                     i.labels.Clear();
                 }
