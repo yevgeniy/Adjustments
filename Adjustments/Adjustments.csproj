@@ -245,8 +245,6 @@
     <Compile Include="Char_Manager.cs" />
     <Compile Include="Char_Panel.cs" />
     <Compile Include="Char_Patches.cs" />
-    <Compile Include="Haul_Map.cs" />
-    <Compile Include="Haul_Patches.cs" />
     <Compile Include="Mag_Adjustments.cs" />
     <Compile Include="Mag_Hediff_Subjugation.cs" />
     <Compile Include="Mag_Patches.cs" />
@@ -265,14 +263,6 @@
     <Compile Include="Puppeteer_Adjustments\Hediff_PsySurge.cs" />
     <Compile Include="Puppeteer_Adjustments\Patches.cs" />
     <Compile Include="Puppeteer_Adjustments\ValidatePawnTarget.cs" />
-    <Compile Include="Rel_Adjustments.cs" />
-    <Compile Include="Rel_AmmoProxy.cs" />
-    <Compile Include="Rel_Driver_ReloadInStorage.cs" />
-    <Compile Include="Rel_GunProxy.cs" />
-    <Compile Include="Rel_JobDefOf.cs" />
-    <Compile Include="Rel_ManagerReloadWeapons.cs" />
-    <Compile Include="Rel_WorkGiverDefOf.cs" />
-    <Compile Include="Rel_WorkGiver_ReloadInStorage.cs" />
     <Compile Include="Remember_Weapon\Adjustments.cs" />
     <Compile Include="Remember_Weapon\Manager.cs" />
     <Compile Include="Remember_Weapon\Patches.cs" />
@@ -283,6 +273,9 @@
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="Puppeteer_Adjustments\README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Gamespeed_Adjustments\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

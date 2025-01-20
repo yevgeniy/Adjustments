@@ -1,6 +1,9 @@
-﻿using System;
+﻿using HarmonyLib;
+using RimWorld;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -8,11 +11,62 @@ using Verse;
 
 namespace Adjustments
 {
+    [StaticConstructorOnStartup]
     public class Adjustments_Mod : Mod
     {
         public Adjustments_Mod(ModContentPack content) : base(content)
         {
         }
+
+
+        public static bool HasCombatExtended { get; } = ModsConfig.ActiveModsInLoadOrder.Any(m => m.Name == "Combat Extended");
+        public static bool VehicleIsActive { get; } = ModsConfig.ActiveModsInLoadOrder.Any(m => m.Name == "Vehicle Framework");
+
+        public static bool AllowToolIsActive { get; } = ModsConfig.ActiveModsInLoadOrder.Any(m => m.Name == "Allow Tool");
+
+        public override string SettingsCategory() => "Nimm Adjustments";
+
+
+        static Adjustments_Mod()
+        {
+            Harmony harmony = new Harmony("nimm.adjustments");
+#if DEBUG
+            Harmony.DEBUG = true;
+#endif
+
+            harmony.PatchAll();
+
+            Log.Message("ADJUSTMENTS PATCHED.");
+
+            AdjustDict();
+        }
+
+        private static void AdjustDict()
+        {
+            /*replace all fat and hulking female bodytypes to normal*/
+            var femaleBodyType = DefDatabase<BodyTypeDef>.AllDefs.FirstOrDefault(v => v.defName == "Female");
+            Log.Message("FEMALE BODY TYPE: " + femaleBodyType);
+            if (femaleBodyType != null)
+            {
+
+                foreach (var i in DefDatabase<BackstoryDef>.AllDefs)
+                {
+                    if (i.bodyTypeFemale != null && (i.bodyTypeFemale.defName == "Fat" || i.bodyTypeFemale.defName == "Hulk"))
+                        i.bodyTypeFemale = femaleBodyType;
+                }
+            }
+
+
+            var haulUrgent = DefDatabase<WorkTypeDef>.AllDefs.FirstOrDefault(v => v.defName == "HaulingUrgent");
+            if (haulUrgent != null)
+            {
+                var reloadDef = DefDatabase<WorkGiverDef>.AllDefs.FirstOrDefault(v => v.defName == "ReloadTurrets");
+                if (reloadDef != null)
+                    reloadDef.workType = haulUrgent;
+            }
+
+        }
+
 
         public override void DoSettingsWindowContents(Rect inRect)
         {
@@ -54,6 +108,6 @@ namespace Adjustments
             base.DoSettingsWindowContents(inRect);
         }
 
-        public override string SettingsCategory() => "Nimm Adjustments";
+
     }
 }
