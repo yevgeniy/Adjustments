@@ -2,12 +2,46 @@
 <Defs>
 
 
+	<VFECore.Abilities.AbilityDef ParentName="VPE_PsycastGoToTargetBase">
+		<defName>ADJ_MindLeech</defName>
+		<label>brain leech</label>
+		<description>Creates a psionic link on a colleague or prisoner that redirects brain processing power to the leacher and redistrites it to him and his pawns.</description>
+		<iconPath>Abilities/Puppeteer/BrainLeech</iconPath>
+		<abilityClass>Adjustments.Puppeteer_Adjustments.Ability_BrainLeech</abilityClass>
+		<castSound>VPEP_Brainleech_Cast</castSound>
+		<targetMode>Pawn</targetMode>
+		<distanceToTarget>1.5</distanceToTarget>
+		<needsTicking>true</needsTicking>
+		<drawAimPie>false</drawAimPie>
+		<targetingParameters>
+			<canTargetBuildings>False</canTargetBuildings>
+			<canTargetSelf>False</canTargetSelf>
+			<canTargetAnimals>False</canTargetAnimals>
+			<canTargetPawns>True</canTargetPawns>
+			<canTargetHumans>True</canTargetHumans>
+			<canTargetMechs>False</canTargetMechs>
+		</targetingParameters>
+		<castTime>50</castTime>
+		<modExtensions>
+			<li Class="VanillaPsycastsExpanded.AbilityExtension_Psycast">
+				<path>VPEP_Puppeteer</path>
+				<level>1</level>
+				<order>2</order>
+				<psyfocusCost>0.1</psyfocusCost>
+				<entropyGain>0</entropyGain>
+				<psychic>True</psychic>
+			</li>
+		</modExtensions>
+	</VFECore.Abilities.AbilityDef>
+
+
+
 	<VFECore.Abilities.AbilityDef >
 	
 		<defName>ADJ_Augment</defName>
 		
 		<label>augment</label>
-		<description>Augment another consciousness by sacrificing your own.  Will not work if your consciousness is below 80%.  And will not raise it above 120%</description>
+		<description>Augment another consciousness by sacrificing your own.  Will not work if your consciousness is already below 80%.  And will not raise it above 120%</description>
 		
 		<warmupSound>VPE_PsycastCastingEffect</warmupSound>
         <warmupMote>VPE_Mote_CastPsycast</warmupMote>
@@ -204,7 +238,19 @@
 		<label>psychic surging</label>
 		<description>Push a puppet's body to dangerous limits</description>
 		<hediffClass>Adjustments.Puppeteer_Adjustments.Hediff_PsySurging</hediffClass>
-		
 	</HediffDef>
 
+	
+	<ThoughtDef>
+        <defName>ADJ_GetOutOfMyHead</defName>
+		<thoughtClass>Adjustments.Puppeteer_Adjustments.Thought_GetOutOfMyHead</thoughtClass>
+        <stages>
+            <li>
+                <label>Get out of my head!</label>
+				<description>A sorcerer is messing with my head</description>
+                <baseMoodEffect>-20</baseMoodEffect>
+            </li>
+        </stages>
+        <stackLimit>1</stackLimit>
+    </ThoughtDef>
 </Defs>

@@ -1,10 +1,12 @@
-﻿using RimWorld;
+﻿using Adjustments.Puppeteer_Adjustments;
+using RimWorld;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using VanillaPsycastsExpanded;
 using Verse;
 
 namespace Adjustments
@@ -19,7 +21,6 @@ namespace Adjustments
             GetMasterField();
             AttachSubjugation();
             AttachSubjugationAbility();
-            AdjustBrainLeech();
             GetPuppetHediffDef();
         }
 
@@ -28,22 +29,18 @@ namespace Adjustments
             VPEP_Puppet = DefDatabase<HediffDef>.AllDefs.FirstOrDefault(v => v.defName == "VPEP_Puppet");
         }
 
-        private static void AdjustBrainLeech()
-        {
-            var brainleechabil = DefDatabase<VFECore.Abilities.AbilityDef>.AllDefs.FirstOrDefault(v => v.defName == "VPEP_BrainLeech");
-            if (brainleechabil != null)
-            {
-                /*can cast on any pawn.*/
-                brainleechabil.modExtensions.RemoveAll(v => v.GetType().Name == "AbilityExtension_TargetValidator");
-                Log.Message("nimm brainleach modified");
-            }
-        }
+
 
         private static void AttachSubjugationAbility()
         {
             var subjabil = DefDatabase<VFECore.Abilities.AbilityDef>.AllDefs.FirstOrDefault(v => v.defName == "VPEP_Subjugation");
             if (subjabil != null)
             {
+
+                (subjabil.modExtensions[0] as AbilityExtension_Psycast).prerequisites.Clear();
+                (subjabil.modExtensions[0] as AbilityExtension_Psycast).prerequisites.Add(Defs.ADJ_MindLeech);
+
+
                 /*attach master ref on haddif after cast */
                 subjabil.modExtensions.Add(new Mag_SubjugateAbilityExtention());
 

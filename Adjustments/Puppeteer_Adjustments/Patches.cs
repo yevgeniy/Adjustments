@@ -11,7 +11,9 @@ using UnityEngine;
 using UnityEngine.SocialPlatforms;
 using VanillaPsycastsExpanded;
 using Verse;
+using VFECore.Abilities;
 using static HarmonyLib.Code;
+using static UnityEngine.GraphicsBuffer;
 using static Verse.PawnCapacityUtility;
 
 namespace Adjustments.Puppeteer_Adjustments
@@ -19,69 +21,41 @@ namespace Adjustments.Puppeteer_Adjustments
 
 
 
+
+ 
+
     [HarmonyPatch]
-    public class adjust_for_heat
+    public class adjust_puppet_validation
     {
         [HarmonyTargetMethods]
         static IEnumerable<MethodBase> TargetMethods()
         {
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-            var type = assemblies.SelectMany(v => v.GetTypes()).FirstOrDefault(v => v.Name == "Hediff_PsycastAbilities");
-            yield return type.GetMethod("RecacheCurStage", BindingFlags.NonPublic | BindingFlags.Instance);
+            var type = assemblies.SelectMany(v => v.GetTypes()).FirstOrDefault(v => v.Name == "Ability_Puppet");
+            yield return type.GetMethod("ValidateTarget", BindingFlags.Public | BindingFlags.Instance);
         }
-        static void Adjust(object psyHediff)
+
+        [HarmonyPrefix]
+        public static bool no_validation(ref bool __result, LocalTargetInfo target, bool showMessages)
         {
-            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-            var type = assemblies.SelectMany(v => v.GetTypes()).FirstOrDefault(v => v.Name == "Hediff_PsycastAbilities");
-            var field = type.GetField("pawn", BindingFlags.Public | BindingFlags.Instance);
-
-            var pawn = field.GetValue(psyHediff) as Pawn;
-            if (pawn == null)
+            if (target.Pawn is null)
             {
-                Log.Message("NO PAWN");
-                return;
+                __result = false;
+            }
+            if (target.Pawn.health.hediffSet.hediffs.FirstOrDefault(v => v.def.defName == "VPEP_Puppet") != null)
+            {
+                Log.Message("ALREADY A PUPPET");
+                __result = false;
             }
 
-            var surgingHediff = pawn.health.hediffSet.GetFirstHediffOfDef(Defs.ADJ_PsySurging) as Hediff_PsySurging;
-            if (surgingHediff==null)
+            if (new bool[] { target.Pawn.IsColonist, target.Pawn.IsSlave, target.Pawn.IsPrisonerOfColony }.ToList().All(v => v == false))
             {
-                Log.Message("NOT SURGING");
-                return;
+                Log.Message("PAWN SHOULD BE A COLONIST, A SLAVE, OR PRISONER");
+                __result = false;
             }
 
-
-            var c = surgingHediff.Subjects.Count;
-            var curStage = type.GetField("curStage", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(psyHediff) as HediffStage;
-            if (curStage==null)
-            {
-                Log.Message("NO CUR STAGE");
-                return;
-            }
-
-            curStage.statOffsets.FirstOrDefault(v => v.stat.defName == "VPE_PsychicEntropyMinimum").value += c * 20f;
-
-        }
-        [HarmonyTranspiler]
-        static IEnumerable<CodeInstruction> Use_EntropyValue_insteadof_currentEntropy(IEnumerable<CodeInstruction> instructions, MethodBase original)
-        {
-
-            var newinst = new List<CodeInstruction>();
-            for (var x = 0; x < instructions.ToList().Count; x++)
-            {
-                var i = instructions.ToArray()[x];
-                if (i.ToString().Contains("Notify_HediffChanged") )
-                {
-                    newinst.Add(CodeInstruction.Call(typeof(adjust_for_heat), nameof(Adjust)));
-                    newinst.Add(new CodeInstruction(OpCodes.Ldarg_0)); /*load this*/
-                }
-
-                newinst.Add(i);
-            }
-
-            foreach (var i in newinst)
-            {
-                yield return i;
-            }
+            __result = true;
+            return false;
         }
     }
 
@@ -93,11 +67,24 @@ namespace Adjustments.Puppeteer_Adjustments
         [HarmonyPostfix]
         public static void postfix(ref float __result, HediffSet diffSet, PawnCapacityDef capacity, List<PawnCapacityUtility.CapacityImpactor> impactors, bool forTradePrice)
         {
-            if (capacity.defName== "Consciousness")
+            if (capacity.defName == "Consciousness")
             {
-                if (diffSet.HasHediff(Adjustments.BrainLeechingHdeiff))
+                if (diffSet.TryGetHediff(Adjustments.BrainLeechingHediff, out var hediff))
                 {
-                    __result += .5f;
+                    var brainleechinghediff = hediff as Hediff_BrainLeech;
+                    var adjustBy = brainleechinghediff.ConsciousnessAdjustment;
+
+                    __result += adjustBy;
+                }
+                if (diffSet.TryGetHediff(Adjustments.VPEP_PuppetHediff, out hediff))
+                {
+                    var puppetHediffProxy = new PuppetHedifProxy(hediff);
+                    var master = puppetHediffProxy.Master;
+                    if (master.health.hediffSet.TryGetHediff(Adjustments.BrainLeechingHediff, out var blinghedif))
+                    {
+                        var adjustBy = (blinghedif as Hediff_BrainLeech).ConsciousnessAdjustment;
+                        __result += adjustBy;
+                    }
                 }
                 if (diffSet.HasHediff(Defs.ADJ_Augmented))
                 {
@@ -134,9 +121,17 @@ namespace Adjustments.Puppeteer_Adjustments
         [HarmonyPostfix]
         public static void Postfix(ref float __result, HediffSet diffSet, List<PawnCapacityUtility.CapacityImpactor> impactors)
         {
-            if (diffSet.HasHediff(Adjustments.BrainLeechHediff))
+            if (diffSet.TryGetHediff(Adjustments.BrainLeechHediff, out var h))
             {
-                __result -= .5f;                    
+                /*brain leech should fail when target is too much unconcious */
+                if (__result <= .5f)
+                {
+                    (h as Hediff_BrainLeech).shouldRemove = true;
+                }
+                else
+                {
+                    __result -= .5f;
+                }
             }
 
             if (diffSet.HasHediff(Defs.ADJ_Augmenting))

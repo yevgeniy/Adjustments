@@ -6,16 +6,21 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using VanillaPsycastsExpanded;
 using Verse;
 using VFECore.Abilities;
 using Ability = VFECore.Abilities.Ability;
 
 namespace Adjustments
 {
-    public class Mag_PuppetAbilityExtention: AbilityExtension_AbilityMod
+    public class Mag_PuppetAbilityExtention: AbilityExtension_Psycast
     {
-        
- 
+
+        public override bool ValidateTarget(LocalTargetInfo target, Ability ability, bool throwMessages = false)
+        {
+            return base.ValidateTarget(target, ability, throwMessages);
+        }
+
         public override void PostCast(GlobalTargetInfo[] targets, Ability ability)
         {
 
@@ -24,7 +29,7 @@ namespace Adjustments
                 if (p == null)
                     continue;
 
-                var hediff = p.health.hediffSet.hediffs.First(v => v.def.defName == Mag_Adjustments.VPEP_Puppet.defName);
+                var hediff = p.health.hediffSet.hediffs.FirstOrDefault(v => v.def.defName == Mag_Adjustments.VPEP_Puppet.defName);
                 if (hediff == null)
                 {
                     Log.Error("COULD NOT FIND PUPPET HEDIFF");

@@ -11,16 +11,23 @@ namespace Adjustments.Puppeteer_Adjustments
     [DefOf]
     public static class Defs
     {
+
+
         public static HediffDef ADJ_Augmenting;
         public static HediffDef ADJ_Augmented;
         public static HediffDef ADJ_MindMerging;
         public static HediffDef ADJ_MindMerged;
         public static HediffDef ADJ_PsySurged;
         public static HediffDef ADJ_PsySurging;
-        
+
+        public static ThoughtDef ADJ_GetOutOfMyHead;
+
 
 
         public static VFECore.Abilities.AbilityDef ADJ_MindMerge;
+        public static VFECore.Abilities.AbilityDef ADJ_MindLeech;
+        
+
 
 
     }

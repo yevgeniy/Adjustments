@@ -14,52 +14,6 @@ using static UnityEngine.GraphicsBuffer;
 namespace Adjustments
 {
 
-
-    [HarmonyPatch(typeof(SlaveRebellionUtility), "CanParticipateInSlaveRebellion")]
-    public class subjugated_ppl_dont_rebell
-    {
-        [HarmonyPrefix]
-        public static bool patch(Pawn pawn, ref bool __result)
-        {
-
-
-            if (pawn.health.hediffSet.HasHediff(Mag_Adjustments.VPEP_Puppet))
-            {
-                __result = false;
-                return false;
-            }
-
-            return true;
-        }
-    }
-
-    [HarmonyPatch(typeof(GuestUtility), "GetDisabledWorkTypes")]
-    public class subjugated_ppl_can_do_art_and_research
-    {
-        private static Pawn GetPawn(Pawn_GuestTracker instance)
-        {
-            Type type = typeof(Pawn_GuestTracker);
-
-            // Get the private field info
-            FieldInfo fieldInfo = type.GetField("pawn", BindingFlags.NonPublic | BindingFlags.Instance);
-
-            return (Pawn)fieldInfo.GetValue(instance);
-
-        }
-        [HarmonyPostfix]
-        public static void postfix(Pawn_GuestTracker guest, ref List<WorkTypeDef> __result)
-        {
-            var pawn = GetPawn(guest);
-
-            if (pawn.health.hediffSet.HasHediff(Mag_Adjustments.VPEP_Puppet))
-            {
-                __result.RemoveAll(v => v==WorkTypeDefOf.Research || v.defName=="Art");
-            }
-
-        }
-
-    }
-
     [HarmonyPatch(typeof(ThingWithComps), nameof(ThingWithComps.TickRare))]
     public class puppet_has_skill_of_master
     {
