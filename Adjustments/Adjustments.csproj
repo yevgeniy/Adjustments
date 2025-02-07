@@ -247,16 +247,12 @@
     <Compile Include="Char_Panel.cs" />
     <Compile Include="Char_Patches.cs" />
     <Compile Include="ClassMaster.cs" />
-    <Compile Include="Mag_Adjustments.cs" />
-    <Compile Include="Mag_Hediff_Subjugation.cs" />
-    <Compile Include="Mag_Patches.cs" />
-    <Compile Include="Mag_PuppetAbilityExtention.cs" />
-    <Compile Include="Mag_SubjugateAbilityExtention.cs" />
     <Compile Include="Brand_Patches.cs" />
     <Compile Include="Brand_Map.cs" />
+    <Compile Include="Puppeteer_Adjustments\AbilityExtension_Puppet.cs" />
     <Compile Include="Puppeteer_Adjustments\Ability_Augment.cs" />
-    <Compile Include="Puppeteer_Adjustments\Ability_BrainLeech.cs" />
-    <Compile Include="Puppeteer_Adjustments\Hediff_BrainLeech.cs" />
+    <Compile Include="Puppeteer_Adjustments\Ability_SoulLeech.cs" />
+    <Compile Include="Puppeteer_Adjustments\Hediff_SoulLeech.cs" />
     <Compile Include="Puppeteer_Adjustments\Hediff_PsySurging.cs" />
     <Compile Include="Puppeteer_Adjustments\Ability_MindMerge.cs" />
     <Compile Include="Puppeteer_Adjustments\Ability_PsychicSurge.cs" />
@@ -268,6 +264,7 @@
     <Compile Include="Puppeteer_Adjustments\Patches.cs" />
     <Compile Include="Puppeteer_Adjustments\ThoughWorker_GetOutOfMyHead.cs" />
     <Compile Include="Puppeteer_Adjustments\ValidatePawnTarget.cs" />
+    <Compile Include="PuppetHediffProxy.cs" />
     <Compile Include="Remember_Weapon\Adjustments.cs" />
     <Compile Include="Remember_Weapon\Manager.cs" />
     <Compile Include="Remember_Weapon\Patches.cs" />

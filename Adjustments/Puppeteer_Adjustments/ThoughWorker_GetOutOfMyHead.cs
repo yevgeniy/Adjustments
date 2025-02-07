@@ -18,7 +18,11 @@ namespace Adjustments.Puppeteer_Adjustments
         {
             get
             {
-                return !pawn.health.hediffSet.HasHediff(Adjustments.BrainLeechHediff);
+                if (pawn.health.hediffSet.TryGetHediff(Adjustments.BrainLeechHediff, out var h) && h is Hediff_SoulLeech soulLeechHediff )
+                {
+                    return soulLeechHediff.LeechActive;
+                }
+                return false;
             }
         }
 

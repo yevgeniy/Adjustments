@@ -69,47 +69,68 @@ namespace Adjustments.Puppeteer_Adjustments
         {
             if (capacity.defName == "Consciousness")
             {
-                if (diffSet.TryGetHediff(Adjustments.BrainLeechingHediff, out var hediff))
-                {
-                    var brainleechinghediff = hediff as Hediff_BrainLeech;
-                    var adjustBy = brainleechinghediff.ConsciousnessAdjustment;
+                var original = __result;
 
-                    __result += adjustBy;
-                }
-                if (diffSet.TryGetHediff(Adjustments.VPEP_PuppetHediff, out hediff))
+                Hediff hediff;
+                if (diffSet.TryGetHediff(Adjustments.BrainLeechHediff, out hediff) && hediff is Hediff_SoulLeech soulLeech)
                 {
-                    var puppetHediffProxy = new PuppetHedifProxy(hediff);
-                    var master = puppetHediffProxy.Master;
-                    if (master.health.hediffSet.TryGetHediff(Adjustments.BrainLeechingHediff, out var blinghedif))
+                    if (__result>.01f)
                     {
-                        var adjustBy = (blinghedif as Hediff_BrainLeech).ConsciousnessAdjustment;
-                        __result += adjustBy;
+                        __result = Mathf.Max(__result - soulLeech.AmmountLeachedAway, .01f);
+                    }
+                        
+                }
+
+                if (diffSet.TryGetHediff(Adjustments.VPEP_PuppetHediff_HediffDef, out hediff))
+                {
+                    var offsetforpuppet = Mathf.Max( original - .7f, 0f);
+
+                    if (__result >= .3f)
+                    {
+                        __result = .3f + offsetforpuppet;
                     }
                 }
-                if (diffSet.HasHediff(Defs.ADJ_Augmented))
-                {
-                    __result += .5f;
-                }
-                __result = Mathf.Clamp(__result, 0f, 1.2f);
+                //if (diffSet.TryGetHediff(Adjustments.BrainLeechingHediff, out var hediff))
+                //{
+                //    var brainleechinghediff = hediff as Hediff_SoulLeech;
+                //    var adjustBy = brainleechinghediff.ConsciousnessAdjustment;
 
-                if (diffSet.HasHediff(Defs.ADJ_MindMerged))
-                {
-                    __result *= 2;
-                    __result = Math.Max(__result, capacity.minValue);
-                }
+                //    __result += adjustBy;
+                //}
+                //if (diffSet.TryGetHediff(Adjustments.VPEP_PuppetHediff_HediffDef, out hediff))
+                //{
+                //    var puppetHediffProxy = new PuppetHediffProxy(hediff);
+                //    var master = puppetHediffProxy.Master;
+                //    if (master.health.hediffSet.TryGetHediff(Adjustments.BrainLeechingHediff, out var blinghedif))
+                //    {
+                //        var adjustBy = (blinghedif as Hediff_SoulLeech).ConsciousnessAdjustment;
+                //        __result += adjustBy;
+                //    }
+                //}
+                //if (diffSet.HasHediff(Defs.ADJ_Augmented))
+                //{
+                //    __result += .5f;
+                //}
+                //__result = Mathf.Clamp(__result, 0f, 1.2f);
+
+                //if (diffSet.HasHediff(Defs.ADJ_MindMerged))
+                //{
+                //    __result *= 2;
+                //    __result = Math.Max(__result, capacity.minValue);
+                //}
                 __result = GenMath.RoundedHundredth(__result);
             }
             else if (capacity.defName == "Moving")
             {
-                if (diffSet.HasHediff(Defs.ADJ_MindMerged))
-                {
-                    __result += .3f;
-                    __result = Math.Max(__result, capacity.minValue);
-                }
-                if (diffSet.HasHediff(Defs.ADJ_PsySurged))
-                {
-                    __result += .6f;
-                }
+                //if (diffSet.HasHediff(Defs.ADJ_MindMerged))
+                //{
+                //    __result += .3f;
+                //    __result = Math.Max(__result, capacity.minValue);
+                //}
+                //if (diffSet.HasHediff(Defs.ADJ_PsySurged))
+                //{
+                //    __result += .6f;
+                //}
             }
         }
     }
@@ -121,35 +142,60 @@ namespace Adjustments.Puppeteer_Adjustments
         [HarmonyPostfix]
         public static void Postfix(ref float __result, HediffSet diffSet, List<PawnCapacityUtility.CapacityImpactor> impactors)
         {
-            if (diffSet.TryGetHediff(Adjustments.BrainLeechHediff, out var h))
-            {
-                /*brain leech should fail when target is too much unconcious */
-                if (__result <= .5f)
-                {
-                    (h as Hediff_BrainLeech).Active = false;
-                }
-                else
-                {
-                    (h as Hediff_BrainLeech).Active = true;
-                    __result -= .5f;
-                }
-            }
+            
 
-            if (diffSet.HasHediff(Defs.ADJ_Augmenting))
-            {
-                __result -= .5f;
-            }
+            //if (diffSet.TryGetHediff(Adjustments.BrainLeechHediff, out var h))
+            //{
+                
+                
+            //}
 
-            __result = Mathf.Max(0f, __result);
+            //if (diffSet.HasHediff(Defs.ADJ_Augmenting))
+            //{
+            //    __result -= .5f;
+            //}
+
+            //__result = Mathf.Max(0f, __result);
 
 
-            if (diffSet.HasHediff(Defs.ADJ_PsySurged))
-            {
-                __result += .6f;
-            }
+            //if (diffSet.HasHediff(Defs.ADJ_PsySurged))
+            //{
+            //    __result += .6f;
+            //}
 
-            __result = GenMath.RoundedHundredth(__result);
+            //__result = GenMath.RoundedHundredth(__result);
         }
+    }
+
+    [HarmonyPatch(typeof(ThingWithComps), nameof(ThingWithComps.TickRare))]
+    public class puppet_has_skill_of_master
+    {
+
+        [HarmonyPrefix]
+        public static bool Prefix(ThingWithComps __instance)
+        {
+            if (__instance is Pawn pawn)
+            {
+                
+                if (pawn.health.hediffSet.TryGetHediff(Adjustments.VPEP_PuppetHediff_HediffDef, out var h))
+                {
+                    var pupetHediffProxy = new PuppetHediffProxy(h);
+                    var master = pupetHediffProxy.Master;
+
+                    foreach (var skill in master.skills.skills)
+                    {
+                        var targetSkill = pawn.skills.GetSkill(skill.def);
+                        targetSkill.xpSinceLastLevel = skill.xpSinceLastLevel;
+                        targetSkill.xpSinceMidnight = skill.xpSinceMidnight;
+                        targetSkill.Level = skill.Level;
+                        targetSkill.passion = skill.passion;
+                    }
+                }
+            }
+
+            return true;
+        }
+
     }
 
 }

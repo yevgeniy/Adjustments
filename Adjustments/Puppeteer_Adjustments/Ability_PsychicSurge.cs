@@ -26,14 +26,15 @@ namespace Adjustments.Puppeteer_Adjustments
                     return false;
                 }
 
-                var hediff = targetPawn.health.hediffSet.GetFirstHediffOfDef(Adjustments.VPEP_PuppetHediff);
+                var hediff = targetPawn.health.hediffSet.GetFirstHediffOfDef(Adjustments.VPEP_PuppetHediff_HediffDef);
                 if (hediff == null)
                 {
                     Log.Message("NOT A PUPPET");
                     return false;
                 }
 
-                var master = Adjustments.Master.GetValue(hediff);
+                var master = ClassMaster.GetValue(hediff, "master");
+
                 if (master == null)
                 {
                     Log.Message("NO MASTER");

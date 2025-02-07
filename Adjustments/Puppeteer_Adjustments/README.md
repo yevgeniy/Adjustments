@@ -1,13 +1,9 @@
-### brain leech
+### soul leech
+- when active target loses consciousness one per hour and master gains the same as a reserve
+	- at first max reserve of 50
 
-- take 50 conc from target and add 50 conc to you -- done
+- get rid of subjugation and make soul leech prereq for puppet
 
+- casting puppet on slave or prisoner makes them colonist.
 
-### augment
-
-- takes 50 conc from caster and gives it to target -- done
-
-### mind merge
-
-- sets caster conc to 30 for 1 day
-- doubles conc of target
+- base consiousness for puppet should be 30

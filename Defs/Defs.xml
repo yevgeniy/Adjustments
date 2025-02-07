@@ -3,11 +3,11 @@
 
 
 	<VFECore.Abilities.AbilityDef ParentName="VPE_PsycastGoToTargetBase">
-		<defName>ADJ_MindLeech</defName>
-		<label>brain leech</label>
-		<description>Creates a psionic link on a colleague or prisoner that redirects brain processing power to the leacher and redistrites it to him and his pawns.</description>
+		<defName>ADJ_SoulLeech</defName>
+		<label>soul leech</label>
+		<description>Slowly leach the soul from a hapless pawn storing it as a reserve conciousness.</description>
 		<iconPath>Abilities/Puppeteer/BrainLeech</iconPath>
-		<abilityClass>Adjustments.Puppeteer_Adjustments.Ability_BrainLeech</abilityClass>
+		<abilityClass>Adjustments.Puppeteer_Adjustments.Ability_SoulLeech</abilityClass>
 		<castSound>VPEP_Brainleech_Cast</castSound>
 		<targetMode>Pawn</targetMode>
 		<distanceToTarget>1.5</distanceToTarget>

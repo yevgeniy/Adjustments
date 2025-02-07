@@ -25,7 +25,7 @@ namespace Adjustments.Puppeteer_Adjustments
 
 
         public static VFECore.Abilities.AbilityDef ADJ_MindMerge;
-        public static VFECore.Abilities.AbilityDef ADJ_MindLeech;
+        public static VFECore.Abilities.AbilityDef ADJ_SoulLeech;
         
 
 

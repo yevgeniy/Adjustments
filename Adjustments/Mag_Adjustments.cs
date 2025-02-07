@@ -38,7 +38,7 @@ namespace Adjustments
             {
 
                 (subjabil.modExtensions[0] as AbilityExtension_Psycast).prerequisites.Clear();
-                (subjabil.modExtensions[0] as AbilityExtension_Psycast).prerequisites.Add(Defs.ADJ_MindLeech);
+                (subjabil.modExtensions[0] as AbilityExtension_Psycast).prerequisites.Add(Defs.ADJ_SoulLeech);
 
 
                 /*attach master ref on haddif after cast */

@@ -17,23 +17,22 @@ namespace Adjustments.Puppeteer_Adjustments
     [StaticConstructorOnStartup]
     public class Adjustments
     {
+        public static Assembly[] Assemblies = AppDomain.CurrentDomain.GetAssemblies();
+
         public static HediffDef BrainLeechHediff;
         public static HediffDef BrainLeechingHediff;
-        public static HediffDef VPEP_PuppetHediff;
-        public static HediffDef VPEP_PuppeteerHediff;
+        public static HediffDef VPEP_PuppetHediff_HediffDef;
+        public static HediffDef VPEP_PuppeteerHediff_HediffDef;
         public static FieldInfo Master;
 
 
         static Adjustments()
         {
-            Puppeteer_change();
-            BrainLeech_change();
-            GetMasterField();
+            
+            BrainLeech_ability_changes();
+            Puppet_ability_changes();
             GetPuppetHediff();
-
-            Remove();
-
-
+            Puppeteer_tree_changes();
 
             var pupPath = DefDatabase<PsycasterPathDef>.AllDefs.FirstOrDefault(v => v.defName == "VPEP_Puppeteer");
             if (pupPath != null)
@@ -41,40 +40,49 @@ namespace Adjustments.Puppeteer_Adjustments
 
         }
 
+        private static void Puppet_ability_changes()
+        {
+            var puppetAbility = DefDatabase<VFECore.Abilities.AbilityDef>.AllDefs.FirstOrDefault(v => v.defName == "VPEP_Puppet");
+            if (puppetAbility != null)
+            {
+
+                (puppetAbility.modExtensions[0] as AbilityExtension_Psycast).prerequisites.Clear();
+                (puppetAbility.modExtensions[0] as AbilityExtension_Psycast).prerequisites.Add(Defs.ADJ_SoulLeech);
+
+                puppetAbility.modExtensions.Add(new AbilityExtension_Puppet());
+
+                /*can cast on any pawn.*/
+                puppetAbility.modExtensions.RemoveAll(v => v.GetType().Name == "AbilityExtension_TargetValidator");
+
+                Log.Message("nimm subjugation modifield");
+            }
+        }
+
         private static void GetPuppetHediff()
         {
-            VPEP_PuppetHediff = DefDatabase<HediffDef>.AllDefs.FirstOrDefault(v => v.defName == "VPEP_Puppet");
-            VPEP_PuppeteerHediff = DefDatabase<HediffDef>.AllDefs.FirstOrDefault(v => v.defName == "VPEP_Puppeteer");
+            VPEP_PuppetHediff_HediffDef = DefDatabase<HediffDef>.AllDefs.FirstOrDefault(v => v.defName == "VPEP_Puppet");
+            VPEP_PuppeteerHediff_HediffDef = DefDatabase<HediffDef>.AllDefs.FirstOrDefault(v => v.defName == "VPEP_Puppeteer");
         }
 
-        private static void GetMasterField()
-        {
-            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-            var type = assemblies.SelectMany(assembly => assembly.GetTypes())
-                .FirstOrDefault(v => v.Name == "Hediff_Puppet");
-
-            if (type == null)
-                return;
-
-            Master = type.GetField("master", BindingFlags.Public | BindingFlags.Instance);
-        }
-
-        private static void Remove()
+        private static void RemoveAbilities()
         {
 
-            var remove = new string[] { "VPEP_PuppetSwarm", "VPEP_SummonPuppet", "VPEP_BrainCut", "VPEP_Ascension", "VPEP_BrainLeech" };
-                var l = DefDatabase<VFECore.Abilities.AbilityDef>.AllDefs.ToList();
+            var remove = new string[] { "VPEP_PuppetSwarm", "VPEP_SummonPuppet", "VPEP_BrainCut", "VPEP_Ascension", "VPEP_BrainLeech",
+                "VPEP_Subjugation", "VPEP_Degrade"
+            };
+            
+            var l = DefDatabase<VFECore.Abilities.AbilityDef>.AllDefs.ToList();
             l.RemoveAll(v => remove.Contains(v.defName));
 
             DefDatabase<VFECore.Abilities.AbilityDef>.Clear();
-            foreach ( var v in l )
+            foreach (var v in l)
             {
                 DefDatabase<VFECore.Abilities.AbilityDef>.Add(v);
             }
         }
 
 
-        private static void Puppeteer_change()
+        private static void Puppeteer_tree_changes()
         {
             var pupptree = DefDatabase<VanillaPsycastsExpanded.PsycasterPathDef>.AllDefs.FirstOrDefault(v => v.defName == "VPEP_Puppeteer");
             if (pupptree != null)
@@ -83,18 +91,20 @@ namespace Adjustments.Puppeteer_Adjustments
                 //var requiredBackstoriesAny = pupptree.GetType().GetField("requiredBackstoriesAny", BindingFlags.Public).GetValue(pupptree);
                 //requiredBackstoriesAny.GetType().GetMethod("Clear", BindingFlags.Public).Invoke(requiredBackstoriesAny, new object[] { });
             }
+
+            RemoveAbilities();
         }
 
-        private static void BrainLeech_change()
+        private static void BrainLeech_ability_changes()
         {
             BrainLeechHediff = DefDatabase<HediffDef>.AllDefs.FirstOrDefault(v => v.defName == "VPEP_BrainLeech");
             BrainLeechHediff.stages.ForEach(v => v.capMods.First().offset = 0);
-            BrainLeechHediff.hediffClass = typeof(Hediff_BrainLeech);
-            
+            BrainLeechHediff.hediffClass = typeof(Hediff_SoulLeech);
+
 
             BrainLeechingHediff = DefDatabase<HediffDef>.AllDefs.FirstOrDefault(v => v.defName == "VPEP_Leeching");
             BrainLeechingHediff.stages.ForEach(v => v.capMods.First().offset = 0);
-            BrainLeechingHediff.hediffClass = typeof(Hediff_BrainLeech);
+            BrainLeechingHediff.hediffClass = typeof(Hediff_SoulLeech);
 
             //var brainLeechAbility = DefDatabase<VFECore.Abilities.AbilityDef>.AllDefs.FirstOrDefault(v => v.defName == "VPEP_BrainLeech");
             //if (brainLeechAbility == null)
@@ -108,7 +118,7 @@ namespace Adjustments.Puppeteer_Adjustments
 
         }
 
-       
+
 
     }
 
