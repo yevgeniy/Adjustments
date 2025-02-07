@@ -19,12 +19,15 @@ namespace Adjustments.Puppeteer_Adjustments
         public bool shouldRemove = false;
         public override bool ShouldRemove => shouldRemove;
         public Pawn Master = null;
-        public List<Pawn> Subjects = null;
+        public List<Pawn> Subjects = new List<Pawn>();
         public Pawn Subject = null;
+
+        private bool active = true;
+        public bool Active { get { return active; } set {  active = value; } }
 
         public override string Label => Subject == null
             ? Master.LabelShort + " is brian leeching " + string.Join(", ", Subjects.Select(v => v.LabelShort))
-            : Subject.LabelShort + "  is being leeched by " + Master.LabelShort;
+            : Subject.LabelShort + "  is being leeched by " + Master.LabelShort + (!this.Active ? " (inactive)" : "");
 
         public int TotalToRedistribute => Subjects.Count * 50;
 
@@ -42,6 +45,7 @@ namespace Adjustments.Puppeteer_Adjustments
 
             }
         }
+
 
 
         public int? NumberOfPuppets
@@ -62,13 +66,27 @@ namespace Adjustments.Puppeteer_Adjustments
             }
         }
 
+        public int ActiveSubjectsCount
+        {
+            get
+            {
+                var c = 0;
+                foreach(var i in this.Subjects)
+                {
+                    if (i.health.hediffSet.GetFirstHediff<Hediff_BrainLeech>().Active)
+                        c++;
+                }
+                return c;
+            }
+        }
+
         public float ConsciousnessAdjustment
         {
             get
             {
                 if (NumberOfPuppets != null)
                 {
-                    return (this.Subjects.Count * 50) / (NumberOfPuppets.Value + 1) * .01f;
+                    return (this.ActiveSubjectsCount * 50) / (NumberOfPuppets.Value + 1) * .01f;
                 }
                 return 0f;
             }
@@ -102,6 +120,8 @@ namespace Adjustments.Puppeteer_Adjustments
         {
             base.ExposeData();
             Scribe_Values.Look(ref shouldRemove, "hed-bl-shouldRemove");
+            Scribe_Values.Look(ref active, "hed-bl-active");
+
             Scribe_References.Look(ref Master, "hed-bl-m");
             Scribe_References.Look(ref Subject, "hed-bl-subj");
             Scribe_Collections.Look(ref Subjects, "nim-bl-subjs", LookMode.Reference);
@@ -169,6 +189,21 @@ namespace Adjustments.Puppeteer_Adjustments
 
 
             base.PostRemoved();
+        }
+
+        public override void Tick()
+        {
+            if (Find.TickManager.TicksGame % 2000==0)
+            {
+                if (pawn.IsColonist || pawn.IsPrisoner || pawn.IsSlaveOfColony)
+                {
+
+                }
+                else
+                {
+                    shouldRemove = true;
+                }
+            }
         }
 
 

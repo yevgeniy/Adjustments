@@ -126,10 +126,11 @@ namespace Adjustments.Puppeteer_Adjustments
                 /*brain leech should fail when target is too much unconcious */
                 if (__result <= .5f)
                 {
-                    (h as Hediff_BrainLeech).shouldRemove = true;
+                    (h as Hediff_BrainLeech).Active = false;
                 }
                 else
                 {
+                    (h as Hediff_BrainLeech).Active = true;
                     __result -= .5f;
                 }
             }

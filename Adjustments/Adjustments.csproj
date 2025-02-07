@@ -43,6 +43,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Text.Json, Version=7.0.0.3, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL" />
     <Reference Include="System.Xml" />
     <Reference Include="Unity.TextMeshPro">
       <HintPath>..\..\..\RimWorldWin64_Data\Managed\Unity.TextMeshPro.dll</HintPath>
@@ -245,6 +246,7 @@
     <Compile Include="Char_Manager.cs" />
     <Compile Include="Char_Panel.cs" />
     <Compile Include="Char_Patches.cs" />
+    <Compile Include="ClassMaster.cs" />
     <Compile Include="Mag_Adjustments.cs" />
     <Compile Include="Mag_Hediff_Subjugation.cs" />
     <Compile Include="Mag_Patches.cs" />
@@ -272,6 +274,10 @@
     <Compile Include="Adjustments_Settings.cs" />
     <Compile Include="Surg_Patches.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="VehicleDelivery\Patches.cs" />
+    <Compile Include="VehicleDelivery\VehicleDeliveryMap.cs" />
+    <Compile Include="Vehicle\Patches.cs" />
+    <Compile Include="VehiclePawnProxy.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -18,7 +18,7 @@ namespace Adjustments
         {
         }
 
-
+        public static Assembly[] Assemblies = AppDomain.CurrentDomain.GetAssemblies();
         public static bool HasCombatExtended { get; } = ModsConfig.ActiveModsInLoadOrder.Any(m => m.Name == "Combat Extended");
         public static bool VehicleIsActive { get; } = ModsConfig.ActiveModsInLoadOrder.Any(m => m.Name == "Vehicle Framework");
 
@@ -27,8 +27,10 @@ namespace Adjustments
         public override string SettingsCategory() => "Nimm Adjustments";
 
 
+
         static Adjustments_Mod()
         {
+            
             Harmony harmony = new Harmony("nimm.adjustments");
 #if DEBUG
             Harmony.DEBUG = true;
