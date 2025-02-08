@@ -14,3 +14,7 @@
 	- from 21-30 3:1
 	- ...
 - max 100 conc. point adjustment (not to go over 130% consciousness this way)
+
+- every psy upgrade increases leech, and growth potency by 1/10th
+	- for leach it will leach away 1/10th more consciousness (of base 1 consc).
+	- for growth it will spend 1/10th more points (of base 1 leech point);

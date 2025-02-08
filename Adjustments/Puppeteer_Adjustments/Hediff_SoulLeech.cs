@@ -54,7 +54,7 @@ namespace Adjustments.Puppeteer_Adjustments
             {
                 if (Subjects.Count > 0)
                 {
-                    return $"{Master.LabelShort} is soul leeching {string.Join(", ", Subjects.Select(v => v.LabelShort))} ({TotalLeachedReserve*100f})";
+                    return $"{Master.LabelShort} is soul leeching {string.Join(", ", Subjects.Select(v => v.LabelShort))} ({TotalLeachedReserve * 100f})";
                 }
                 return $"{Master.LabelShort} leeched away soul reserve ({TotalLeachedReserve * 100f})";
 
@@ -66,11 +66,11 @@ namespace Adjustments.Puppeteer_Adjustments
             {
                 if (LeechActive)
                 {
-                    return $"{Master.LabelShort} is leeching my soul! ({AmmountLeachedAway*100})";
+                    return $"{Master.LabelShort} is leeching my soul! ({AmmountLeachedAway * 100})";
                 }
                 else
                 {
-                    return $"My soul has been leached away ({AmmountLeachedAway*100})";
+                    return $"My soul has been leached away ({AmmountLeachedAway * 100})";
                 }
 
             }
@@ -138,6 +138,22 @@ namespace Adjustments.Puppeteer_Adjustments
             base.PostRemoved();
         }
 
+        static FieldInfo StatPointsFieldInfo = typeof(Hediff_PsycastAbilities).GetField("statPoints", BindingFlags.NonPublic|BindingFlags.Instance);
+        public int GetStatPoints()
+        {
+            Log.Message($"getting points {Master}");
+            if (Master.health.hediffSet.TryGetHediff(VPE_DefOf.VPE_PsycastAbilityImplant, out var h)
+                && h is Hediff_PsycastAbilities psyhediff)
+            {
+                Log.Message($"method {StatPointsFieldInfo}");
+                return (int)StatPointsFieldInfo.GetValue(psyhediff);
+            }
+
+            Log.Error($"Master {Master} does not seem to have psyhediff");
+            return 0;
+
+        }
+
         private int totalTicks = 0;
         public override void Tick()
         {
@@ -158,16 +174,21 @@ namespace Adjustments.Puppeteer_Adjustments
             {
                 totalTicks++;
 
-                if (totalTicks % GenDate.TicksPerHour==0)
+                if (totalTicks % GenDate.TicksPerHour == 0)
                 {
                     if (Type == SoulLeechType.Subject && LeechActive)
                     {
-                        
-                        if (Master.health.hediffSet.TryGetHediff(Adjustments.BrainLeechingHediff, out var h) 
+
+                        if (Master.health.hediffSet.TryGetHediff(Adjustments.BrainLeechingHediff, out var h)
                             && h is Hediff_SoulLeech masterSoulLeechHediff)
                         {
-                            AmmountLeachedAway += .01f;
-                            masterSoulLeechHediff.AddLeechedReserve(.01f);
+                            var psyupgrades = masterSoulLeechHediff.GetStatPoints();
+                            var potency= .01f + psyupgrades * .01f * 1f / 10f;
+
+                            Log.Message($"POTENCY LEECH: {potency}");
+
+                            AmmountLeachedAway += potency;
+                            masterSoulLeechHediff.AddLeechedReserve(potency);
                             Subject.health.capacities.Notify_CapacityLevelsDirty();
                         }
                         else
@@ -186,7 +207,7 @@ namespace Adjustments.Puppeteer_Adjustments
 
         public override IEnumerable<Gizmo> GetGizmos()
         {
-            if (Type==SoulLeechType.Master)
+            if (Type == SoulLeechType.Master)
                 yield return new Command_Action
                 {
                     defaultLabel = "Stop leeching",
@@ -197,7 +218,7 @@ namespace Adjustments.Puppeteer_Adjustments
                         StopLeeching();
                     }
                 };
-            else if (Type==SoulLeechType.Subject && LeechActive)
+            else if (Type == SoulLeechType.Subject && LeechActive)
             {
                 yield return new Command_Action
                 {
@@ -217,11 +238,17 @@ namespace Adjustments.Puppeteer_Adjustments
         }
         public bool TryDrawReservePoint(out float value)
         {
+            
+
             value = 0f;
             if (TotalLeachedReserve > 0f)
             {
-                value = .01f;
-                TotalLeachedReserve -= .01f;
+                var psyupgrades = GetStatPoints();
+                var potency = .01f + psyupgrades * .01f * 1f / 10f;
+                Log.Message($"POTENCY GROWTH: {potency}");
+
+                value = potency;
+                TotalLeachedReserve -= value;
                 return true;
             }
 
@@ -265,7 +292,7 @@ namespace Adjustments.Puppeteer_Adjustments
             }
         }
 
-      
+
     }
 
 

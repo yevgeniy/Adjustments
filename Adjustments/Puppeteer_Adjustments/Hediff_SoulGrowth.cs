@@ -3,9 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.Eventing.Reader;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using VanillaPsycastsExpanded;
 using Verse;
 
 namespace Adjustments.Puppeteer_Adjustments
@@ -94,7 +96,7 @@ namespace Adjustments.Puppeteer_Adjustments
                     if (masterSoulLeechHediff.TryDrawReservePoint(out var point))
                     {
                         Log.Message($"applying a point {point}");
-                        ApplyValue(.01f);
+                        ApplyValue(point);
                     }
                     else
                     {
