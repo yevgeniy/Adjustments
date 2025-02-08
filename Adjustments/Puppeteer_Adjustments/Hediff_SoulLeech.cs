@@ -23,8 +23,10 @@ namespace Adjustments.Puppeteer_Adjustments
     {
 
         public SoulLeechType Type;
-        public bool shouldRemove = false;
-        public override bool ShouldRemove => shouldRemove;
+        public override bool ShouldRemove =>
+            Type == SoulLeechType.Master && Subjects.Count == 0 && TotalLeachedReserve == 0f
+            || Type == SoulLeechType.Subject && LeechActive == false && AmmountLeachedAway == 0f;
+
         public Pawn Master = null;
         public List<Pawn> Subjects = new List<Pawn>();
         public Pawn Subject = null;
@@ -64,11 +66,11 @@ namespace Adjustments.Puppeteer_Adjustments
             {
                 if (LeechActive)
                 {
-                    return $"{Master.LabelShort} is leeching my soul! ({AmmountLeachedAway})";
+                    return $"{Master.LabelShort} is leeching my soul! ({AmmountLeachedAway*100})";
                 }
                 else
                 {
-                    return $"My soul has been leached away ({AmmountLeachedAway})";
+                    return $"My soul has been leached away ({AmmountLeachedAway*100})";
                 }
 
             }
@@ -107,7 +109,7 @@ namespace Adjustments.Puppeteer_Adjustments
                 }
                 else
                 {
-                    Log.Message($"could no find soul leech hediff on subject {i}!");
+                    Log.Error($"could no find soul leech hediff on subject {i}!");
                     return;
                 }
             }
@@ -118,14 +120,14 @@ namespace Adjustments.Puppeteer_Adjustments
         {
 
             LeechActive = false;
-            if (!Master.health.hediffSet.TryGetHediff(Adjustments.BrainLeechingHediff, out var h))
+            if (Master.health.hediffSet.TryGetHediff(Adjustments.BrainLeechingHediff, out var h))
             {
                 var soulLeechingHediff = h as Hediff_SoulLeech;
                 soulLeechingHediff.Subjects.Remove(Subject);
             }
             else
             {
-                Log.Message($"count not find soul leeching hediff on master {Master}!");
+                Log.Error($"count not find soul leeching hediff on master {Master}!");
             }
         }
 
@@ -158,11 +160,30 @@ namespace Adjustments.Puppeteer_Adjustments
 
                 if (totalTicks % GenDate.TicksPerHour==0)
                 {
-                    if (Type == SoulLeechType.Master) TotalLeachedReserve = Mathf.Min(.5f, TotalLeachedReserve + .01f);
-                    if (Type == SoulLeechType.Subject) AmmountLeachedAway += .01f;
+                    if (Type == SoulLeechType.Subject && LeechActive)
+                    {
+                        
+                        if (Master.health.hediffSet.TryGetHediff(Adjustments.BrainLeechingHediff, out var h) 
+                            && h is Hediff_SoulLeech masterSoulLeechHediff)
+                        {
+                            AmmountLeachedAway += .01f;
+                            masterSoulLeechHediff.AddLeechedReserve(.01f);
+                            Subject.health.capacities.Notify_CapacityLevelsDirty();
+                        }
+                        else
+                        {
+                            Log.Error($"Could not find master leech hediff {Master}");
+                        }
+                    }
                 }
             }
         }
+
+        private void AddLeechedReserve(float amt)
+        {
+            TotalLeachedReserve = Mathf.Min(.5f, TotalLeachedReserve + amt);
+        }
+
         public override IEnumerable<Gizmo> GetGizmos()
         {
             if (Type==SoulLeechType.Master)
@@ -194,18 +215,31 @@ namespace Adjustments.Puppeteer_Adjustments
             foreach (var i in basegiz)
                 yield return i;
         }
+        public bool TryDrawReservePoint(out float value)
+        {
+            value = 0f;
+            if (TotalLeachedReserve > 0f)
+            {
+                value = .01f;
+                TotalLeachedReserve -= .01f;
+                return true;
+            }
+
+            return false;
+
+        }
 
 
 
         public override void ExposeData()
         {
             base.ExposeData();
-            Scribe_Values.Look(ref shouldRemove, "hed-bl-shouldRemove");
+            //Scribe_Values.Look(ref shouldRemove, "hed-bl-shouldRemove");
             Scribe_Values.Look(ref leechActive, "hed-bl-active");
             Scribe_Values.Look(ref ammountLeachedAway, "hed-bl-leached-away");
             Scribe_Values.Look(ref totalLeachedReserve, "hed-bl-leeched-res");
 
-
+            Scribe_Values.Look(ref Type, "hed-bl-type");
             Scribe_References.Look(ref Master, "hed-bl-m");
             Scribe_References.Look(ref Subject, "hed-bl-subj");
             Scribe_Collections.Look(ref Subjects, "nim-bl-subjs", LookMode.Reference);
@@ -231,11 +265,7 @@ namespace Adjustments.Puppeteer_Adjustments
             }
         }
 
-
-
-
-
-
+      
     }
 
 

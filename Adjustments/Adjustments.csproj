@@ -251,7 +251,9 @@
     <Compile Include="Brand_Map.cs" />
     <Compile Include="Puppeteer_Adjustments\AbilityExtension_Puppet.cs" />
     <Compile Include="Puppeteer_Adjustments\Ability_Augment.cs" />
+    <Compile Include="Puppeteer_Adjustments\Ability_SoulGrowth.cs" />
     <Compile Include="Puppeteer_Adjustments\Ability_SoulLeech.cs" />
+    <Compile Include="Puppeteer_Adjustments\Hediff_SoulGrowth.cs" />
     <Compile Include="Puppeteer_Adjustments\Hediff_SoulLeech.cs" />
     <Compile Include="Puppeteer_Adjustments\Hediff_PsySurging.cs" />
     <Compile Include="Puppeteer_Adjustments\Ability_MindMerge.cs" />

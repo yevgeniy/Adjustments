@@ -7,3 +7,10 @@
 - casting puppet on slave or prisoner makes them colonist.
 
 - base consiousness for puppet should be 30
+
+- can stream excess consciousness to pawn 1/hour
+	- from 1-10 1:1
+	- from 11-20 2:1
+	- from 21-30 3:1
+	- ...
+- max 100 conc. point adjustment (not to go over 130% consciousness this way)

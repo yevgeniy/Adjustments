@@ -14,6 +14,7 @@ using Verse;
 using VFECore.Abilities;
 using static HarmonyLib.Code;
 using static UnityEngine.GraphicsBuffer;
+using static UnityEngine.UI.Image;
 using static Verse.PawnCapacityUtility;
 
 namespace Adjustments.Puppeteer_Adjustments
@@ -67,9 +68,9 @@ namespace Adjustments.Puppeteer_Adjustments
         [HarmonyPostfix]
         public static void postfix(ref float __result, HediffSet diffSet, PawnCapacityDef capacity, List<PawnCapacityUtility.CapacityImpactor> impactors, bool forTradePrice)
         {
+            var original = __result;
             if (capacity.defName == "Consciousness")
             {
-                var original = __result;
 
                 Hediff hediff;
                 if (diffSet.TryGetHediff(Adjustments.BrainLeechHediff, out hediff) && hediff is Hediff_SoulLeech soulLeech)
@@ -80,16 +81,13 @@ namespace Adjustments.Puppeteer_Adjustments
                     }
                         
                 }
-
-                if (diffSet.TryGetHediff(Adjustments.VPEP_PuppetHediff_HediffDef, out hediff))
+                if (diffSet.TryGetHediff(Adjustments.VPEP_PuppetHediff_HediffDef, out var _))
                 {
-                    var offsetforpuppet = Mathf.Max( original - .7f, 0f);
+                    __result = CalcPuppetConsc(diffSet, __result, original);
 
-                    if (__result >= .3f)
-                    {
-                        __result = .3f + offsetforpuppet;
-                    }
                 }
+
+
                 //if (diffSet.TryGetHediff(Adjustments.BrainLeechingHediff, out var hediff))
                 //{
                 //    var brainleechinghediff = hediff as Hediff_SoulLeech;
@@ -122,6 +120,12 @@ namespace Adjustments.Puppeteer_Adjustments
             }
             else if (capacity.defName == "Moving")
             {
+                if (diffSet.TryGetHediff(Adjustments.VPEP_PuppetHediff_HediffDef, out var _))
+                {
+                    __result = CalcPuppetConsc(diffSet, __result, original);
+
+                }
+
                 //if (diffSet.HasHediff(Defs.ADJ_MindMerged))
                 //{
                 //    __result += .3f;
@@ -132,6 +136,56 @@ namespace Adjustments.Puppeteer_Adjustments
                 //    __result += .6f;
                 //}
             }
+            //else if (capacity.defName=="Talking")
+            //{
+            //    if (diffSet.TryGetHediff(Adjustments.VPEP_PuppetHediff_HediffDef, out var _))
+            //    {
+            //        __result = CalcPuppetConsc(diffSet, __result, original);
+
+            //    }
+            //}
+            //else if (capacity.defName=="Eating")
+            //{
+            //    if (diffSet.TryGetHediff(Adjustments.VPEP_PuppetHediff_HediffDef, out var _))
+            //    {
+            //        __result = CalcPuppetConsc(diffSet, __result, original);
+
+            //    }
+            //}
+            //else if (capacity.defName=="Manipulation")
+            //{
+            //    if (diffSet.TryGetHediff(Adjustments.VPEP_PuppetHediff_HediffDef, out var _))
+            //    {
+            //        __result = CalcPuppetConsc(diffSet, __result, original);
+
+            //    }
+            //}
+        }
+
+
+        private static float CalcPuppetConsc(HediffSet diffSet, float current, float original)
+        {
+            var offsetforpuppet = Mathf.Max(original - .7f, 0f);
+            var res = 0f;
+
+            if (current >= .3f)
+            {
+                res = .3f + offsetforpuppet;
+            }
+            else
+            {
+                res = current;
+            }
+
+
+            var hediff = diffSet.GetFirstHediffOfDef(Defs.ADJ_SoulGrowth_Hediff) as Hediff_SoulGrowth;
+            if (hediff != null)
+            {
+                res += hediff.CurrentRework;
+            }
+
+            return res;
+
         }
     }
 
@@ -144,10 +198,12 @@ namespace Adjustments.Puppeteer_Adjustments
         {
             
 
+            
+
             //if (diffSet.TryGetHediff(Adjustments.BrainLeechHediff, out var h))
             //{
-                
-                
+
+
             //}
 
             //if (diffSet.HasHediff(Defs.ADJ_Augmenting))
@@ -165,6 +221,7 @@ namespace Adjustments.Puppeteer_Adjustments
 
             //__result = GenMath.RoundedHundredth(__result);
         }
+
     }
 
     [HarmonyPatch(typeof(ThingWithComps), nameof(ThingWithComps.TickRare))]

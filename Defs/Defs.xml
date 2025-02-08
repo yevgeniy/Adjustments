@@ -33,6 +33,57 @@
 			</li>
 		</modExtensions>
 	</VFECore.Abilities.AbilityDef>
+	
+	<VFECore.Abilities.AbilityDef >
+	
+		<defName>ADJ_SoulGrowth</defName>
+		
+		<label>soul growth</label>
+		<description>Slowly grow the conciousness of a puppet by using reserve leeched conciousness.  Will grow with diminishing returns and will not go beyond 130%.</description>
+		<warmupSound>VPE_PsycastCastingEffect</warmupSound>
+        <warmupMote>VPE_Mote_CastPsycast</warmupMote>
+		<gizmoClass>VanillaPsycastsExpanded.Command_Ability_Psycast</gizmoClass>
+		<cooldownTime>120</cooldownTime>
+		<rangeRingColor>(1, 1, 1)</rangeRingColor>
+		<radiusRingColor>(0.3, 0.8, 1)</radiusRingColor>
+		<requireLineOfSight>false</requireLineOfSight>
+		<jobDef>VFEA_GotoTargetAndUseAbility</jobDef>
+		<targetMode>Pawn</targetMode>
+		<range>999999</range>
+		<iconPath>Abilities/Puppeteer/BrainCut</iconPath>
+		<abilityClass>Adjustments.Puppeteer_Adjustments.Ability_SoulGrowth</abilityClass>
+		<castSound>VPEP_Brainleech_Cast</castSound>
+		<distanceToTarget>1.5</distanceToTarget>
+		<needsTicking>true</needsTicking>
+		<drawAimPie>false</drawAimPie>
+		<targetingParameters>
+			<canTargetBuildings>False</canTargetBuildings>
+			<canTargetSelf>False</canTargetSelf>
+			<canTargetAnimals>False</canTargetAnimals>
+			<canTargetPawns>True</canTargetPawns>
+			<canTargetHumans>True</canTargetHumans>
+			<canTargetMechs>False</canTargetMechs>
+			
+		</targetingParameters>
+		<castTime>50</castTime>
+		<modExtensions>
+			<li Class="VanillaPsycastsExpanded.AbilityExtension_Psycast">
+				<path>VPEP_Puppeteer</path>
+				<level>4</level>
+				<order>1</order>
+				<psyfocusCost>0.25</psyfocusCost>
+				<entropyGain>0</entropyGain>
+				<psychic>True</psychic>
+				<prerequisites>
+					<li>VPEP_Puppet</li>
+				</prerequisites>
+			</li>
+			<li Class="Adjustments.Puppeteer_Adjustments.ValidatePawnTarget">
+			</li>
+		</modExtensions>
+		
+	</VFECore.Abilities.AbilityDef>
+	
 
 
 
@@ -239,6 +290,15 @@
 		<description>Push a puppet's body to dangerous limits</description>
 		<hediffClass>Adjustments.Puppeteer_Adjustments.Hediff_PsySurging</hediffClass>
 	</HediffDef>
+	
+	<HediffDef>
+		<defName>ADJ_SoulGrowth_Hediff</defName>
+		<label>soul growth</label>
+		<description>Growing the soul of a puppet.</description>
+		<hediffClass>Adjustments.Puppeteer_Adjustments.Hediff_SoulGrowth</hediffClass>
+	</HediffDef>
+	
+	
 
 	
 	<ThoughtDef>

@@ -19,6 +19,7 @@ namespace Adjustments.Puppeteer_Adjustments
         public static HediffDef ADJ_MindMerged;
         public static HediffDef ADJ_PsySurged;
         public static HediffDef ADJ_PsySurging;
+        public static HediffDef ADJ_SoulGrowth_Hediff;
 
         public static ThoughtDef ADJ_GetOutOfMyHead;
 
@@ -26,7 +27,9 @@ namespace Adjustments.Puppeteer_Adjustments
 
         public static VFECore.Abilities.AbilityDef ADJ_MindMerge;
         public static VFECore.Abilities.AbilityDef ADJ_SoulLeech;
+        public static VFECore.Abilities.AbilityDef ADJ_SoulGrowth;
         
+
 
 
 
