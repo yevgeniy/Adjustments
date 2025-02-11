@@ -22,7 +22,7 @@ namespace Adjustments.Puppeteer_Adjustments
                 return false;
             }
 
-            var h = new PuppetHediffProxy(hediff);
+            PuppetHediffProxy h = new PuppetHediffProxy(hediff);
             var master = h.Master;
 
             if (this.pawn != master)

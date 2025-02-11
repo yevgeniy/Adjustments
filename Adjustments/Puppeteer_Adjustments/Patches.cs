@@ -87,6 +87,12 @@ namespace Adjustments.Puppeteer_Adjustments
 
                 }
 
+                //var shhediff = diffSet.GetFirstHediffOfDef(Defs.ADJ_SoulShield_Hediff) as Hediff_SoulShield;
+                //if (shhediff != null)
+                //{
+                //    __result = shhediff.Act(original);
+                //}
+
 
                 //if (diffSet.TryGetHediff(Adjustments.BrainLeechingHediff, out var hediff))
                 //{
@@ -120,46 +126,9 @@ namespace Adjustments.Puppeteer_Adjustments
             }
             else if (capacity.defName == "Moving")
             {
-                if (diffSet.TryGetHediff(Adjustments.VPEP_PuppetHediff_HediffDef, out var _))
-                {
-                    __result = CalcPuppetConsc(diffSet, __result, original);
 
-                }
-
-                //if (diffSet.HasHediff(Defs.ADJ_MindMerged))
-                //{
-                //    __result += .3f;
-                //    __result = Math.Max(__result, capacity.minValue);
-                //}
-                //if (diffSet.HasHediff(Defs.ADJ_PsySurged))
-                //{
-                //    __result += .6f;
-                //}
             }
-            //else if (capacity.defName=="Talking")
-            //{
-            //    if (diffSet.TryGetHediff(Adjustments.VPEP_PuppetHediff_HediffDef, out var _))
-            //    {
-            //        __result = CalcPuppetConsc(diffSet, __result, original);
-
-            //    }
-            //}
-            //else if (capacity.defName=="Eating")
-            //{
-            //    if (diffSet.TryGetHediff(Adjustments.VPEP_PuppetHediff_HediffDef, out var _))
-            //    {
-            //        __result = CalcPuppetConsc(diffSet, __result, original);
-
-            //    }
-            //}
-            //else if (capacity.defName=="Manipulation")
-            //{
-            //    if (diffSet.TryGetHediff(Adjustments.VPEP_PuppetHediff_HediffDef, out var _))
-            //    {
-            //        __result = CalcPuppetConsc(diffSet, __result, original);
-
-            //    }
-            //}
+       
         }
 
 

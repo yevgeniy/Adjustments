@@ -54,10 +54,17 @@ namespace Adjustments.Puppeteer_Adjustments
             {
                 if (Subjects.Count > 0)
                 {
-                    return $"{Master.LabelShort} is soul leeching {string.Join(", ", Subjects.Select(v => v.LabelShort))} ({TotalLeachedReserve * 100f})";
+                    return $"Soul leeching {string.Join(", ", Subjects.Select(v => v.LabelShort))} ({TotalLeachedReserve * 100f})";
                 }
-                return $"{Master.LabelShort} leeched away soul reserve ({TotalLeachedReserve * 100f})";
+                return $"Leeched away soul reserve ({TotalLeachedReserve * 100f})";
 
+            }
+        }
+        public float MaxLeechStore
+        {
+            get
+            {
+                return .5f + 50f * GetStatPoints();
             }
         }
         public string SubjectLabel
@@ -66,11 +73,11 @@ namespace Adjustments.Puppeteer_Adjustments
             {
                 if (LeechActive)
                 {
-                    return $"{Master.LabelShort} is leeching my soul! ({AmmountLeachedAway * 100})";
+                    return $"{Master.LabelShort} leeching my soul! ({AmmountLeachedAway * 100})";
                 }
                 else
                 {
-                    return $"My soul has been leached away ({AmmountLeachedAway * 100})";
+                    return $"My soul was leached away ({AmmountLeachedAway * 100})";
                 }
 
             }
@@ -133,25 +140,13 @@ namespace Adjustments.Puppeteer_Adjustments
 
         public override void PostRemoved()
         {
-            Log.Message($"SOMEHOW BRAIN LEECH/LEECHING HEDIFF GOT REMOVED!");
 
             base.PostRemoved();
         }
 
-        static FieldInfo StatPointsFieldInfo = typeof(Hediff_PsycastAbilities).GetField("statPoints", BindingFlags.NonPublic|BindingFlags.Instance);
         public int GetStatPoints()
         {
-            Log.Message($"getting points {Master}");
-            if (Master.health.hediffSet.TryGetHediff(VPE_DefOf.VPE_PsycastAbilityImplant, out var h)
-                && h is Hediff_PsycastAbilities psyhediff)
-            {
-                Log.Message($"method {StatPointsFieldInfo}");
-                return (int)StatPointsFieldInfo.GetValue(psyhediff);
-            }
-
-            Log.Error($"Master {Master} does not seem to have psyhediff");
-            return 0;
-
+            return Utils.GetPsyStatPoints(Master);
         }
 
         private int totalTicks = 0;
@@ -202,12 +197,12 @@ namespace Adjustments.Puppeteer_Adjustments
 
         private void AddLeechedReserve(float amt)
         {
-            TotalLeachedReserve = Mathf.Min(.5f, TotalLeachedReserve + amt);
+            TotalLeachedReserve = Mathf.Min(MaxLeechStore, TotalLeachedReserve + amt);
         }
 
         public override IEnumerable<Gizmo> GetGizmos()
         {
-            if (Type == SoulLeechType.Master)
+            if (Type == SoulLeechType.Master && Subjects.Count>0)
                 yield return new Command_Action
                 {
                     defaultLabel = "Stop leeching",
@@ -255,6 +250,20 @@ namespace Adjustments.Puppeteer_Adjustments
             return false;
 
         }
+        public bool TryDrawReserve(float amt, out float value)
+        {
+            value = 0f;
+
+            if (amt >= TotalLeachedReserve)
+            {
+                TotalLeachedReserve -= amt;
+                value = amt;
+
+                return true;
+            }
+
+            return false;
+        }
 
 
 
@@ -294,63 +303,5 @@ namespace Adjustments.Puppeteer_Adjustments
 
 
     }
-
-
-    class PuppetHediffProxy
-    {
-        private Hediff _hediff;
-
-        public static List<Assembly> Assemblies = AppDomain.CurrentDomain.GetAssemblies().ToList();
-
-
-        public PuppetHediffProxy(Hediff hediff)
-        {
-            _hediff = hediff;
-        }
-
-        public List<Pawn> Puppets
-        {
-            get
-            {
-                return PuppetsField.GetValue(_hediff) as List<Pawn>;
-            }
-        }
-
-
-        private static FieldInfo _puppetsField;
-        public static FieldInfo PuppetsField
-        {
-            get
-            {
-                return _puppetsField ?? (
-                    _puppetsField = Assemblies.SelectMany(assembly => assembly.GetTypes())
-                    .FirstOrDefault(v => v.Name == "Hediff_Puppeteer")
-                    .GetField("puppets", BindingFlags.Instance | BindingFlags.Public)
-                 );
-            }
-        }
-
-        private static FieldInfo _masterField;
-        public static FieldInfo MasterField
-        {
-            get
-            {
-                return _masterField ?? (
-                    _masterField = Assemblies.SelectMany(assembly => assembly.GetTypes())
-                    .FirstOrDefault(v => v.Name == "Hediff_Puppet")
-                    .GetField("master", BindingFlags.Instance | BindingFlags.Public)
-                );
-            }
-        }
-        public Pawn Master
-        {
-            get
-            {
-                return MasterField.GetValue(_hediff) as Pawn;
-            }
-        }
-    }
-
-
 
 }

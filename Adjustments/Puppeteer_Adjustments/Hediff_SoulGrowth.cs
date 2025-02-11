@@ -90,7 +90,8 @@ namespace Adjustments.Puppeteer_Adjustments
                     var masterSoulLeechHediff = Master.health.hediffSet.GetFirstHediffOfDef(Adjustments.BrainLeechingHediff) as Hediff_SoulLeech;
                     if (masterSoulLeechHediff == null)
                     {
-                        Log.Error($"Master {Master} did not have the sould leech hediff!");
+                        Log.Message($"no leech hediff on master");
+                        return;
                     }
 
                     if (masterSoulLeechHediff.TryDrawReservePoint(out var point))

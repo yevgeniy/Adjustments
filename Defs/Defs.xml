@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Defs>
 
-
 	<VFECore.Abilities.AbilityDef ParentName="VPE_PsycastGoToTargetBase">
 		<defName>ADJ_SoulLeech</defName>
 		<label>soul leech</label>
@@ -84,27 +83,25 @@
 		
 	</VFECore.Abilities.AbilityDef>
 	
-
-
-
+	Ability_SoulMutation
 	<VFECore.Abilities.AbilityDef >
 	
-		<defName>ADJ_Augment</defName>
+		<defName>ADJ_SoulMutation</defName>
 		
-		<label>augment</label>
-		<description>Augment another consciousness by sacrificing your own.  Will not work if your consciousness is already below 80%.  And will not raise it above 120%</description>
+		<label>soul mutation</label>
+		<description>Mutate the targets soul expanding upgrading his passions.</description>
 		
 		<warmupSound>VPE_PsycastCastingEffect</warmupSound>
         <warmupMote>VPE_Mote_CastPsycast</warmupMote>
 		<gizmoClass>VanillaPsycastsExpanded.Command_Ability_Psycast</gizmoClass>
-		<cooldownTime>120</cooldownTime>
+		<cooldownTime>20</cooldownTime>
 		<rangeRingColor>(1, 1, 1)</rangeRingColor>
 		<radiusRingColor>(0.3, 0.8, 1)</radiusRingColor>
 		<requireLineOfSight>false</requireLineOfSight>
 		<jobDef>VFEA_GotoTargetAndUseAbility</jobDef>
 		<range>999999</range>
 		<iconPath>Abilities/Puppeteer/BrainCut</iconPath>
-		<abilityClass>Adjustments.Puppeteer_Adjustments.Ability_Augment</abilityClass>
+		<abilityClass>Adjustments.Puppeteer_Adjustments.Ability_SoulMutation</abilityClass>
 		<castSound>VPEP_Brainleech_Cast</castSound>
 		<targetMode>Pawn</targetMode>
 		<distanceToTarget>1.5</distanceToTarget>
@@ -118,21 +115,74 @@
 			<canTargetHumans>True</canTargetHumans>
 			<canTargetMechs>False</canTargetMechs>
 		</targetingParameters>
-		<castTime>50</castTime>
+		<castTime>5</castTime>
+		<modExtensions>
+			<li Class="VanillaPsycastsExpanded.AbilityExtension_Psycast">
+				<path>VPEP_Puppeteer</path>
+				<level>4</level>
+				<order>4</order>
+				<psyfocusCost>.9</psyfocusCost>
+				<entropyGain>0</entropyGain>
+				<psychic>True</psychic>
+				<prerequisites>
+					<li>VPEP_Puppet</li>
+				</prerequisites>
+			</li>
+			<li Class="Adjustments.Puppeteer_Adjustments.ValidatePawnTarget">
+			</li>
+		</modExtensions>
+	</VFECore.Abilities.AbilityDef>
+
+	
+	<!--
+	<VFECore.Abilities.AbilityDef >
+	
+		<defName>ADJ_SoulShield</defName>
+		
+		<label>soul shield</label>
+		<description>Create an excess layer of calcified soul growth on a target's consciousness. Anything which negatively impacts target's consciousness will first strip away calcified layers.</description>
+		
+		<warmupSound>VPE_PsycastCastingEffect</warmupSound>
+        <warmupMote>VPE_Mote_CastPsycast</warmupMote>
+		<gizmoClass>VanillaPsycastsExpanded.Command_Ability_Psycast</gizmoClass>
+		<cooldownTime>20</cooldownTime>
+		<rangeRingColor>(1, 1, 1)</rangeRingColor>
+		<radiusRingColor>(0.3, 0.8, 1)</radiusRingColor>
+		<requireLineOfSight>false</requireLineOfSight>
+		<jobDef>VFEA_GotoTargetAndUseAbility</jobDef>
+		<range>999999</range>
+		<iconPath>Abilities/Puppeteer/BrainCut</iconPath>
+		<abilityClass>Adjustments.Puppeteer_Adjustments.Ability_SoulShield</abilityClass>
+		<castSound>VPEP_Brainleech_Cast</castSound>
+		<targetMode>Pawn</targetMode>
+		<distanceToTarget>12</distanceToTarget>
+		<needsTicking>true</needsTicking>
+		<drawAimPie>false</drawAimPie>
+		<targetingParameters>
+			<canTargetBuildings>False</canTargetBuildings>
+			<canTargetSelf>False</canTargetSelf>
+			<canTargetAnimals>False</canTargetAnimals>
+			<canTargetPawns>True</canTargetPawns>
+			<canTargetHumans>True</canTargetHumans>
+			<canTargetMechs>False</canTargetMechs>
+		</targetingParameters>
+		<castTime>5</castTime>
 		<modExtensions>
 			<li Class="VanillaPsycastsExpanded.AbilityExtension_Psycast">
 				<path>VPEP_Puppeteer</path>
 				<level>1</level>
 				<order>1</order>
-				<psyfocusCost>0.4</psyfocusCost>
-				<entropyGain>0</entropyGain>
+				<psyfocusCost>0.1</psyfocusCost>
+				<entropyGain>25</entropyGain>
 				<psychic>True</psychic>
 			</li>
 			<li Class="Adjustments.Puppeteer_Adjustments.ValidatePawnTarget">
 			</li>
 		</modExtensions>
 	</VFECore.Abilities.AbilityDef>
+	-->
 	
+	<!--
 	<VFECore.Abilities.AbilityDef >
 	
 		<defName>ADJ_MindMerge</defName>
@@ -182,8 +232,10 @@
 		</modExtensions>
 		
 	</VFECore.Abilities.AbilityDef>
+	-->
 	
-		<VFECore.Abilities.AbilityDef>
+	<!--
+	<VFECore.Abilities.AbilityDef>
 
 		<defName>ADJ_PsychicSurge</defName>
 		<label>psychic surge</label>
@@ -232,21 +284,16 @@
 		
 		
 	</VFECore.Abilities.AbilityDef>
+	-->
 	
-	
+	<!--
 	<HediffDef>
-		<defName>ADJ_Augmenting</defName>
-		<label>Supply Augment</label>
-		<description>A large portion of consciousness is lent to another.</description>
-		<hediffClass>Adjustments.Puppeteer_Adjustments.Hediff_Augment</hediffClass>
+		<defName>ADJ_SoulShield_Hediff</defName>
+		<label>should shield</label>
+		<description>Soul is shielded by calcified consciousness.</description>
+		<hediffClass>Adjustments.Puppeteer_Adjustments.Hediff_SoulShield</hediffClass>
 	</HediffDef>
 
-	<HediffDef>
-		<defName>ADJ_Augmented</defName>
-		<label>Augmented Consciousness</label>
-		<description>Consciousness augmented by a puppeteer.</description>
-		<hediffClass>Adjustments.Puppeteer_Adjustments.Hediff_Augment</hediffClass>
-	</HediffDef>
 	
 	<HediffDef>
 		<defName>ADJ_MindMerging</defName>
@@ -290,6 +337,14 @@
 		<description>Push a puppet's body to dangerous limits</description>
 		<hediffClass>Adjustments.Puppeteer_Adjustments.Hediff_PsySurging</hediffClass>
 	</HediffDef>
+	-->
+	
+	<HediffDef>
+		<defName>ADJ_SoulMutating_Hediff</defName>
+		<label>Soul Mutating</label>
+		<description>Mutating soul.</description>
+		<hediffClass>Adjustments.Puppeteer_Adjustments.Hediff_SoulMutation</hediffClass>
+	</HediffDef>
 	
 	<HediffDef>
 		<defName>ADJ_SoulGrowth_Hediff</defName>
@@ -297,9 +352,6 @@
 		<description>Growing the soul of a puppet.</description>
 		<hediffClass>Adjustments.Puppeteer_Adjustments.Hediff_SoulGrowth</hediffClass>
 	</HediffDef>
-	
-	
-
 	
 	<ThoughtDef>
         <defName>ADJ_GetOutOfMyHead</defName>

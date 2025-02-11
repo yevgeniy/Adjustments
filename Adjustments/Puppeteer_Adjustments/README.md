@@ -18,3 +18,7 @@
 - every psy upgrade increases leech, and growth potency by 1/10th
 	- for leach it will leach away 1/10th more consciousness (of base 1 consc).
 	- for growth it will spend 1/10th more points (of base 1 leech point);
+
+- every psy upgrade increases store by 50
+
+- Soul shield base:50 +10/upgrade
