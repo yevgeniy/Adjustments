@@ -61,7 +61,6 @@ namespace Adjustments.Puppeteer_Adjustments
             var masterMindGrowth = pawn.health.hediffSet.GetFirstHediffOfDef(Defs.ADJ_SoulGrowth_Hediff) as Hediff_SoulGrowth;
             if (masterMindGrowth==null)
             {
-                Log.Message($"--master does not have hediff");
                 masterMindGrowth= HediffMaker.MakeHediff(Defs.ADJ_SoulGrowth_Hediff, pawn, pawn.health.hediffSet.GetBrain()) as Hediff_SoulGrowth;
                 masterMindGrowth.Type = MindGrowthType.Master;
                 masterMindGrowth.Subjects = new List<Pawn>() { };

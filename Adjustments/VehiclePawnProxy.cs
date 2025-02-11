@@ -91,7 +91,6 @@ namespace Adjustments
 
         public bool CanAccept(Thing thing, out int? count)
         {
-            Log.Message("CAN ACCEPT? " + thing + " on: " + Thing);
             count = null;
 
             var transferable = GetTransferable(CargoToLoad, thing);
@@ -107,7 +106,6 @@ namespace Adjustments
 
         public int AddOrTransfer(Thing thing, int count)
         {
-            Log.Message("ATTEMPTING TO ADD: " + thing + " " + count + " to: " + Thing);
             return ClassMaster.Call<int>(
                 Thing,
                 "AddOrTransfer",

@@ -15,11 +15,9 @@ namespace Adjustments.Puppeteer_Adjustments
         static FieldInfo StatPointsFieldInfo = typeof(Hediff_PsycastAbilities).GetField("statPoints", BindingFlags.NonPublic | BindingFlags.Instance);
         public static int GetPsyStatPoints(Pawn pawn)
         {
-            Log.Message($"getting points {pawn}");
             if (pawn.health.hediffSet.TryGetHediff(VPE_DefOf.VPE_PsycastAbilityImplant, out var h)
                 && h is Hediff_PsycastAbilities psyhediff)
             {
-                Log.Message($"method {StatPointsFieldInfo}");
                 return (int)StatPointsFieldInfo.GetValue(psyhediff);
             }
 

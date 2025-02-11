@@ -22,3 +22,5 @@
 - every psy upgrade increases store by 50
 
 - Soul shield base:50 +10/upgrade
+
+- consc decrease when active

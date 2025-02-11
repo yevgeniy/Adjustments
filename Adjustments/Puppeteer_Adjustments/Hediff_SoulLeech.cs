@@ -180,7 +180,6 @@ namespace Adjustments.Puppeteer_Adjustments
                             var psyupgrades = masterSoulLeechHediff.GetStatPoints();
                             var potency= .01f + psyupgrades * .01f * 1f / 10f;
 
-                            Log.Message($"POTENCY LEECH: {potency}");
 
                             AmmountLeachedAway += potency;
                             masterSoulLeechHediff.AddLeechedReserve(potency);
@@ -240,7 +239,6 @@ namespace Adjustments.Puppeteer_Adjustments
             {
                 var psyupgrades = GetStatPoints();
                 var potency = .01f + psyupgrades * .01f * 1f / 10f;
-                Log.Message($"POTENCY GROWTH: {potency}");
 
                 value = potency;
                 TotalLeachedReserve -= value;
