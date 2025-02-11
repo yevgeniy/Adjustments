@@ -26,6 +26,12 @@ namespace Adjustments.Puppeteer_Adjustments
                 return false;
             }
 
+            var puppetHediff = subject.health.hediffSet.GetFirstHediffOfDef(Adjustments.VPEP_PuppetHediff_HediffDef);
+            if (puppetHediff != null)
+            {
+                Messages.Message($"Target cannot be a puppet", MessageTypeDefOf.NeutralEvent);
+                return false;
+            }
 
             if (subject.Dead)
             {
@@ -88,14 +94,6 @@ namespace Adjustments.Puppeteer_Adjustments
                 {
                     Messages.Message("No soul leech points on master.", MessageTypeDefOf.NeutralEvent);
                     return;
-                }
-                else
-                {
-                    if (masterLeechHediff.TotalLeachedReserve < cost)
-                    {
-                        Messages.Message($"Not enought soul points on master.  Fail ability", MessageTypeDefOf.NeutralEvent);
-                        return;
-                    }
                 }
 
 

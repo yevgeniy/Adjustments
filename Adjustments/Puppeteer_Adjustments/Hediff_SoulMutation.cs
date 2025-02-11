@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using VanillaPsycastsExpanded;
 using Verse;
+using Verse.Noise;
 using VFECore.Abilities;
 using static System.Collections.Specialized.BitVector32;
 using static UnityEngine.GraphicsBuffer;
@@ -33,13 +34,15 @@ namespace Adjustments.Puppeteer_Adjustments
         private bool shouldRemove = false;
         public override bool ShouldRemove => this.shouldRemove;
 
-        private int stageTicks = 0;
+        public int stageTicks = 0;
         private SoulMutationStage stage;
         private string selection;
 
         public Pawn Master = null;
         public List<Pawn> Subjects = new List<Pawn>();
+        public List<string> Mutations = new List<string>();
         public Pawn Subject = null;
+        private float cost;
 
         public SoulMutationStage Stage
         {
@@ -59,6 +62,7 @@ namespace Adjustments.Puppeteer_Adjustments
         public void Activate(string selection)
         {
             this.selection = selection;
+
             Stage = SoulMutationStage.Mutating;
             stageTicks = 0;
 
@@ -72,10 +76,17 @@ namespace Adjustments.Puppeteer_Adjustments
                 else
                 {
                     Log.Error($"COULD NOT FIND PSY CAST HEDIFF ON MASTER");
+                    return;
                 }
             }
+            else if (Type == SoulMutationType.Subject)
+            {
+                this.cost = Utils.MutateCost(Subject.skills.skills.FirstOrDefault(v => v.def.defName == selection));
+            }
 
-            Log.Message($"ACTIVATING {Type} {selection}");
+            Subject.health.capacities.Notify_CapacityLevelsDirty();
+            Master.health.capacities.Notify_CapacityLevelsDirty();
+
         }
 
 
@@ -95,7 +106,7 @@ namespace Adjustments.Puppeteer_Adjustments
             {
                 if (Stage == SoulMutationStage.Mutating)
                 {
-                    return $"Skill upgrading: {this.selection}";
+                    return $"Skill upgrading: {this.selection} left: {this.cost*100f}";
                 }
                 else if (Stage == SoulMutationStage.Healing)
                 {
@@ -103,7 +114,7 @@ namespace Adjustments.Puppeteer_Adjustments
                 }
                 else if (Stage == SoulMutationStage.Stable)
                 {
-                    return "Mutated.";
+                    return $"Mutated {string.Join(", ", Mutations.Distinct())}";
                 }
 
                 return "";
@@ -114,71 +125,105 @@ namespace Adjustments.Puppeteer_Adjustments
 
         public override void PostRemoved()
         {
-            if (Type == SoulMutationType.Subject)
-            {
-                Log.Error($"SOMEHOW SOUL MUTATION HEDIFF GOT REMOVED!");
-            }
 
+            Subject.health.capacities.Notify_CapacityLevelsDirty();
+            Master.health.capacities.Notify_CapacityLevelsDirty();
             base.PostRemoved();
         }
 
         public override void Tick()
         {
             stageTicks++;
-
-            /*Mutation stage should last 1 day */
-            if (Stage == SoulMutationStage.Mutating && stageTicks >= GenDate.TicksPerHour)
-            //if (Stage == SoulMutationStage.Mutating && stageTicks >= GenDate.TicksPerDay)
+            if (Stage == SoulMutationStage.Mutating && stageTicks % GenDate.TicksPerHour == 0)
             {
                 if (Type == SoulMutationType.Master)
                 {
                     this.shouldRemove = true;
                 }
-                if (Type == SoulMutationType.Subject)
+                else if (Type == SoulMutationType.Subject)
                 {
-                    DoUpgrade();
-                    stageTicks = 0;
-                    Stage = SoulMutationStage.Healing;
+                    ApplyPoint();
+                    if (this.cost <= 0f)
+                    {
+                        DoUpgrade();
+                        stageTicks = 0;
+                        Stage = SoulMutationStage.Healing;
+                        Subject.health.capacities.Notify_CapacityLevelsDirty();
+                    }
+
                 }
             }
-
-            //if (Stage == SoulMutationStage.Healing && stageTicks >= GenDate.TicksPerYear)
-            if (Stage == SoulMutationStage.Healing && stageTicks >= GenDate.TicksPerHour)
+            if (Stage == SoulMutationStage.Healing && stageTicks >= GenDate.TicksPerYear)
             {
                 stageTicks = 0;
                 Stage = SoulMutationStage.Stable;
+                Subject.health.capacities.Notify_CapacityLevelsDirty();
             }
-
         }
-        private void DoUpgrade()
-        {
-            var skillRecord = Subject.skills.skills.FirstOrDefault(v => v.def.defName == this.selection);
-            var cost = Utils.MutateCost(skillRecord);
-            if (cost == -1f)
-            {
-                Log.Error($"Something happened.  can't find cost of selection");
-                this.shouldRemove = true;
-                return;
-            }
 
+        private void ApplyPoint()
+        {
             var masterLeechHediff = Master.health.hediffSet.GetFirstHediffOfDef(Adjustments.BrainLeechingHediff) as Hediff_SoulLeech;
             if (masterLeechHediff == null)
             {
-                Log.Error($"Something happened. Master codes not have leeching hediff.");
-                this.shouldRemove = true;
+                Log.Message($"no soul reserve on master");
                 return;
             }
 
-            if (masterLeechHediff.TryDrawReserve(cost, out var _))
+            if (masterLeechHediff.TryDrawReservePoint(out var amt))
             {
-                skillRecord.passion = (Passion)(((byte)skillRecord.passion) + 1);
-
+                this.cost-=amt;
             }
             else
             {
-                Log.Error($"Master does not have enought soul points.");
+                Log.Message($"no soul points left");
             }
         }
+
+        private void DoUpgrade()
+        {
+            var skillRecord = Subject.skills.skills.FirstOrDefault(v => v.def.defName == this.selection);
+            skillRecord.passion = (Passion)(((byte)skillRecord.passion) + 1);
+
+            Mutations.Add(this.selection);
+        }
+
+        public void StopMutation()
+        {
+            var masterHediff = Master.health.hediffSet.GetFirstHediffOfDef(Defs.ADJ_SoulMutating_Hediff) as Hediff_SoulMutation;
+            if (masterHediff != null)
+            {
+                masterHediff.shouldRemove = true;
+            }
+
+            var subjectHediff = Subject.health.hediffSet.GetFirstHediffOfDef(Defs.ADJ_SoulMutating_Hediff) as Hediff_SoulMutation;
+            subjectHediff.Stage = SoulMutationStage.Stable;
+            subjectHediff.stageTicks = 0;
+            if (subjectHediff.Mutations.Count == 0)
+            {
+                subjectHediff.shouldRemove = true;
+            }
+        }
+
+        public override IEnumerable<Gizmo> GetGizmos()
+        {
+            if (Type == SoulMutationType.Master || (Type == SoulMutationType.Subject && Stage == SoulMutationStage.Mutating))
+                yield return new Command_Action
+                {
+                    defaultLabel = "Stop Mutation",
+                    defaultDesc = "Stop Mutation",
+                    icon = ContentFinder<Texture2D>.Get("Effects/Technomancer/BreakLink/BreakLinkRockConstruct"),
+                    action = delegate
+                    {
+                        StopMutation();
+                    }
+                };
+
+            var basegiz = base.GetGizmos();
+            foreach (var i in basegiz)
+                yield return i;
+        }
+
 
 
         public override void ExposeData()
@@ -190,10 +235,15 @@ namespace Adjustments.Puppeteer_Adjustments
             Scribe_Values.Look(ref selection, "hed-selection-stage");
             Scribe_Values.Look(ref stageTicks, "hed-ticks-stage");
             Scribe_Values.Look(ref shouldRemove, "hed-shouldrem-stage");
+            Scribe_Values.Look(ref cost, "hed-cost-stage");
 
 
             Scribe_References.Look(ref Master, "hed-smut-m");
             Scribe_References.Look(ref Subject, "hed-smut-subj");
+            Scribe_Collections.Look(ref Mutations, "hed-muts-subj");
+
+            if (Mutations == null)
+                Mutations = new List<string>();
 
         }
 
